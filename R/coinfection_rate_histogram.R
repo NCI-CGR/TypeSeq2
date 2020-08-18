@@ -2,6 +2,7 @@
 coinfection_rate_histogram <- function(df){
 
 coinfectionRateHistrogramDf = df %>%
+filter(!is.na(Project)) %>%
 group_by(Project) %>%
 do({
 

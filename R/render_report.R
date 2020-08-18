@@ -1,13 +1,15 @@
 #'
-render_ion_qc_report <- function(args_start_plugin,
-                                 split_deliverables,
-                                 samples_and_controls_df_out,
-                                 control_results,
-                                 hpv_types_df,
-                                 final_pn_matrix,
-                                 scaling_list,
-                                 lineage_df,
-                                 bam_header_df){
+render_ion_qc_report <- function(variants_final_table,
+                                 ion_qc_report,
+                                 args_df,
+                                 manifest,
+                                 control_for_report,
+                                 samples_only_for_report,
+                                 read_count_matrix_report,
+                                 detailed_pn_matrix_for_report,
+                                 specimen_control_defs,
+                                 pn_filters,
+                                 lineage_for_report){
 
 require(dplyr)
 require(knitr)
@@ -22,10 +24,10 @@ library(pander)
 #                   "reports", "Ion_Torrent_report.R", package = "TypeSeqHPV"),
 #               " ./"))
 
-system("cp /TypeSeqHPV/inst/reports/Ion_Torrent_report.R ./")
+system("cp /TypeSeqHPV/inst/typeseq2/Ion_Torrent_report.R ./")
 
 render(input = "Ion_Torrent_report.R",
-       output_dir = "./", output_file = "TypeSeqHPV_QC_report.pdf")
+       output_dir = "./", output_file = "TypeSeqHPV_QC_report.pdf", clean = FALSE)
 
 return(data_frame(path = "Ion_Torrent_report.pdf"))
 

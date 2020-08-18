@@ -16,6 +16,7 @@ drake::clean("variants_final_table")
 command_line_args = tibble(
     manifest = optigrab::opt_get('manifest'),
     control_definitions = optigrab::opt_get('control_definitions'),
+    grouping_defs = optigrab::opt_get('grouping_defs'),
     barcode_file = optigrab::opt_get('barcode_file'),
     tvc_parameters = optigrab::opt_get('tvc_parameters'),
     reference = optigrab::opt_get('reference'),
@@ -74,7 +75,7 @@ ion_plan <- drake::drake_plan(
         glimpse() %>%
         write_csv("variant_table.csv"),
 
-#### 7. joining variant table with sample sheet and write to file ####
+    #### 7. joining variant table with sample sheet and write to file ####
     variants_final_table = typing_variant_filter(variants = variant_table,
                                                  lineage_defs = args_df$lineage_defs,
                                                  manifest = user_files$manifest,
@@ -82,13 +83,29 @@ ion_plan <- drake::drake_plan(
                                                  internal_control_defs = args_df$internal_control_defs,
                                                  pn_filters = args_df$pn_filters,
                                                  scaling_table = args_df$scaling_table) %T>%
-        map_df(~ system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv"),
-
-#### 8. generate qc report ####
-ion_qc_report = variants_final_table %T>%
-  do(render("ion_Torrent_report.R"))
-
-))
+        map_df(~ system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")),
+    
+    #### 8. generate qc report ####
+    ion_qc_report = render_ion_qc_report(variants_final_table = variants_final_table,
+                                         args_df = args_df,
+                                         manifest = user_files$manifest,
+                                         control_for_report = read.csv("control_for_report"),
+                                         samples_only_for_report = read.csv("samples_only_for_report"),
+                                         detailed_pn_matrix_for_report = read.csv("detailed_pn_matrix_report"),
+                                         read_count_matrix_report = read.csv("read_count_matrix_report"),
+                                         pn_filters = read.csv("pn_filters_report"),
+                                         specimen_control_defs = user_files$control_definitions,
+                                         lineage_for_report = read.csv("lineage_for_report") ) %T>%
+        map_df(~ system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")),
+    
+    #### 9. generate grouped pn_matrix           
+    grouped_outputs = get_grouped_df(simple_pn_matrix_final = read.csv("pn_matrix_for_groupings"),
+                                     groups_defs = user_files$grouping_defs,
+                                     ion_qc_report = ion_qc_report)
+    
+    
+    
+)  
 
 #### C. execute workflow plan ####
 system("mkdir vcf")
@@ -99,7 +116,6 @@ num_cores = availableCores() - 1
 future::plan(multicore, workers = num_cores)
 
 drake::make(ion_plan)
-
 #### E. make html block for torrent server ####
 html_block = if ( command_line_args$is_torrent_server == "yes") {
     render("/TypeSeqHPV/inst/typeseq2/torrent_server_html_block.R",

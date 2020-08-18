@@ -14,7 +14,9 @@ library(magrittr)
 command_line_args = tibble(
     manifest = optigrab::opt_get('manifest'),
     control_definitions = optigrab::opt_get('control_definitions'),
+    control_freq = optigrab::opt_get('control_freq'),
     barcode_file = optigrab::opt_get('barcode_file'),
+    pn_filters = optigrab::opt_get('pn_filters'),
     tvc_parameters = optigrab::opt_get('tvc_parameters'),
     reference = optigrab::opt_get('reference'),
     region_bed = optigrab::opt_get('region_bed'),
@@ -38,21 +40,26 @@ args_df = get_command_line_args(command_line_args) %>%
     glimpse(),
 
 #### 2. parse plugin data ####
-user_files = startplugin_parse(args_df) %>%
+user_files = meth_startplugin_parse(args_df) %>%
   glimpse(),
 
 #### 3. demux bams ####
-demux_bam = adam_demux(user_files, args_df$ram, args_df$cores) %>%
-    glimpse(),
+demux_bam = dir_ls("./", recursive = T, glob = "*bam*") %>% 
+  map_df(as_tibble)  %>% 
+  rename(sorted_path = value) %>% 
+  mutate(path = sorted_path) %>% 
+  separate(path, c("a","b","c")) %>% 
+  mutate(bam_path = paste0(a,"_",b,"_",c,".bam")) %>% 
+  mutate(sample = b),
 
 #### 4. split, sort, and index bams ####
-sorted_bam = demux_bam %>%
-    split(.$sample) %>%
-    future_map_dfr(samtools_sort) %>%
-    glimpse(),
+sorted_bam = demux_bam %>% 
+   split(.$bam_path) %>% 
+   future_map_dfr(single_barcode_demux) %>% 
+   glimpse(),
 
 #### 5. run tvc on demux bams ####
-vcf_files = sorted_bam %T>%
+vcf_files = demux_bam %T>%
     map_df(~ system(paste0("cp ", args_df$reference, " ./"))) %T>%
     map_df(~ system(paste0("samtools faidx ", basename(args_df$reference)))) %>%
     split(.$sample) %>%
@@ -65,15 +72,17 @@ variant_table = vcf_files %>%
     split(.$vcf_out) %>%
     future_map_dfr(vcf_to_dataframe) %>%
     glimpse() %>%
-    mutate(barcode = str_sub(filename, 5, 10)) %>%
+    mutate(barcode = str_sub(filename, 5, 7)) %>%
     glimpse(),
 
 #### 7. joining variant table with sample sheet and write to file ####
-variants_final_table = methyl_variant_filter(variant_table,
+variants_final_table = single_bar_methyl_variant_filter(variant_table,
                                       args_df$filteringTable,
                                       args_df$posConversionTable,
+                                      args_df$pn_filters,
                                       user_files$manifest,
-                                      user_files$control_definitions) %T>%
+                                      user_files$control_definitions, 
+                                      user_files$control_freq) %T>%
   map_df(~ system("zip -j TypeSeqHPVMethyl_outputs.zip read_summary.csv *results.csv"))
 
 )
