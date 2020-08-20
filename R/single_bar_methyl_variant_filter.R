@@ -31,7 +31,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     as_tibble()
   
   filtered_variants = variants %>% 
-    filter(ALT %in% c("C", "T")) %>% 
+    filter(ALT %in% c("C", "T")) %>%  
     inner_join(filteringTable) %>% 
     transform(barcode = as.character(barcode)) %>%
     mutate(AF = as.double(AF)) %>%
@@ -39,8 +39,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     mutate(qc_reason = ifelse(DP >= min_DP, qc_reason,
                               "min_DP")) %>% 
  #   filter(!(qc_reason == "min_DP")) %>%
-    mutate(methyl_freq = case_when(
-      ALT == "C" ~ AF, ALT == "T" ~ 1 - AF)) %>%
+    mutate(methyl_freq = case_when(REF == "T" & ALT == "C" ~ AF, REF == "C" & ALT == "T" ~ FRO/DP)) %>% 
     mutate(qc_reason = ifelse(SRF >= min_coverage_pos, qc_reason,
                               paste0(qc_reason, ";", "min_coverage_pos"))) %>%
     mutate(qc_reason = ifelse(SRR >= min_coverage_neg, qc_reason,
@@ -63,7 +62,8 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     mutate(status = ifelse(qc_reason == "Pass", "Pass", "Fail")) %>%
     rename(pos_amplicon = POS, chr_amplicon = CHROM) %>% 
     glimpse() %>% 
-    inner_join(pos_conversion, by = c("chr_amplicon","pos_amplicon")) %>%
+    inner_join(pos_conversion, by = c("chr_amplicon","pos_amplicon")) %>% 
+    mutate(methyl_freq = ifelse(status == "Fail","NA",methyl_freq)) %>%
     select(chr_amplicon, pos, DP, methyl_freq, QUAL, status, qc_reason, everything()) 
   
   return_table = manifest %>% 
