@@ -36,7 +36,7 @@ temp = sample_summary_safe(samples_only_for_report)
 #+ PLATE Results Summary, echo=FALSE, message=FALSE, warning=FALSE, fig.align = "center", results='asis', eval=TRUE
 plate_summary_safe <- possibly(plate_summary, otherwise = data.frame())
 #needs controls only and samples only matrix
-temp = plate_summary(control_for_report,samples_only_for_report)
+temp = plate_summary_safe(control_for_report,samples_only_for_report)
 
 
 #' \newpage

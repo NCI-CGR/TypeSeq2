@@ -138,7 +138,7 @@ for (i in unique(plate_data$Assay_Plate_Code)) {
   select(barcode, Owner_Sample_ID,control_result) %>% 
   inner_join(specimen_control_defs %>% select(Control_Code,Control_type), by =c("Owner_Sample_ID" ="Control_Code")) %>%
   full_join(detailed_pn_matrix_for_report %>% select(barcode,Owner_Sample_ID)) %>%
-  transform(Control_type = as.character(Control_type)) %>%
+  transform(Control_type = as.character(Control_type), control_result = as.character(control_result)) %>%
   mutate(control_result = ifelse(is.na(control_result),"sample",control_result)) %>%
   mutate(Control_type = ifelse(is.na(Control_type),as.character("sample"),Control_type)) %>%
   inner_join(manifest %>% mutate(barcode = paste0(BC1,BC2)),by = c("barcode","Owner_Sample_ID")) %>% 

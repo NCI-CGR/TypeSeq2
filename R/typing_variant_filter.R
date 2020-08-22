@@ -307,7 +307,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   samples_only_pn_matrix_final = manifest %>%
     mutate(barcode = paste0(BC1,BC2)) %>%
     inner_join(samples_only_pn_matrix[,str_sort(colnames(samples_only_pn_matrix), numeric = T)] %>%
-    select(barcode,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, B2M_L, B2M_S,everything())) %>% 
+    select(barcode,Owner_Sample_ID,Num_Types_Pos,ASIC_Low, ASIC_Med, ASIC_High, B2M_L, B2M_S,human_control,everything())) %>% 
     select(-Control_Code) %>%
     filter(!is.na(Owner_Sample_ID))
     
