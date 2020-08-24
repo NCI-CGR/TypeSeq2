@@ -64,10 +64,10 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     glimpse() %>% 
     inner_join(pos_conversion, by = c("chr_amplicon","pos_amplicon")) %>% 
     mutate(methyl_freq = ifelse(status == "Fail","NA",methyl_freq)) %>%
-    select(chr_amplicon, pos, DP, methyl_freq, QUAL, status, qc_reason, everything()) 
+    select(chr_amplicon, pos_amplicon, pos_from_conversion_table = pos, DP, methyl_freq, QUAL, status, qc_reason, everything()) 
   
   return_table = manifest %>% 
-    left_join(filtered_variants %>% select(chr,pos,REF,ALT,DP,methyl_freq,status,qc_reason,chr_amplicon,pos_amplicon,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
+    left_join(filtered_variants %>% select(chr_amplicon,pos_amplicon,chr,pos_from_conversion_table,REF,ALT,DP,methyl_freq,status,qc_reason,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
     filter(!(is.na(Owner_Sample_ID))) 
     write_csv(return_table, "target_variants_results.csv")
   
