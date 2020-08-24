@@ -101,13 +101,14 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
   pn_filter<-read.csv(pn_filters)
   pn_filter %>%
     rename(chrom = contig) -> pn_filters
-  coverage_matrix %>% 
+ 
+ coverage_matrix %>% 
     gather(chrom,depth,-Owner_Sample_ID,-barcode,-total_HPV_reads,-total_MASIC_reads,-total_human_reads) %>%
     inner_join(pn_filters) %>%
     mutate(status = ifelse(depth >= Min_reads_per_type,"pos","neg")) %>%
-  #  mutate(Num_Types_Pos = if_else(status == "pos", 1, 0)) %>%
-  #  group_by(Owner_Sample_ID,barcode) %>%
-   # mutate(Num_Types_Pos = sum(Num_Types_Pos)) %>%
+    #  mutate(Num_Types_Pos = if_else(status == "pos", 1, 0)) %>%
+    #  group_by(Owner_Sample_ID,barcode) %>%
+    # mutate(Num_Types_Pos = sum(Num_Types_Pos)) %>%
     select(-Min_reads_per_type,-depth) %>% 
     spread(chrom,status) -> detailed_pn_matrix
  
@@ -228,9 +229,9 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     select(-pass_targets,-fail_targets,-starts_with("MASIC")) %>%
     spread(chrom, control_results) 
   
-    control_results_final<- coverage_matrix %>%
+  control_results_final<- coverage_matrix %>%
     gather("MAS_chr","mas_depth",starts_with("MASIC"),-Owner_Sample_ID, -barcode) %>% 
-  # inner_join(control_defs, by = c("MAS_chr" = "chrom","Owner_Sample_ID" = "control_code" )) %>%
+    # inner_join(control_defs, by = c("MAS_chr" = "chrom","Owner_Sample_ID" = "control_code" )) %>%
     fuzzyjoin::fuzzy_join(control_defs, mode = "inner", by = c("Owner_Sample_ID" = "control_code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))) %>%
     filter(MAS_chr == chrom) %>% 
     mutate(mas_results = ifelse(control_type == "pos" & mas_depth >= min_coverage, "Pass","fail")) %>% 
@@ -242,7 +243,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     mutate(num_fail_MASIC = sum(mas_fail_targets)) %>%
     select(Owner_Sample_ID,barcode,num_fail_MASIC,MAS_chr,mas_results) %>%
     spread(MAS_chr,mas_results) %>% 
-   # select(Owner_Sample_ID,barcode,num_fail_MASIC) %>%
+    # select(Owner_Sample_ID,barcode,num_fail_MASIC) %>%
     full_join(control_results, by = c("Owner_Sample_ID","barcode")) 
     
     control_results_final = control_results_final %>%
@@ -258,6 +259,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
   
   
   control_freq_defs %>%
+    filter(!is.na(control_code)) %>%
     tidyr::gather(chrom, value, -control_code,-Control_range) %>%
     transform(control_code = as.character(control_code)) %>%
     spread(Control_range, value) -> control_freq_defs
