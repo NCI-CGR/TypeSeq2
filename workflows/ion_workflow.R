@@ -167,7 +167,7 @@ html_block_and_client_outputs = grouped_samples_only_matrix %T>%
     filter(key == "client") %>%
     mutate(report_script = case_when(
         value == "Default" ~
-            "/TypeSeqHPV/inst/reports/torrent_server_html_block.R",
+            "/TypeSeqHPV2/inst/reports/torrent_server_html_block.R",
         TRUE ~
             paste0(args_custom_report_script_dir,"/",
                    .$value, "_client_report.R"))) %>%
