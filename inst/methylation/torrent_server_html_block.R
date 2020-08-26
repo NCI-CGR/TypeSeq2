@@ -29,6 +29,10 @@ cat('
 
 [variant table](./target_variants_results.csv)
 
+[simple pn matrix](./simple_pn_matrix_results.csv)
+
+[detailed pn matrix](./detailed_pn_matrix_results.csv)
+
 [read summary](./read_summary.csv)
 
 [coverage matrix](./coverage_matrix_results.csv)

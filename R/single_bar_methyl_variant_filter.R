@@ -131,7 +131,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     manifest %>% 
       inner_join(num_type_list) %>% 
       filter(!(is.na(Owner_Sample_ID))) %>%
-      write.csv("detailed_pn_matrix.csv")
+      write.csv("detailed_pn_matrix_results.csv")
 
   # Simple pn matrix
     
@@ -182,7 +182,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     inner_join(HPV_count_table) %>% 
     inner_join(simple_pn_matrix) %>%
     filter(!(is.na(Owner_Sample_ID))) %>%
-     write.csv("simple_pn_matrix.csv")
+     write.csv("simple_pn_matrix_results.csv")
     
   
   #freq_matrix
