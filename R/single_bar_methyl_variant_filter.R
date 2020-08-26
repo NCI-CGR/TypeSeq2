@@ -39,7 +39,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     mutate(qc_reason = ifelse(DP >= min_DP, qc_reason,
                               "min_DP")) %>% 
  #   filter(!(qc_reason == "min_DP")) %>%
-    mutate(methyl_freq = case_when(REF == "T" & ALT == "C" ~ AF, REF == "C" & ALT == "T" ~ FRO/DP)) %>% 
+    mutate(methyl_freq = case_when(REF == "T" & ALT == "C" ~ AF, REF == "C" & ALT == "T" ~ FRO/FDP)) %>%
     mutate(qc_reason = ifelse(SRF >= min_coverage_pos, qc_reason,
                               paste0(qc_reason, ";", "min_coverage_pos"))) %>%
     mutate(qc_reason = ifelse(SRR >= min_coverage_neg, qc_reason,
