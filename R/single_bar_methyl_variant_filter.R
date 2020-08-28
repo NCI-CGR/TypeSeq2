@@ -63,13 +63,10 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     rename(pos_amplicon = POS, chr_amplicon = CHROM) %>% 
     glimpse() %>% 
     inner_join(pos_conversion, by = c("chr_amplicon","pos_amplicon")) %>% 
-    mutate(methyl_freq = ifelse(status == "Fail","NA",methyl_freq)) %>%
+    mutate(methyl_freq = ifelse(status == "Fail","NA",methyl_freq)) %>% 
     select(chr_amplicon, pos, DP, methyl_freq, QUAL, status, qc_reason, everything()) 
   
-  return_table = manifest %>% 
-    left_join(filtered_variants %>% select(chr,pos,REF,ALT,DP,methyl_freq,status,qc_reason,chr_amplicon,pos_amplicon,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
-    filter(!(is.na(Owner_Sample_ID))) 
-    write_csv(return_table, "target_variants_results.csv")
+  
   
   coverage_matrix = return_table %>% 
     group_by(Owner_Sample_ID, barcode, chr_amplicon) %>% 
@@ -132,12 +129,25 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
       inner_join(num_type_list) %>% 
       filter(!(is.na(Owner_Sample_ID))) %>%
       write.csv("detailed_pn_matrix_results.csv")
+    
+    
+    return_table = manifest %>% 
+      left_join(filtered_variants %>% select(chr,pos,REF,ALT,DP,methyl_freq,status,qc_reason,chr_amplicon,pos_amplicon,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
+      filter(!(is.na(Owner_Sample_ID)))  %>%
+      inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>% transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
+      mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq)) %>% 
+    write_csv(return_table, "target_variants_results.csv")
+    
+    
+    
+    
+    
 
   # Simple pn matrix
     
     simple_pn_matrix_long = detailed_pn_matrix %>%
       filter(!is.na(Owner_Sample_ID)) %>%
-      gather("CHROM", "status", starts_with("HPV"), factor_key = TRUE) %>%
+      gather("CHROM", "status", starts_with("HP    V"), factor_key = TRUE) %>%
       separate(CHROM, sep = "_", into = c("type"), remove = FALSE, extra = "drop") %>%
       glimpse() %>% 
       mutate(status_as_integer = ifelse(status == "pos", 1, 0)) %>%
@@ -181,23 +191,26 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     inner_join(count_table) %>%
     inner_join(HPV_count_table) %>% 
     inner_join(simple_pn_matrix) %>%
-    filter(!(is.na(Owner_Sample_ID))) %>%
+    filter(!(is.na(Owner_Sample_ID))) %>% 
      write.csv("simple_pn_matrix_results.csv")
     
   
   #freq_matrix
   
-  freq_matrix = return_table %>%
+  freq_matrix = return_table %>% 
+   # inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>% transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
+    mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq)) %>% 
+    transform(methyl_freq = as.numeric(methyl_freq)) %>%
     group_by(Owner_Sample_ID, barcode, chr_amplicon) %>%
     summarize(mean_freq = mean(methyl_freq[status == "Pass"])) %>% 
-    mutate(mean_freq = ifelse(mean_freq == "NaN","neg",mean_freq )) %>%
+   # mutate(mean_freq = ifelse(mean_freq == "NaN","neg",mean_freq )) %>%
     ungroup() %>%
     group_by(barcode, Owner_Sample_ID) %>% 
-  #  spread(chr_amplicon, mean_freq) %>%
+    spread(chr_amplicon, mean_freq) %>%
   #  group_by(barcode, Owner_Sample_ID) %>% 
-    inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>%
-                 transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
-    mutate(mean_freq = ifelse(Num_Types_Pos == 1, "",mean_freq)) %>% 
+  #  inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>%
+    #             transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
+ #   mutate(mean_freq = ifelse(Num_Types_Pos == 1, "",mean_freq)) %>% 
     glimpse() 
   
   manifest %>%
