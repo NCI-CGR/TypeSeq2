@@ -138,10 +138,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
       mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq)) %>% 
     write_csv(return_table, "target_variants_results.csv")
     
-    
-    
-    
-    
+  
 
   # Simple pn matrix
     
@@ -204,9 +201,10 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     group_by(Owner_Sample_ID, barcode, chr_amplicon) %>%
     summarize(mean_freq = mean(methyl_freq[status == "Pass"])) %>% 
    # mutate(mean_freq = ifelse(mean_freq == "NaN","neg",mean_freq )) %>%
-    ungroup() %>%
+    ungroup() %>% 
     group_by(barcode, Owner_Sample_ID) %>% 
-    spread(chr_amplicon, mean_freq) %>%
+    spread(chr_amplicon, mean_freq) %>% 
+    select(Owner_Sample_ID,barcode,con_sort_order,everything()) %>%
   #  group_by(barcode, Owner_Sample_ID) %>% 
   #  inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>%
     #             transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
@@ -214,7 +212,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     glimpse() 
   
   manifest %>%
-    inner_join(freq_matrix) %>% 
+    inner_join(freq_matrix ) %>% 
     filter(!(is.na(Owner_Sample_ID))) %>%
     write_csv("freq_matrix_results.csv") 
   
