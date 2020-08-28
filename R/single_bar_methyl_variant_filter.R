@@ -66,6 +66,9 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     mutate(methyl_freq = ifelse(status == "Fail","NA",methyl_freq)) %>% 
     select(chr_amplicon, pos, DP, methyl_freq, QUAL, status, qc_reason, everything()) 
   
+  return_table = manifest %>% 
+    left_join(filtered_variants %>% select(chr,pos,REF,ALT,DP,methyl_freq,status,qc_reason,chr_amplicon,pos_amplicon,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
+    filter(!(is.na(Owner_Sample_ID))) 
   
   
   coverage_matrix = return_table %>% 
@@ -131,9 +134,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
       write.csv("detailed_pn_matrix_results.csv")
     
     
-    return_table = manifest %>% 
-      left_join(filtered_variants %>% select(chr,pos,REF,ALT,DP,methyl_freq,status,qc_reason,chr_amplicon,pos_amplicon,QUAL,FILTER,CpG_Variant_Info,HS,TYPE,HRUN,everything())) %>% 
-      filter(!(is.na(Owner_Sample_ID)))  %>%
+    return_table %>%
       inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>% transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
       mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq)) %>% 
     write_csv(return_table, "target_variants_results.csv")
