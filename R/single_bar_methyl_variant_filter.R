@@ -134,12 +134,11 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
       write.csv("detailed_pn_matrix_results.csv")
     
     
-    return_table %>%
+    return_table = return_table %>%
       inner_join(num_type_list %>% select(Owner_Sample_ID, barcode, Num_Types_Pos) %>% transform(Num_Types_Pos = as.integer(Num_Types_Pos)),by = c("Owner_Sample_ID","barcode")) %>%
-      mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq)) %>% 
-    write_csv(return_table, "target_variants_results.csv")
+      mutate(methyl_freq = ifelse(Num_Types_Pos == 1, "NA",methyl_freq))
+    write_csv(return_table,"target_variants_results.csv")
     
-  
 
   # Simple pn matrix
     
