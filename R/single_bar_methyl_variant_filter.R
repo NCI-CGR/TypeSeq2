@@ -144,7 +144,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     
     simple_pn_matrix_long = detailed_pn_matrix %>%
       filter(!is.na(Owner_Sample_ID)) %>%
-      gather("CHROM", "status", starts_with("HP    V"), factor_key = TRUE) %>%
+      gather("CHROM", "status", starts_with("HPV"), factor_key = TRUE) %>%
       separate(CHROM, sep = "_", into = c("type"), remove = FALSE, extra = "drop") %>%
       glimpse() %>% 
       mutate(status_as_integer = ifelse(status == "pos", 1, 0)) %>%
