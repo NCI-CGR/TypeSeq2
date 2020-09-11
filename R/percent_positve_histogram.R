@@ -19,10 +19,14 @@ temp = temp %>%
   mutate(sampleCount = df$sampleCount)
 
 }) %>%
-gather(hpvType, hpvStatus, starts_with("HPV")) %>%
-filter(hpvStatus == "pos") %>%
-group_by(hpvType, sampleCount) %>%
-summarize(posCount = n()) %>%
+gather(hpvType, hpvStatus, starts_with("HPV")) %>% 
+#filter(hpvStatus == "pos") %>%
+mutate(count = ifelse(hpvStatus == "neg",0,1)) %>%
+group_by(hpvType, sampleCount) %>% 
+mutate(posCount = sum(count)) %>% 
+#summarize(posCount = n()) %>% 
+select(hpvType, sampleCount, posCount) %>%
+unique() %>% 
 mutate(percPos = posCount / sampleCount) %>%
 ungroup() %>%
 #full_join(bam_header %>% select(hpvType = HPV_Type) %>%
