@@ -8,7 +8,7 @@ echo Pipeline version $VERSION
 ln ../../*.bam ./
 
 docker run -i -v $(pwd):/mnt -v /mnt:/user_files \
-    cgrlab/typeseqhpv:development_stable_191226 \
+    cgrlab/typeseqhpv:development_191226 \
         Rscript /TypeSeqHPV2/workflows/TypeSeq2.R \
         --is_torrent_server yes \
         --config_file config_file.csv \
