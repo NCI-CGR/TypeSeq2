@@ -303,6 +303,10 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     left_join(select(control_results_final, barcode, Control_Code)) %>%
     filter(is.na(Control_Code)) %>%
     glimpse()
+
+# Adding this to support runs with no samples
+  
+if(nrow(samples_only_pn_matrix)>0){
   
   samples_only_pn_matrix_final = manifest %>%
     mutate(barcode = paste0(BC1,BC2)) %>%
@@ -317,7 +321,10 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     inner_join(read_counts_matrix_wide %>% select(barcode, Owner_Sample_ID, total_reads)) %>%
     filter(!is.na(Project)) 
     write_csv(samples_only_for_report,"samples_only_for_report")
-  
+    
+}else{
+    write_csv(samples_only_pn_matrix,"samples_only_for_report")
+    }
   
   #failed_samples_only_pn_matrix = samples_only_pn_matrix %>%
    # filter(str_detect(human_control, fixed("fail", ignore_case = TRUE))) %>%
