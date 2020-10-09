@@ -62,7 +62,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     filter(!is.na(Owner_Sample_ID))
   
   read_count_matrix_report = read_counts_matrix_wide %>%
-    gather(HPV_Type, HPV_Type_count, -barcode,-total_reads, -Owner_Sample_ID,-`ASIC-Low`,-`ASIC-High`,-`ASIC-Med`,-`ESIC-High`,-`ESIC-Low`,-`ESIC-Med`,-`B2M-L`,-`B2M-S`) %>%
+    gather(HPV_Type, HPV_Type_count, -barcode,-total_reads, -Owner_Sample_ID,-`ASIC-Low`,-`ASIC-High`,-`ASIC-Med`,-`B2M-L`,-`B2M-S`) %>%
     write.csv("read_count_matrix_report")
 
   
@@ -145,12 +145,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     spread(qc_name, qc_print) %>%
     select(-internal_control_code) %>%
     full_join(new) -> new
-  new %>%
-    left_join(outputExt_SIC, by = c("ESICHigh","ESICLow","ESICMed")) %>%
-    select(barcode,ESICHigh,ESICLow,ESICMed,internal_control_code, qc_name, qc_print) %>%
-    spread(qc_name, qc_print) %>%
-    select(-internal_control_code) %>%
-    full_join(new) -> new
+  
   new %>%
     left_join(outputhuman_control, by = c("B2ML", "B2MS")) %>%
     select(barcode,B2ML,B2MS,internal_control_code, qc_name, qc_print) %>%
@@ -184,7 +179,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     final<-merge(new,table_with_final_count, by = "barcode")
     
     final %>%
-    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "ESIC_High"=ESICHigh,"ESIC_Low"=ESICLow,"ESIC_Med"=ESICMed, "B2M_L"=B2ML, "B2M_S"=B2MS)  %>%
+    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "B2M_L"=B2ML, "B2M_S"=B2MS)  %>%
     filter(!is.na(Owner_Sample_ID))-> detailed_pn_matrix
     
   detailed_pn_matrix = detailed_pn_matrix[,str_sort(colnames(detailed_pn_matrix), numeric = T)] %>%
@@ -270,14 +265,14 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   
   control_results_final<- simple_pn_matrix %>%
     select(-human_control,-Ext_SIC,-Assay_SIC, -Num_Types_Pos) %>%
-    gather(type,status, -barcode,-Owner_Sample_ID,-ESIC_High,-ESIC_Low,-ESIC_Med,-ASIC_Low,-ASIC_High,-ASIC_Med) %>%
+    gather(type,status, -barcode,-Owner_Sample_ID,-ASIC_Low,-ASIC_High,-ASIC_Med) %>%
     inner_join(specimen_control_defs_long %>% mutate(Owner_Sample_ID = Control_Code), by = c("Owner_Sample_ID", "type")) %>%  
   #  inner_join(specimen_control_defs %>% select(-B2M.S,-B2M.L)) %>%
     mutate(status_count = ifelse(status.x == status.y, 0, 1)) %>%
     group_by(barcode) %>%
     mutate(sum_status_count = sum(status_count)) %>%
     mutate(control_result = ifelse(sum_status_count == 0, "pass","fail")) %>%
-    select(barcode,Owner_Sample_ID,Control_Code,control_result,type, status.x,ESIC_High,ESIC_Low,ESIC_Med,ASIC_Low,ASIC_High,ASIC_Med) %>% 
+    select(barcode,Owner_Sample_ID,Control_Code,control_result,type, status.x,ASIC_Low,ASIC_High,ASIC_Med) %>% 
     distinct() %>%
     spread(type,status.x) %>% 
     inner_join(read_counts_matrix_wide %>% select(barcode,Owner_Sample_ID,total_reads), by = c("barcode","Owner_Sample_ID")) 
