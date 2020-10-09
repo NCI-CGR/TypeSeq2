@@ -264,7 +264,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   print("line 158")
   
   control_results_final<- simple_pn_matrix %>%
-    select(-human_control,-Ext_SIC,-Assay_SIC, -Num_Types_Pos) %>%
+    select(-human_control,-Assay_SIC, -Num_Types_Pos) %>%
     gather(type,status, -barcode,-Owner_Sample_ID,-ASIC_Low,-ASIC_High,-ASIC_Med) %>%
     inner_join(specimen_control_defs_long %>% mutate(Owner_Sample_ID = Control_Code), by = c("Owner_Sample_ID", "type")) %>%  
   #  inner_join(specimen_control_defs %>% select(-B2M.S,-B2M.L)) %>%
