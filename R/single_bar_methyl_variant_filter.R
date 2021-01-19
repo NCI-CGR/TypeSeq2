@@ -98,39 +98,43 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     write_csv("coverage_matrix_results.csv") 
   
   
+# Prepare the pn_filter
   pn_filter<-read.csv(pn_filters)
   pn_filter %>%
     rename(chrom = contig) -> pn_filters
  
+  
  coverage_matrix %>% 
     gather(chrom,depth,-Owner_Sample_ID,-barcode,-total_HPV_reads,-total_MASIC_reads,-total_human_reads) %>%
     inner_join(pn_filters) %>%
     mutate(status = ifelse(depth >= Min_reads_per_type,"pos","neg")) %>%
-    #  mutate(Num_Types_Pos = if_else(status == "pos", 1, 0)) %>%
-    #  group_by(Owner_Sample_ID,barcode) %>%
-    # mutate(Num_Types_Pos = sum(Num_Types_Pos)) %>%
     select(-Min_reads_per_type,-depth) %>% 
     spread(chrom,status) -> detailed_pn_matrix
  
-    #Calculate num_type_pos separately   
+#Calculate num_type_pos separately   
     
     num_type_list <- detailed_pn_matrix %>%
     tidyr::gather("type_id", "type_status", starts_with("HPV")) %>%  #Only counting HPV contigs and not MASIC contigs here
-      group_by(barcode) %>% 
-      mutate(Num_Types_Pos = if_else(type_status == "pos", 1, 0)) %>%
-      mutate(type2 = type_id) %>%
-      mutate(type_id = gsub("_.*","",type_id)) %>% 
-      select(barcode,type_id,Num_Types_Pos) %>% 
-      unique() %>% 
-      mutate(Num_Types_Pos = sum(Num_Types_Pos)) %>% 
-      select(-type_id) %>%
+      group_by(Owner_Sample_ID,barcode) %>% 
+      mutate(count_pos = if_else(type_status == "pos", 1, 0)) %>%
+      separate(type_id, into = c("grouped_type","extra"),sep = "_", remove = F) %>% 
+      group_by(barcode,grouped_type) %>%
+      mutate(total_pos_per_type = sum(count_pos)) %>% 
+      ungroup() %>%
+      mutate(new_status = ifelse(total_pos_per_type >= 2, "pos","neg")) %>%
+      mutate(new_count = ifelse(new_status == "pos",1,0)) %>% 
+      group_by(Owner_Sample_ID,barcode) %>%
+      mutate(Num_Type_Pos = sum(new_count)) %>% 
+      ungroup() %>% 
+      select(-grouped_type,-extra,-new_status,-new_count,-count_pos,-total_pos_per_type,-type_status,-type_id) %>%
+      select(Owner_Sample_ID, barcode,Num_Type_Pos,everything()) %>%
       unique() %>% 
       inner_join(detailed_pn_matrix) %>% 
-      transform(barcode = as.character(barcode))
+      transform(barcode = as.character(barcode)) 
     
-    manifest %>% 
+    manifest %>%
       inner_join(num_type_list) %>% 
-      filter(!(is.na(Owner_Sample_ID))) %>%
+      filter(!(is.na(Owner_Sample_ID))) %>% 
       write.csv("detailed_pn_matrix_results.csv")
     
     
