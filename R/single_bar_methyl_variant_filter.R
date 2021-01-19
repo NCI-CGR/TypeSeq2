@@ -126,18 +126,18 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
       select(-type_id,-type_status, -extra, -count_pos) %>%
       unique() %>%
       group_by(Owner_Sample_ID,barcode) %>%
-      mutate(Num_Type_Pos = sum(new_count)) %>% 
+      mutate(Num_Types_Pos = sum(new_count)) %>% 
       ungroup() %>% 
       select(-grouped_type,-new_status,-new_count,-total_pos_per_type) %>%
-      select(Owner_Sample_ID, barcode,Num_Type_Pos,everything()) %>%
+      select(Owner_Sample_ID, barcode,Num_Types_Pos,everything()) %>%
       unique() %>% 
       inner_join(detailed_pn_matrix) %>% 
       transform(barcode = as.character(barcode)) 
     
     manifest %>%
       inner_join(num_type_list) %>% 
-      filter(!(is.na(Owner_Sample_ID))) %>% 
-      write.csv("detailed_pn_matrix_results.csv")
+      filter(!(is.na(Owner_Sample_ID))) %>%
+      write.csv("detailed_pn_matrix_results.csv", row.names = F)
     
     
     return_table = return_table %>%
@@ -195,7 +195,7 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     inner_join(HPV_count_table) %>% 
     inner_join(simple_pn_matrix) %>%
     filter(!(is.na(Owner_Sample_ID))) %>% 
-     write.csv("simple_pn_matrix_results.csv")
+     write.csv("simple_pn_matrix_results.csv", row.names = F)
     
   
   #freq_matrix
