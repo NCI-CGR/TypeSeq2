@@ -279,14 +279,14 @@ single_bar_methyl_variant_filter <- function(variants, filteringTablePath, posCo
     tidyr::gather("chrom", "freq", -Owner_Sample_ID, -barcode) %>%
     inner_join(control_freq_defs, by = c("Owner_Sample_ID" = "control_code", "chrom")) %>%
     mutate(status = ifelse(freq <= max & freq >= min, "Pass","Fail")) %>% 
-    mutate(status = ifelse(freq == "neg", "NA",status)) %>%
-    mutate(pass_freq = ifelse(status == "Pass",1,0)) %>%
+    mutate(status = ifelse(freq == "neg", "NA",status)) %>% 
+    mutate(pass_freq = ifelse(status == "Pass",1,0)) %>% 
     mutate(fail_freq = ifelse(status == "Fail",1,0)) %>%
-    mutate(NA_freq = ifelse(status == "NA",1,0)) %>%
-    group_by(Owner_Sample_ID,barcode) %>%
-    mutate(num_pass_freq = sum(pass_freq),num_fail_freq = sum(fail_freq),num_NA_freq = sum(NA_freq)) %>%
+    mutate(NA_freq = ifelse(is.na(status),1,0)) %>%
+    group_by(Owner_Sample_ID,barcode) %>% 
+    mutate(num_pass_freq = sum(pass_freq,na.rm = T),num_fail_freq = sum(fail_freq, na.rm = T),num_NA_freq = sum(NA_freq, na.rm = T)) %>% 
     select(Owner_Sample_ID, barcode, chrom,status, num_pass_freq,num_fail_freq,num_NA_freq) %>%
-    spread(chrom,status)
+    spread(chrom,status) 
   
   control_freq_qc = control_freq_qc[,str_sort(colnames(control_freq_qc),numeric = T)] %>%
     select(Owner_Sample_ID,barcode,num_pass_freq,num_fail_freq,num_NA_freq,everything())
