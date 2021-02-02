@@ -422,9 +422,14 @@ if(nrow(samples_only_pn_matrix)>0){
 man = manifest %>% transform(Assay_Batch_Code = as.factor(Assay_Batch_Code),Project = as.factor(Project))   
 code = levels(unique(man$Assay_Batch_Code))
 Project_code = levels(unique(man$Project))
+
+
+# Add a check for control-only run. If this is control-only run, samples_only_pn_matrix will be empty and 
+# there will not be a samples_only_pn_matrix_final #see line 304
     
 for (i in Project_code){
   
+  if(nrow(samples_only_pn_matrix) > 0){
   samples_only_pn_matrix_final %>%
     filter(!is.na(Owner_Sample_ID)) %>%
     filter(Project == i) %>%
@@ -432,7 +437,7 @@ for (i in Project_code){
   
 }    
 
-    
+}    
     
 for (i in code){
       print(i)
