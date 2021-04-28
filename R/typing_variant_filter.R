@@ -62,7 +62,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     filter(!is.na(Owner_Sample_ID))
   
   read_count_matrix_report = read_counts_matrix_wide %>%
-    gather(HPV_Type, HPV_Type_count, -barcode,-total_reads, -Owner_Sample_ID,-`ASIC-Low`,-`ASIC-High`,-`ASIC-Med`,-`B2M-L`,-`B2M-S`) %>%
+    gather(HPV_Type, HPV_Type_count, -barcode,-total_reads, -Owner_Sample_ID,-`ASIC-Low`,-`ASIC-High`,-`ASIC-Med`,-`B2M-S2`,-`B2M-S`) %>%
     write.csv("read_count_matrix_report")
 
   
@@ -71,7 +71,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   read_counts_matrix_wide_final = manifest %>%
     mutate(barcode = paste0(BC1, BC2)) %>%
     full_join(read_counts_matrix_wide[,str_sort(colnames(read_counts_matrix_wide), numeric = T)] %>%
-              select(barcode,Owner_Sample_ID,total_reads,`ASIC-Low`, `ASIC-Med`, `ASIC-High`, `B2M-L`, `B2M-S`,everything())) %>%
+              select(barcode,Owner_Sample_ID,total_reads,`ASIC-Low`, `ASIC-Med`, `ASIC-High`, `B2M-S2`, `B2M-S`,everything())) %>%
     select(-BC1, -BC2) %>%
     filter(!is.na(Owner_Sample_ID))
   
@@ -179,11 +179,11 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     final<-merge(new,table_with_final_count, by = "barcode")
     
     final %>%
-    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "B2M_L"=B2ML, "B2M_S"=B2MS)  %>%
+    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "B2M_S2"=B2ML, "B2M_S"=B2MS)  %>%
     filter(!is.na(Owner_Sample_ID))-> detailed_pn_matrix
     
   detailed_pn_matrix = detailed_pn_matrix[,str_sort(colnames(detailed_pn_matrix), numeric = T)] %>%
-    select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_L, B2M_S,human_control,everything())
+    select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_S2, B2M_S,human_control,everything())
     write.csv(detailed_pn_matrix,"detailed_pn_matrix_report")
   
   #  print("line 110")
@@ -225,7 +225,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   simple_pn_matrix_final = manifest %>%
     mutate(barcode = paste0(BC1, BC2)) %>%
     inner_join(simple_pn_matrix[,str_sort(colnames(simple_pn_matrix), numeric = T)] %>%
-                 select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_L, B2M_S,human_control,everything())) %>%
+                 select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_S2, B2M_S,human_control,everything())) %>%
     select(-BC1, -BC2)  %>%
     filter(!is.na(Owner_Sample_ID))
   
@@ -236,7 +236,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   
   #Changing the '.' to '_' to makesure it doesn't cause format issues downstream
    specimen_control_defs%>%
-    rename("B2M_S"=`B2M-S`, "B2M_L"=`B2M-L`) -> specimen_control_defs 
+    rename("B2M_S"=`B2M-S`, "B2M_S2"=`B2M-S2`) -> specimen_control_defs 
   
   specimen_control_defs_long = specimen_control_defs %>%
     filter(!is.na(Control_Code)) %>%
@@ -253,7 +253,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   failed_pn_matrix_final = manifest %>%
     mutate(barcode = paste0(BC1, BC2)) %>%
     inner_join(failed_pn_matrix[,str_sort(colnames(simple_pn_matrix), numeric = T)] %>%
-                 select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_L, B2M_S,human_control,everything())) %>%
+                 select(barcode,Num_Types_Pos,Owner_Sample_ID, ASIC_Low, ASIC_Med, ASIC_High, Assay_SIC, B2M_S2, B2M_S,human_control,everything())) %>%
     select(-BC1, -BC2) %>%
     filter(!is.na(Owner_Sample_ID))
   
@@ -281,7 +281,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
    control_results_final = manifest %>% 
     mutate(barcode = paste0(BC1,BC2)) %>%
     inner_join(control_results_final[,str_sort(colnames(control_results_final), numeric = T)] %>%
-     select(barcode,total_reads,Owner_Sample_ID,ASIC_Low, ASIC_Med, ASIC_High, B2M_L, B2M_S,everything()) )  %>%
+     select(barcode,total_reads,Owner_Sample_ID,ASIC_Low, ASIC_Med, ASIC_High, B2M_S2, B2M_S,everything()) )  %>%
      filter(!is.na(Owner_Sample_ID))
     
   
@@ -306,7 +306,7 @@ if(nrow(samples_only_pn_matrix)>0){
   samples_only_pn_matrix_final = manifest %>%
     mutate(barcode = paste0(BC1,BC2)) %>%
     inner_join(samples_only_pn_matrix[,str_sort(colnames(samples_only_pn_matrix), numeric = T)] %>%
-    select(barcode,Owner_Sample_ID,Num_Types_Pos,ASIC_Low, ASIC_Med, ASIC_High, B2M_L, B2M_S,human_control,everything())) %>% 
+    select(barcode,Owner_Sample_ID,Num_Types_Pos,ASIC_Low, ASIC_Med, ASIC_High, B2M_S2, B2M_S,human_control,everything())) %>% 
     select(-Control_Code) %>%
     filter(!is.na(Owner_Sample_ID))
     

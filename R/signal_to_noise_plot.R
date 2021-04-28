@@ -42,7 +42,7 @@ bind_rows(temp)
 #better x axis sorting
 separate(HPV_Type, c("temp", "hpvNum"), "HPV", remove=FALSE) %>%
 select(-temp) %>%
-mutate(hpvNum = ifelse(HPV_Type == "B2M_L" | HPV_Type == "B2M_S",1,hpvNum)) %>%
+mutate(hpvNum = ifelse(HPV_Type == "B2M_S2" | HPV_Type == "B2M_S",1,hpvNum)) %>%
 separate(hpvNum, c("hpvNum2", "temp"), "_", remove=FALSE) %>%
 select(-temp) %>% 
 separate(hpvNum2, c("hpvNum3", "temp"), "_", remove=FALSE) %>%

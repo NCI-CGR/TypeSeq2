@@ -7,7 +7,7 @@ Internal_control_summary <- function(detailed_pn_matrix_for_report,manifest,cont
   detailed_pn_matrix_for_report %>%
   inner_join(manifest %>% mutate(barcode = paste0(BC1,BC2)) %>% select(-BC1,-BC2)) %>% 
   full_join(control_for_report %>% select(Owner_Sample_ID,Control_Code)) %>%
-  select(barcode,Owner_Sample_ID,ASIC_Low,ASIC_Med,ASIC_High,B2M_L,B2M_S,Assay_Plate_Code,Assay_SIC,human_control) %>%
+  select(barcode,Owner_Sample_ID,ASIC_Low,ASIC_Med,ASIC_High,B2M_S2,B2M_S,Assay_Plate_Code,Assay_SIC,human_control) %>%
   distinct() %>%
   mutate(num = 1) %>%
   mutate(plate_sum = sum(num)) %>%
