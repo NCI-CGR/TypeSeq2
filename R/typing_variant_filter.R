@@ -147,8 +147,8 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     full_join(new) -> new
   
   new %>%
-    left_join(outputhuman_control, by = c("B2ML", "B2MS")) %>%
-    select(barcode,B2ML,B2MS,internal_control_code, qc_name, qc_print) %>%
+    left_join(outputhuman_control, by = c("B2MS2", "B2MS")) %>%
+    select(barcode,B2MS2,B2MS,internal_control_code, qc_name, qc_print) %>%
     spread(qc_name, qc_print) %>%
     select(-internal_control_code) %>%
     full_join(new) -> new
