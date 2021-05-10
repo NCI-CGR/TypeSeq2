@@ -179,7 +179,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     final<-merge(new,table_with_final_count, by = "barcode")
     
     final %>%
-    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "B2M_S2"=B2ML, "B2M_S"=B2MS)  %>%
+    rename("ASIC_High"=ASICHigh, "ASIC_Low"=ASICLow, "ASIC_Med"=ASICMed, "B2M_S2"=B2MS2, "B2M_S"=B2MS)  %>%
     filter(!is.na(Owner_Sample_ID))-> detailed_pn_matrix
     
   detailed_pn_matrix = detailed_pn_matrix[,str_sort(colnames(detailed_pn_matrix), numeric = T)] %>%
