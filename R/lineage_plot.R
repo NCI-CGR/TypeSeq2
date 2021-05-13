@@ -9,21 +9,24 @@ mutate(lineage_found = ifelse(lineage_percent > 0, 1, 0)) %>%
 group_by(Lineage_ID) %>%
 mutate(typeCount = sum(lineage_found)) %>%
 ungroup() %>%
-mutate(HPV_Type = str_sub(Lineage_ID, end =5)) %>%
-select(HPV_Type, Lineage_ID, typeCount) %>%
+separate(Lineage_ID, into = c("HPV_Type","sub_type"), sep = "_",remove = F) %>%
+#mutate(HPV_Type = str_sub(Lineage_ID, end =5)) %>%
+select(HPV_Type,sub_type,Lineage_ID, typeCount) %>%
 distinct() %>%
 arrange(HPV_Type, Lineage_ID) %>%
 group_by(HPV_Type) %>%
 mutate(lineage_num = 1:n()) %>%
-mutate(lineage_num = factor(lineage_num)) 
+mutate(lineage_num = factor(lineage_num)) %>%
+mutate(sub_type = ifelse(typeCount == 0,"",sub_type))
   
-returnPlot1 = ggplot(lineage_plot_table, aes(x=Lineage_ID, y=typeCount, fill = lineage_num)) +
+returnPlot1 = lineage_plot_table %>%
+ggplot(aes(x=Lineage_ID, y=typeCount, fill = lineage_num)) +
 geom_bar(stat="identity", position = position_dodge(width=0.5)) +
   
 theme_light() +
 theme(
       axis.text.y = element_text(angle = 0, hjust = 1, color = "darkblue", size = 18),
-      axis.text.x = element_text(angle = 90, hjust = 1, size = 18, vjust = 0.5),
+      axis.text.x = element_text(angle = 90, hjust = 1, size = 8, vjust = 0.5),
       axis.line = element_line(colour = "darkblue",  size = 2, linetype = "solid")) +
 theme(strip.background = element_blank(),
       legend.position="bottom",
@@ -64,7 +67,8 @@ theme(
     fill = "grey90",
     colour = "black",
     size = 1)) +
-scale_fill_igv()  
+scale_fill_igv()+
+geom_text(aes(label = sub_type),position = position_fill(vjust = 0.6))
 
 if(whichPlot == 1){print(returnPlot1)}
 if(whichPlot == 2){print(returnPlot2)}
