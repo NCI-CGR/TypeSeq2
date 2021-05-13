@@ -19,8 +19,7 @@ mutate(lineage_num = 1:n()) %>%
 mutate(lineage_num = factor(lineage_num)) %>%
 mutate(sub_type = ifelse(typeCount == 0,"",sub_type))
   
-returnPlot1 = lineage_plot_table %>%
-ggplot(aes(x=Lineage_ID, y=typeCount, fill = lineage_num)) +
+returnPlot1 = ggplot(lineage_plot_table, aes(x=Lineage_ID, y=typeCount, fill = lineage_num)) +
 geom_bar(stat="identity", position = position_dodge(width=0.5)) +
   
 theme_light() +
@@ -28,10 +27,6 @@ theme(
       axis.text.y = element_text(angle = 0, hjust = 1, color = "darkblue", size = 18),
       axis.text.x = element_text(angle = 90, hjust = 1, size = 8, vjust = 0.5),
       axis.line = element_line(colour = "darkblue",  size = 2, linetype = "solid")) +
-theme(strip.background = element_blank(),
-      legend.position="bottom",
-     legend.text=element_text(size=16),
-     legend.title=element_text(size=16)) +
 labs(title="Lineage Distribution By Type.  Colors Represent Within Type Groupings", x= "Type", y = "Count", size=12) +
   theme(axis.text=element_text(size=18), axis.title=element_text(size=18,face="bold"), 
       plot.title = element_text(size=18, face="bold")) +
