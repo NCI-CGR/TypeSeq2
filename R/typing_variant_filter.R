@@ -272,8 +272,12 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     group_by(barcode) %>%
     mutate(sum_status_count = sum(status_count)) %>%
     mutate(control_result = ifelse(sum_status_count == 0, "pass","fail")) %>%
-    select(barcode,Owner_Sample_ID,Control_Code,control_result,type, status.x,ASIC_Low,ASIC_High,ASIC_Med) %>% 
+    mutate(control_fail = ifelse(status.x == "pos" & sum_status_count > 0,"false-neg",";")) %>%
+    mutate(control_fail = ifelse(status.x == "neg" & sum_status_count > 0, "false-pos",control_fail)) %>%
+    select(barcode,Owner_Sample_ID,Control_Code,control_result,control_fail,type, status.x,ASIC_Low,ASIC_High,ASIC_Med) %>%
     distinct() %>%
+    mutate(control_fail_code = paste0(control_fail %>% unique(), collapse=";")) %>% 
+    select(-control_fail)  %>%
     spread(type,status.x) %>% 
     inner_join(read_counts_matrix_wide %>% select(barcode,Owner_Sample_ID,total_reads), by = c("barcode","Owner_Sample_ID")) 
   
