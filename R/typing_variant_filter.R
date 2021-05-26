@@ -385,6 +385,7 @@ if(nrow(samples_only_pn_matrix)>0){
   
   
   # calculate AF with only the ones which passed the filters in the last step 
+  # Adding detailed_pn_matrix to filter out neg result contigs from AF calculation
   lineage_all %>%
     filter(lineage_status == 1) %>%
     group_by(barcode, Lineage_ID) %>% 
@@ -392,6 +393,9 @@ if(nrow(samples_only_pn_matrix)>0){
     mutate(AF_sum = sum(AF)) %>%
     mutate(AF = AF_sum/lineage_status_sum) %>% 
     ungroup() %>% 
+    left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = TRUE)  %>% select(barcode,CHROM,Owner_Sample_ID,status,Num_Types_Pos), by = c("barcode","CHROM")) %>% 
+    unique() %>% 
+    filter(status != "neg") %>%
     select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF)-> lineage_filtered_pass
 
   
