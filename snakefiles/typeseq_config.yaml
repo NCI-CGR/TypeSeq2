@@ -1,0 +1,9 @@
+
+# These five files are selected via the GUI created by instance.html and given standard file names.
+config_file: 'config_file.csv'
+barcode_file: 'barcodes.csv'
+control_file: 'control_defs.csv'
+grouping_file: 'grouping_defs.csv'
+manifest_file: 'manifest.csv'
+
+

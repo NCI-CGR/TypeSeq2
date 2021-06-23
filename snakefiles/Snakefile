@@ -1,0 +1,8 @@
+rule all:
+	input: 'test_echo.txt'
+
+rule echo_test:
+	input: 'test_input.txt'
+	output: 'test_echo.txt'
+	shell:
+		'echo "Test" > {output}'
