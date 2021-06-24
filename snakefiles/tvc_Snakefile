@@ -1,0 +1,23 @@
+# vim: ft=python
+import glob
+import pandas as pd
+
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+
+rule tvc_all:
+    input: the table with all variant calls
+
+
+
+Steps 5-6 from the original pipeline
+
+5 - run tvc
+
+6 - merge vcfs into one table
+
+
+

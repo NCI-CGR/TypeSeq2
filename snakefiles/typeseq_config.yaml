@@ -1,9 +1,13 @@
 
 # These five files are selected via the GUI created by instance.html and given standard file names.
 config_file: 'config_file.csv'
-barcode_file: 'barcodes.csv'
+barcode_file: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039/barcodes.csv'
 control_file: 'control_defs.csv'
 grouping_file: 'grouping_defs.csv'
-manifest_file: 'manifest.csv'
+manifest_file: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039/manifest.csv'
+
+
+
+ionxpress_bam_dir: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039'
 
 

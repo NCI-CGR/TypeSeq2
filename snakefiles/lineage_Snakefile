@@ -1,0 +1,19 @@
+# vim: ft=python
+import glob
+import pandas as pd
+
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+
+rule lineage_all:
+    input: 
+
+
+Step 9 of the original pipeline
+
+Does anyone even look at lineage for typing??
+
+
