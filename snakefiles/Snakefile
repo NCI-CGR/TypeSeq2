@@ -22,7 +22,7 @@ bc2s = df_manifest['BC2'].unique().tolist() # these have a leading P
 TARGETS = []
 include: 'dev_demux_Snakefile'
 TARGETS += expand('fastq_demux2/{bc1}.{bc2}.fastq', bc2=bc2s, bc1=bc1s)
-
+TARGETS += expand('demux2_bams/{bc1}.{bc2}.bam', bc1=bc1s, bc2=bc2s)
 
 
 rule all:
