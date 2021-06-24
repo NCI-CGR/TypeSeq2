@@ -7,7 +7,11 @@ grouping_file: 'grouping_defs.csv'
 manifest_file: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039/manifest.csv'
 
 
-
 ionxpress_bam_dir: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039'
 
 
+# choose which method to use for demultiplexing the 3' barcodes
+# scala is faster but lacks some intermediate files
+# dev is slower and should be run on an HPC
+scala_demux: False
+dev_demux: True
