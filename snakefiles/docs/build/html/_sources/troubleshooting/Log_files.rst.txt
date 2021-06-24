@@ -1,0 +1,13 @@
+
+===========
+Log Files
+===========
+
+
+Always look at the log file to understand where the code broke. TypeSeq is usually good with pointing out the step where it failed. 
+
+
+
+
+
+

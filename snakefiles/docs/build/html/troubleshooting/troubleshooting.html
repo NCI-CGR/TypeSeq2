@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Standard troubleshooting protocol &mdash; TypeSeqHPV Documentation 2021 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Input Files" href="../Input_files/input.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> TypeSeqHPV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installation/source_code.html">Plugin source code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installation/GUI.html">GUI Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Input_files/input.html">Input Files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Standard troubleshooting protocol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#are-my-input-files-correct">Are my input files correct?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#is-my-reference-file-correct">Is my reference file correct?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#which-step-was-the-breakpoint">Which step was the breakpoint?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collect-input-files-and-run-the-container-from-the-command-line">Collect input files and run the container from the command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-do-i-find-the-main-r-script-that-runs-the-plugin">Where do I find the main R script that runs the plugin?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-files">Log Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steps-involved-in-debugging-inside-the-container">Steps involved in debugging inside the container</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TypeSeqHPV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Standard troubleshooting protocol</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/troubleshooting/troubleshooting.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="standard-troubleshooting-protocol">
+<h1><a class="toc-backref" href="#id1">Standard troubleshooting protocol</a><a class="headerlink" href="#standard-troubleshooting-protocol" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#standard-troubleshooting-protocol" id="id1">Standard troubleshooting protocol</a></p>
+<ul>
+<li><p><a class="reference internal" href="#are-my-input-files-correct" id="id2">Are my input files correct?</a></p></li>
+<li><p><a class="reference internal" href="#is-my-reference-file-correct" id="id3">Is my reference file correct?</a></p></li>
+<li><p><a class="reference internal" href="#which-step-was-the-breakpoint" id="id4">Which step was the breakpoint?</a></p></li>
+<li><p><a class="reference internal" href="#collect-input-files-and-run-the-container-from-the-command-line" id="id5">Collect input files and run the container from the command line</a></p></li>
+<li><p><a class="reference internal" href="#where-do-i-find-the-main-r-script-that-runs-the-plugin" id="id6">Where do I find the main R script that runs the plugin?</a></p></li>
+<li><p><a class="reference internal" href="#log-files" id="id7">Log Files</a></p></li>
+<li><p><a class="reference internal" href="#steps-involved-in-debugging-inside-the-container" id="id8">Steps involved in debugging inside the container</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="are-my-input-files-correct">
+<h2><a class="toc-backref" href="#id2">Are my input files correct?</a><a class="headerlink" href="#are-my-input-files-correct" title="Permalink to this headline">¶</a></h2>
+<p>Since there are 4 different input requirements, user can sometimes upload the wrong file. They might upload wrong barcodes or wrong sampleIDs. This needs to be verified first before moving forward.</p>
+</div>
+<div class="section" id="is-my-reference-file-correct">
+<h2><a class="toc-backref" href="#id3">Is my reference file correct?</a><a class="headerlink" href="#is-my-reference-file-correct" title="Permalink to this headline">¶</a></h2>
+<p>Your run might fail when you align to a different reference file. This problem should go away once we hard code the reference for release
+Check the reference version like v81_ref1 or V72_ref4 this should match correctly.</p>
+</div>
+<div class="section" id="which-step-was-the-breakpoint">
+<h2><a class="toc-backref" href="#id4">Which step was the breakpoint?</a><a class="headerlink" href="#which-step-was-the-breakpoint" title="Permalink to this headline">¶</a></h2>
+<p>Look at the log file and figure out the step at which the plugin broke and try to rerun that.</p>
+</div>
+<div class="section" id="collect-input-files-and-run-the-container-from-the-command-line">
+<h2><a class="toc-backref" href="#id5">Collect input files and run the container from the command line</a><a class="headerlink" href="#collect-input-files-and-run-the-container-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<p>If the docker run fails, you have to go into the docker and run it step-by-step until you find the culprit.</p>
+</div>
+<div class="section" id="where-do-i-find-the-main-r-script-that-runs-the-plugin">
+<h2><a class="toc-backref" href="#id6">Where do I find the main R script that runs the plugin?</a><a class="headerlink" href="#where-do-i-find-the-main-r-script-that-runs-the-plugin" title="Permalink to this headline">¶</a></h2>
+<p>For Ion Torrent version, the main R script which wraps the entire plugin is located in the workflow folder. It is named as TypeSeq2.R  Run this script step-by-step manually to identify failures. Drake is similar to snakemake and looks for targets.</p>
+</div>
+<div class="section" id="log-files">
+<h2><a class="toc-backref" href="#id7">Log Files</a><a class="headerlink" href="#log-files" title="Permalink to this headline">¶</a></h2>
+<p>Always look at the log file to understand where the code broke. TypeSeq is usually good with pointing out the step where it failed. Log files are available to view in the GUI. Here are some example screenshots</p>
+<p>This example shows the log file in which the plugin threw an error at the variant table step. Good idea is to start tracing the steps here.</p>
+<img alt="../_images/Variant_table_error.png" src="../_images/Variant_table_error.png" />
+<p>This example shows the args_df failed which is the dataframe. This step is used for parsing the command line arguments and storing it in the dataframe. Look at the TypeSeqHPV.R file to see which R function it is calling and run that function step-by-step.</p>
+<img alt="../_images/target.png" src="../_images/target.png" />
+</div>
+<div class="section" id="steps-involved-in-debugging-inside-the-container">
+<h2><a class="toc-backref" href="#id8">Steps involved in debugging inside the container</a><a class="headerlink" href="#steps-involved-in-debugging-inside-the-container" title="Permalink to this headline">¶</a></h2>
+<p>First step is to identify the docker details by looking at the log file. For example,</p>
+<p>This is a typical plugin run command for Typeseq2. Here you can use some parts of the code to log into the docker.</p>
+<p>Step 1, log into the server (see where this was run. This example is from professor, so I will link the professor details below)</p>
+<p>After logging in, use this command</p>
+<p>Notice that this is similar to the first part of the docker run command. Except this command uses ‘-it’ instead of ‘-i’</p>
+<p>This is an interactive mode (-it) where we can go inside the container and look at the error.
+I am mounting the directories to the docker so that all the input/output files are in order.</p>
+<p>Use should see the console change to /mnt</p>
+<p>Since the docker uses R and I like to have access to shell without having to load everything all the time, docker uses radian.</p>
+<p>Type radian and it should take you to R console</p>
+<p>You can switch to regular command line by typing “;” and back to R by pressing backspace(delete in mac).</p>
+<p>Now with R, copy paste all the packages we need that is in the beginning of the Typeseq2.R workflow. It should be in /workflows/Typeseq2.R (aka load library)</p>
+<p>After loading all this, uses loadd() to load all intermediate files (basically everthing the plugin created before it failed). Now, look at the log file, it usually gives out messages like fail target xyz
+If you know which step it was, use diagnose(step) command to see more info on the error.</p>
+<p>Since the code is in R, you can easily understand what is hapenning but sometimes, it is hard to find the error in that case :-</p>
+<p>There are some comment lines for some of the scripts which are very long, in that case, it will print out something like this - line 114 before dying if that step is clear (example: typing_variant_filter file)</p>
+<p>Running the code step-by-step inside the docker after loading the targets is a quick way of finding it. Once you find the error that needs some code fix, copy the files to T drive (I copy it here - /CGF/Research/Amulya, map it to Rstudio which is linked to your github (I usually keep them connected so that I can push updates easily). Load all the files, try to run that step and see how it works. If the code you changed solves the problem, push it to github and rebuild the docker on the server.</p>
+<p>For rebuilding the docker follow this
+Example - zapp</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Log into Zapp</p></li>
+<li><p>cd into TypeseqHPV2/docker</p></li>
+<li><p>Run -</p></li>
+</ol>
+</div></blockquote>
+<p>This will help us rebuild the docker and tag it. cgrlab/typeseqhpv:development_191226 is the official development docker. Each time you fix something in the code, you need to rebuild it.
+Another way is to start a build on the dockerhub. That takes longer (~15 mins) and I usuually don’t do that. You can build it locally and then push it to docker hub.</p>
+<p>Never touch the base docker.</p>
+<p>If you are having issues with building docker, contact Eamonn, it is usually the issue with DNS that need some permission.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../Input_files/input.html" class="btn btn-neutral float-left" title="Input Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Amulya Shastry.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

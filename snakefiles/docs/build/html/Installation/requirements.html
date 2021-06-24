@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Requirements &mdash; TypeSeqHPV Documentation 2021 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to TypeSeq2 documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> TypeSeqHPV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Requirements</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TypeSeqHPV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Requirements</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Installation/requirements.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="requirements">
+<span id="installation-installation"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<p>The TypeSeqHPV Ion Torrent Version has the following requirements prior to installation -</p>
+<ol class="arabic">
+<li><p><a class="reference external" href="https://www.thermofisher.com/order/catalog/product/A27212#/A27212">Ion_torrent</a> S5 system connected to a server</p></li>
+<li><p>Latest Torrent Suite Software installed on the server (5.1 or higher)</p></li>
+<li><p>Ubuntu 16.04 (Xenial/Bionic/Cosmic/Disco) or higher</p></li>
+<li><p>Docker needs to be installed before running the plugin. Steps 1-3 are required to support docker.</p>
+<p>Install Docker on S5 server - <a class="reference external" href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/</a></p>
+<p>Uninstall previous version</p>
+</li>
+</ol>
+<p>It may be required to uninstall previous version of docker. Skip this step if no previous version of docker installed.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo apt-get remove docker docker-engine docker.io
+<span class="gp">$</span> Update Package Index and Install
+
+<span class="gp">$</span> sudo apt-get update
+<span class="gp">$</span> sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+<span class="gp">$</span> curl -fsSL https://download.docker.com/linux/ubuntu/gpg <span class="p">|</span> sudo apt-key add -
+
+<span class="gp">$</span> sudo add-apt-repository <span class="se">\</span>
+  <span class="s2">&quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \</span>
+<span class="s2">  </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2"> \</span>
+<span class="s2">  stable&quot;</span>
+
+<span class="gp">$</span> sudo apt-get update
+
+<span class="gp">$</span> sudo apt-get install -y docker-ce
+<span class="gp">$</span> Post Installation Setup
+</pre></div>
+</div>
+<p>Give plugin access to docker.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo usermod -aG docker ionadmin
+<span class="gp">$</span> sudo usermod -aG docker ionian
+</pre></div>
+</div>
+<p>Try a hello world install test.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run hello-world
+<span class="gp">$</span> Make Docker storage more robust on torrent server
+</pre></div>
+</div>
+<p>Docker doesn’t always clean up after itself. Changing were docker keeps it’s image layers will prevent critical partitions from filling up. If this step is skipped after several runs of a docker plugin the Torrent Service job scheduler will stop working.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo service docker stop
+<span class="gp">$</span> sudo rm -rf  /var/lib/docker
+<span class="gp">$</span> sudo vim /etc/default/docker
+</pre></div>
+</div>
+<p>Modify this line</p>
+<blockquote>
+<div><p>#DOCKER_OPTS=”–dns 8.8.8.8 –dns 8.8.4.4”
+Changing it to this</p>
+<p>DOCKER_OPTS=”–dns 8.8.8.8 –dns 8.8.4.4 -g /results/plugins/scratch/docker”</p>
+</div></blockquote>
+<p>Restart Docker</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo service docker start
+</pre></div>
+</div>
+<p>Pull the docker image from docker hub</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker pull cgrlab/typeseqhpv:final_190104
+</pre></div>
+</div>
+<p>Note to developer – to be removed later
+The docker container is already built and saved in our image library. If you make a new image, please use proper tags, the tag should indicate date in yy/mm/dd format
+docker and github repos are synced. If you want to build docker container, you can trigger a build directly on docker hub. It takes around 15 mins there
+Never mess with the base container. Only change stuff in the developemnt docker image.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to TypeSeq2 documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Amulya Shastry.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

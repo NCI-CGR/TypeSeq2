@@ -1,0 +1,25 @@
+
+
+.. _Ion_Torrent: https://www.thermofisher.com/order/catalog/product/A27212#/A27212
+
+
+.. _Installation-Installation: 
+
+=============================
+Requirements
+=============================
+
+The TypeSeqHPV Ion Torrent Version has the following requirements prior to installation -
+
+1. Ion_torrent_ S5 system connected to a server 
+2. Latest Torrent Suite Software installed on the server (5.1 or higher)
+3. Ubuntu 16.04 (Xenial/Bionic/Cosmic/Disco) or higher
+
+
+
+
+
+
+
+
+
