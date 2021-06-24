@@ -1,0 +1,27 @@
+# vim: ft=python
+import glob
+import pandas as pd
+
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+
+rule report_all:
+    input: Probably some pdf or html file
+
+
+
+rule create_report:
+# Run R/render_report.R
+#
+# what are the inputs?
+#
+# What are the outputs?
+#
+#
+#
+#
+
+

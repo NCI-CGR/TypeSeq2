@@ -1,8 +1,48 @@
-rule all:
-	input: 'test_echo.txt'
+# vim: ft=python
+import glob
+import pandas as pd
 
-rule echo_test:
-	input: 'test_input.txt'
-	output: 'test_echo.txt'
-	shell:
-		'echo "Test" > {output}'
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+# set variables for entire pipeline run
+df_manifest = pd.read_csv(config['manifest_file'])
+df_manifest.dropna(subset=['BC1'], inplace=True) # remove extra blank line
+
+
+# identify barcodes used in this run
+bc1s = df_manifest['BC1'].unique().tolist() # these do not have a leading A
+bc2s = df_manifest['BC2'].unique().tolist() # these have a leading P
+
+
+# choose which subworkflows to run
+# eventually move this to the config.yaml
+TARGETS = []
+include: 'dev_demux_Snakefile'
+TARGETS += expand('fastq_demux2/{bc1}.{bc2}.fastq', bc2=bc2s, bc1=bc1s)
+
+
+
+rule all:
+    input: TARGETS
+
+
+
+def filename_input(wildcards):
+    '''
+    In the manifest, the barcodes have a leading 'A', but the file names have a leading '0'.
+    e.g. - A93 vs IonXpress_093_rawlib.bam
+    '''
+    newbc =  wildcards.bc1.replace('A', '0')
+    return config['ionxpress_bam_dir'] + '/IonXpress_%s_rawlib.bam' %newbc
+
+
+rule link_rawlib_bams:
+    input: filename_input
+    output: 'single_demux_bams/IonXpress_{bc1}_rawlib.bam'
+    shell:
+        'cd single_demux_bams; ln -s ../{input} IonXpress_{wildcards.bc1}_rawlib.bam'
+
+

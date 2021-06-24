@@ -1,0 +1,26 @@
+# vim: ft=python
+import glob
+import pandas as pd
+
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+
+rule scala_dmx_all:
+    input:
+        expand('fastq_demux2/{bc1}.{bc2}.fastq', bc2=bc2s, bc1=bc1s)
+
+
+
+rule scala_demux:
+# Run R/adam_demux.R here
+# 
+# What are the inputs?
+#
+# What are the outputs?
+#
+#
+
+

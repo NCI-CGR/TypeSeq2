@@ -1,0 +1,25 @@
+# vim: ft=python
+import glob
+import pandas as pd
+
+configfile: 'typeseq_config.yaml'
+workdir: os.environ['PWD']
+shell.executable('bash')
+
+
+
+rule tables_all:
+    input: lots of tables
+
+
+
+Step 7 from the original pipeline
+
+
+Lots of table merging, column sorting, etc.
+
+This workflow especially needs to be unit tested
+
+
+
+
