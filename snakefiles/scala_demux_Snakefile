@@ -15,12 +15,23 @@ rule scala_dmx_all:
 
 
 rule scala_demux:
-# Run R/adam_demux.R here
-# 
-# What are the inputs?
-#
-# What are the outputs?
-#
-#
+    input:
+       user_files
+    params:
+     core =  config['core']
+     ram  =  config['ram']       
+    output:
+     "demux_reads.bam",
+     "demux_reads.bam.bai",
+     
 
+    shell:
+        """
+        /home/adam/bin/adam-shell --driver-memory {params.ram} --driver-cores {params.core} -i /TypeSeqHPV2/inst/methylation/demux_3prime_barcode_adam.scala
+        samtools index {output[0]}
+        ls /mnt/demux_reads.bam | xargs -n1 -P4 samtools index
+        cp read_summary_df.csv/*csv read_summary.csv  # Note - add this as output directory 
+        
+        # There can be two options here -- A code in python to do the next steps listed in adam_demux.R or put that into an R function and call it here
+        """
 
