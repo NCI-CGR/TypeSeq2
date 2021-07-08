@@ -5,7 +5,7 @@ VERSION="2.2008.2101"
 #autorundisable
 echo Pipeline version $VERSION
 
-ln ../../*.bam ./
+cp ../../*.bam ./
 cp ../../raw_peak_signal ./
 cp ../../sigproc_results/analysis.bfmask.stats ./
 cp ../../basecaller_results/BaseCaller.json ./
