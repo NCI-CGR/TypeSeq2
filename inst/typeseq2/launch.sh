@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 # TypeSeq2 HPV
-VERSION="2.2008.2101"
+VERSION="2.2107.0906"
 #autorundisable
 echo Pipeline version $VERSION
 
@@ -14,8 +14,7 @@ cp ../../basecaller_results/ionstats_tf.json ./
 cp ../../ionstats_alignment.json ./
 
 
-docker run -i -v $(pwd):/mnt -v /mnt:/user_files \
-    cgrlab/typeseqhpv:development_191226 \
+singularity exec --bind --bind $(pwd):/mnt --bind /mnt:/user_files  /home/ionadmin/test_singularity_Amulya/amulya.sif \
         Rscript /TypeSeqHPV2/workflows/TypeSeq2.R \
         --is_torrent_server yes \
         --config_file config_file.csv \
