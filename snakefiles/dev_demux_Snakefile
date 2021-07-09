@@ -11,7 +11,7 @@ shell.executable('bash')
 rule dev_dmx_all:
     input:
         expand('read_names_demux2/{bc1}.{bc2}.readnames.txt', bc2=bc2s, bc1=bc1s),
-        expand('demux2_bams/{bc1}.{bc2}.bam', bc1=bc1s, bc2=bc2s)
+        expand('demux2_dev_bams/{bc1}.{bc2}.bam', bc1=bc1s, bc2=bc2s)
 
 
 # samtools fastq would probably be better here but I ran into bugs back in
@@ -59,12 +59,13 @@ rule subset_rawlib_bams:
         bam = 'single_demux_bams/IonXpress_{bc1}_rawlib.bam',
         read = expand('read_names_demux2/{{bc1}}.{bc2}.readnames.txt', bc2=bc2s)
     output:
-        expand('demux2_bams/{{bc1}}.{bc2}.bam', bc2=bc2s)
+        expand('demux2_dev_bams/{{bc1}}.{bc2}.bam', bc2=bc2s)
     threads: 2
     run:
         for fname in input.read:
             bc1 = fname.split('/')[-1].split('.')[0]
             bc2 = fname.split('/')[-1].split('.')[1]
-            shell('samtools view -h -@ {threads} -N {fname} {input.bam} > demux2_bams/%s.%s.bam' %(bc1, bc2))
+            shell('samtools view -h -@ {threads} -N {fname} {input.bam} | \
+                    samtools sort - > demux2_dev_bams/%s.%s.bam' %(bc1, bc2))
 
 
