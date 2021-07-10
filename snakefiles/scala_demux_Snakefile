@@ -7,31 +7,75 @@ workdir: os.environ['PWD']
 shell.executable('bash')
 
 
+# This sets up linking the original rawlib bams to where the scala script expects them to be.
+rawlib_paths = glob.glob(config['ionxpress_bam_dir'] + '/*rawlib.bam')
+rawlib_ids = [x.split('/')[-1].split('_')[1] for x in rawlib_paths] # e.g. 095
+
 
 rule scala_dmx_all:
     input:
-        expand('fastq_demux2/{bc1}.{bc2}.fastq', bc2=bc2s, bc1=bc1s)
+#        expand('IonXpress_{origbc}_rawlib.bam', origbc=rawlib_ids),
+        expand('scala_demux/sample_bams/{bc1}{bc2}.bam', bc1=bc1s, bc2=bc2s)
 
+
+rule link_bams_for_scala_dev:
+    """
+    This rule is just to put the rawlib bams where the demux_3prime_barcode_adam.scala script expects them to be.
+    Eventually, when this becomes the primary pipeline, the scala script can be changed or this rule can be removed.
+    """
+    input: config['ionxpress_bam_dir'] + '/IonXpress_{origbc}_rawlib.bam'
+    output: 'scala_demux/IonXpress_{origbc}_rawlib.bam'
+    run:
+        shell('cd scala_demux; ln -s ../{input[0]} .')
+
+rule link_csv_for_scala_dev:
+    input: config['ionxpress_bam_dir'] + '/manifest.csv'
+    output: 'scala_demux/manifest.csv'
+    run:
+        shell('cd scala_demux; ln -s ../%s/manifest.csv .' %config['ionxpress_bam_dir'])
+        shell('cd scala_demux; ln -s ../%s/barcodes.csv .' %config['ionxpress_bam_dir'])
 
 
 rule scala_demux:
-    input:
-       user_files
-    params:
-     core =  config['core']
-     ram  =  config['ram']       
+    """
+    These are 3 of the 4 command line commands from adam_demux.R.
+    The second shell command appears to be a redundant bam index command, so we removed it here.
+    The rest of adam_demux.R can be handled in follow up snakemake rules.
+    """
+    input: 
+        expand('scala_demux/IonXpress_{origbc}_rawlib.bam', origbc=rawlib_ids),
+        'scala_demux/manifest.csv'
     output:
-     "demux_reads.bam",
-     "demux_reads.bam.bai",
-     
-
+        "scala_demux/demux_reads.bam",
+        "scala_demux/read_summary.csv"
+    params:
+        core =  config['scala_core'],
+        ram  =  config['scala_ram']
+    threads: 20
     shell:
         """
+        cd scala_demux
         /home/adam/bin/adam-shell --driver-memory {params.ram} --driver-cores {params.core} -i /TypeSeqHPV2/inst/methylation/demux_3prime_barcode_adam.scala
-        samtools index {output[0]}
         ls /mnt/demux_reads.bam | xargs -n1 -P4 samtools index
-        cp read_summary_df.csv/*csv read_summary.csv  # Note - add this as output directory 
-        
-        # There can be two options here -- A code in python to do the next steps listed in adam_demux.R or put that into an R function and call it here
+        cp read_summary_df.csv/*csv read_summary.csv
+        cd ..; chmod -R g+w scala_demux
+
         """
+
+
+
+rule scala_split_bam:
+    input: "scala_demux/demux_reads.bam"
+    output: expand('scala_demux/sample_bams/{bc1}{bc2}.bam', bc1=bc1s, bc2=bc2s)
+    threads: 8
+    run:
+        #shell('samtools split -@ {threads} -f "scala_demux/%!" {input}')
+        
+        # rename to get rid of the trailing RG ID fields
+        # assumes that RG IDs are formatted with barcodes first (eg - A96P16.8LENV.IonXpress_096)
+        for fname in glob.glob('scala_demux/A*'):
+            newname = fname.split('/')[-1].split('.')[0]
+            shutil.move(fname, 'scala_demux/sample_bams/%s.bam' %newname)
+
+
 
