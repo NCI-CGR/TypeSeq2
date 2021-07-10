@@ -13,5 +13,9 @@ ionxpress_bam_dir: '../../../test_data/standard_run/TypeSeq2-Dev_stable_out.2039
 # choose which method to use for demultiplexing the 3' barcodes
 # scala is faster but lacks some intermediate files
 # dev is slower and should be run on an HPC
-scala_demux: False
+scala_demux: True
 dev_demux: True
+
+scala_core: '20'
+scala_ram: '60G'
+
