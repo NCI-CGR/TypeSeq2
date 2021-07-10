@@ -28,6 +28,7 @@ rule link_bams_for_scala_dev:
     run:
         shell('cd scala_demux; ln -s ../{input[0]} .')
 
+
 rule link_csv_for_scala_dev:
     input: config['ionxpress_bam_dir'] + '/manifest.csv'
     output: 'scala_demux/manifest.csv'
@@ -77,5 +78,7 @@ rule scala_split_bam:
             newname = fname.split('/')[-1].split('.')[0]
             shutil.move(fname, 'scala_demux/sample_bams/%s.bam' %newname)
 
-
+        # someday instead of the shutil.move, create a new rule that will sort
+        # the split bams. might need a dictionary and function to handle the
+        # potential changes in RG ID
 
