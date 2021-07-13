@@ -13,3 +13,4 @@ RUN wget https://github.com/jgm/pandoc/releases/download/2.9.2/pandoc-2.9.2-1-am
 && dpkg -i pandoc-2.9.2-1-amd64.deb
 
 RUN Rscript -e 'install.packages("gridExtra")'
+RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/vcfR_1.12.0.tar.gz", repos=NULL, type="source")'
