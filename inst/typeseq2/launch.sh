@@ -14,7 +14,7 @@ cp ../../basecaller_results/ionstats_tf.json ./
 cp ../../ionstats_alignment.json ./
 
 
-singularity exec --bind --bind $(pwd):/mnt --bind /mnt:/user_files  /home/ionadmin/test_singularity_Amulya/amulya.sif \
+singularity exec --bind --bind $(pwd):/mnt --bind /mnt:/user_files  /home/ionadmin/image_typeseqhpv2_singularity.sif \
         Rscript /TypeSeqHPV2/workflows/TypeSeq2.R \
         --is_torrent_server yes \
         --config_file config_file.csv \
