@@ -35,6 +35,34 @@ command_line_args = tibble(
     filteringTable = optigrab::opt_get('filteringTable')) %>%
     glimpse()
 
+#### Define workers
+future::plan(multiprocess)
+
+# num_cores = availableCores() - 1
+num_cores = availableCores(methods="system") - 1
+
+tvc_cores <- as.numeric(command_line_args$tvc_cores)
+
+if(is.null(tvc_cores)){
+	tvc_scores <- 4
+}
+
+# workers <- floor(num_cores/tvc_cores)
+workers <- num_cores - 1
+
+
+
+plan_workers <- function(workers, num_cores){
+    if(is.null(workers) || workers<1){
+	    workers <- 1
+    }
+    cat(sprintf("Number of cores: %d and workers: %d \n", num_cores, workers))
+    future::plan(multicore, workers = workers)
+}
+
+
+
+
 #### B. create workflow plan ####
 pkgconfig::set_config("drake::strings_in_dots" = "literals")
 ion_plan <- drake::drake_plan(
@@ -58,12 +86,20 @@ ion_plan <- drake::drake_plan(
         glimpse(),
 
     #### 5. run tvc on demux bams ####
-    vcf_files = sorted_bam %T>%
+    vcf_files = {
+        tmp_workers <- floor(num_cores/tvc_cores)
+        plan_workers(tmp_workers, num_cores)
+ 
+        rv <- sorted_bam %T>%
         map_df(~ system(paste0("cp ", args_df$reference, " ./"))) %T>%
         map_df(~ system(paste0("samtools faidx ", basename(args_df$reference)))) %>%
         split(.$sample) %>%
         future_map_dfr(tvc_cli, args_df) %>%
-        glimpse(),
+        glimpse()
+
+        plan_workers(workers, num_cores)
+        rv
+    },
 
     #### 6. merge vcf files in to 1 table ####
     variant_table = vcf_files %>%
@@ -110,15 +146,15 @@ ion_plan <- drake::drake_plan(
 #### C. execute workflow plan ####
 system("mkdir vcf")
 
-future::plan(multiprocess)
 
-num_cores = availableCores() - 1
-future::plan(multicore, workers = num_cores)
+# future::plan(multicore, workers = workers)
+plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
 #### E. make html block for torrent server ####
 html_block = if ( command_line_args$is_torrent_server == "yes") {
-    render("/TypeSeqHPV2/inst/typeseq2/torrent_server_html_block.R",
-           output_dir = "./")}
+    system("cp /TypeSeqHPV2/inst/typeseq2/torrent_server_html_block.R ./")
 
+    render("./torrent_server_html_block.R", output_dir = "./")
+}
 

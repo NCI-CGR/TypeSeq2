@@ -1,21 +1,15 @@
 #!/bin/bash
 set -x
 # TypeSeq2 HPV
-VERSION="2.2008.2101"
+VERSION="2.1.1.2"
 #autorundisable
 echo Pipeline version $VERSION
 
-cp ../../*.bam ./
-cp ../../raw_peak_signal ./
-cp ../../sigproc_results/analysis.bfmask.stats ./
-cp ../../basecaller_results/BaseCaller.json ./
-cp ../../basecaller_results/datasets_basecaller.json ./
-cp ../../basecaller_results/ionstats_tf.json ./
-cp ../../ionstats_alignment.json ./
+ln ../../*.bam ./
 
+mkdir tmp
 
-docker run -i -v $(pwd):/mnt -v /mnt:/user_files \
-    cgrlab/typeseqhpv:development_191226 \
+singularity exec  --bind $(pwd):/mnt --bind $(pwd)/tmp:/tmp --bind /mnt:/user_files /mnt/DCEG/CGF/Sequencing/Analysis/Research/TypeSeq_dev/typeseqhpv2_v1.sif \
         Rscript /TypeSeqHPV2/workflows/TypeSeq2.R \
         --is_torrent_server yes \
         --config_file config_file.csv \
@@ -24,7 +18,7 @@ docker run -i -v $(pwd):/mnt -v /mnt:/user_files \
         --grouping_defs grouping_defs.csv \
         --cores 22 \
         --manifest manifest.csv \
-        --ram 80G \
+        --ram 24G \
         --tvc_cores 4
 
 rm *rawlib.bam
