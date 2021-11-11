@@ -29,7 +29,7 @@ theme(
     fill = "grey90",
     colour = "black",
     size = 1)) +
-scale_x_continuous(breaks=c(0:max(df$Num_Types_Pos))) +
+scale_x_continuous(breaks=c(0:max(df$Num_Types_Pos)), limits=c(0,NA)) +
 geom_text(aes(label=count, hjust = 0.5, vjust=-0.25, size=2.75)) +
 geom_text(aes(y=count * 1.1, label="")) 
 

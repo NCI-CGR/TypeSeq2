@@ -1,5 +1,3 @@
-#'
-
 #library(gtools)
 #library(gridExtra)
 library(dplyr)
@@ -59,7 +57,7 @@ for (i in unique(plate_data$Assay_Plate_Code)) {
   plot = ggplot(data, aes(y = fct_reorder(rownum,desc(rownum)),x = fct_reorder(colnum,sort(as.numeric(data$colnum))),shape = Control_Code)) + 
     geom_point(aes(colour = color), size =12) + 
     scale_shape_manual(values = c("empty"=16,"control"=17,"sample"=16), limits = c("empty","control","sample"))+
-    scale_color_manual(values = cols) + theme_bw() +
+    scale_color_manual(values = cols)  +
     labs(x= i, y = "ASIC_plate_map")+
     ggtitle("ASIC plate map")
   

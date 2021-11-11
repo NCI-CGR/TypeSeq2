@@ -48,7 +48,7 @@ theme(
       axis.text.x = element_text(angle = 90, hjust = 0, size = 18, vjust = 0.5),
       axis.line = element_line(colour = "darkblue",  size = 2, linetype = "solid")) +
 theme(strip.background = element_blank(),
-      legend.position="bottom", 
+      legend.position="none", 
      legend.text=element_text(size=16), 
       legend.title=element_text(size=16)) +
 labs(title="Normalized Lineage Distribution By Type.  Colors Represent Within Type Groupings", x= "Type", y="") +

@@ -3,7 +3,7 @@ signal_to_noise_plot <- function(read_count_matrix_report, detailed_pn_matrix_fo
 # merge final pn matrix and read_counts_matrix_wide
 signalNoiseDf1 = read_count_matrix_report %>%
 # inner_join(final_pn_matrix, by=c("barcode", "HPV_Type")) %>%
-inner_join(detailed_pn_matrix_for_report %>% gather(HPV_Type, hpvStatus, starts_with("HPV")), by=c("barcode", "HPV_Type", "Owner_Sample_ID")) %>%
+inner_join(detailed_pn_matrix_for_report %>% filter(human_control != "failed_to_amplify") %>% gather(HPV_Type, hpvStatus, starts_with("HPV")), by=c("barcode", "HPV_Type", "Owner_Sample_ID")) %>%
 filter(HPV_Type!="B2M") %>%
 select(barcode, HPV_Type, HPV_Type_count, hpvStatus) %>%
 #sort by types and count
@@ -87,10 +87,10 @@ scale_y_log10(labels = scales::comma, breaks=c(0, 1, 10, 100, 1000, 10000, 10000
 theme_light() +
 theme(
       axis.text.y = element_text(angle = 0, hjust = 1, color = "darkblue", size = 18),
-      axis.text.x = element_text(angle = 90, hjust = 0, color = signalNoiseDf$textColor, size = 18, vjust = 0.5),
+      axis.text.x = element_text(angle = 90, hjust = 0, color = "#00A1D5FF", size = 18, vjust = 0.5),
       axis.line = element_line(colour = "darkblue",  size = 2, linetype = "solid")) +
 theme(strip.background = element_blank(),
-      legend.position="none") +
+      legend.position="bottom") +
 labs(title="Signal to Noise for Current Ion Torrent Run", x= "HPV Types", y = "Average Counts", size=18) +
 theme(axis.text=element_text(size=18), axis.title=element_text(size=18,face="bold"), 
       plot.title = element_text(size=18, face="bold")) +
@@ -100,10 +100,14 @@ theme(
   plot.background = element_rect(
     fill = "grey90",
     colour = "black",
-    size = 1)) 
+    size = 1)) + scale_color_discrete(name="Mean of the read counts", limits=c("Amin_reads", "Bpos", "Cneg"), labels=c("100", "Bottom 10 positive samples", "Top 10 negative samples")) + 
+    theme(legend.title = element_text(color = "blue", size = 20), legend.text = element_text(size=18)) +
+       guides(colour = guide_legend(override.aes = list(size=2)))
+       
 #scale_color_igv()
 
 print(returnPlot)
+
 
 return(signalNoiseDf1)
 }

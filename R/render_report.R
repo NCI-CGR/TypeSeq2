@@ -19,12 +19,12 @@ require(scales)
 require(ggsci)
 library(pander)
 
-# system(paste0("cp ",
-#               system.file(
-#                   "reports", "Ion_Torrent_report.R", package = "TypeSeqHPV"),
-#               " ./"))
+system(paste0("cp ",
+              system.file(
+                  "typeseq2", "Ion_Torrent_report.R", package = "TypeSeqHPV"),
+              " ./"))
 
-system("cp /TypeSeqHPV2/inst/typeseq2/Ion_Torrent_report.R ./")
+# system("cp /TypeSeqHPV2/inst/typeseq2/Ion_Torrent_report.R ./")
 
 render(input = "Ion_Torrent_report.R",
        output_dir = "./", output_file = "TypeSeqHPV_QC_report.pdf", clean = FALSE)
