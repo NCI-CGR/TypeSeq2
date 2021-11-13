@@ -266,21 +266,17 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
   control_results_final<- simple_pn_matrix %>%
     select(-human_control,-Assay_SIC, -Num_Types_Pos) %>%
     gather(type,status, -barcode,-Owner_Sample_ID,-ASIC_Low,-ASIC_High,-ASIC_Med) %>%
-    inner_join(specimen_control_defs_long %>% mutate(Owner_Sample_ID = Control_Code), by = c("Owner_Sample_ID", "type")) %>%  
-  #  inner_join(specimen_control_defs %>% select(-B2M.S,-B2M.L)) %>%
-    mutate(status_count = ifelse(status.x == status.y, 0, 1)) %>%
-    group_by(barcode) %>%
+    inner_join(specimen_control_defs_long %>% mutate(Owner_Sample_ID = Control_Code), by = c("Owner_Sample_ID", "type")) %>% mutate(status_count = ifelse(status.x == status.y, 0, 1)) %>% mutate(control_fail = ifelse(status.x == status.y, "", ifelse(status.x == "pos","false-pos", "false-neg")) ) %>%
+    group_by(barcode) %>% 
     mutate(sum_status_count = sum(status_count)) %>%
     mutate(control_result = ifelse(sum_status_count == 0, "pass","fail")) %>%
-    mutate(control_fail = ifelse(status.x == "pos" & sum_status_count > 0,"false-neg",";")) %>%
-    mutate(control_fail = ifelse(status.x == "neg" & sum_status_count > 0, "false-pos",control_fail)) %>%
-    select(barcode,Owner_Sample_ID,Control_Code,control_result,control_fail,type, status.x,ASIC_Low,ASIC_High,ASIC_Med) %>%
+    mutate(control_fail_code = paste0(control_fail %>% unique %>% setdiff("") , collapse=";")) %>% 
+    select(barcode,Owner_Sample_ID,Control_Code,control_result,control_fail,type, status.x,ASIC_Low,ASIC_High,ASIC_Med, control_fail_code) %>%
     distinct() %>%
-    mutate(control_fail_code = paste0(control_fail %>% unique(), collapse=";")) %>% 
     select(-control_fail)  %>%
     spread(type,status.x) %>% 
-    inner_join(read_counts_matrix_wide %>% select(barcode,Owner_Sample_ID,total_reads), by = c("barcode","Owner_Sample_ID")) 
-  
+    inner_join(read_counts_matrix_wide %>% select(barcode,Owner_Sample_ID,total_reads), by = c("barcode","Owner_Sample_ID"))
+    
   #Adding manifest to the final results 
    control_results_final = manifest %>% 
     mutate(barcode = paste0(BC1,BC2)) %>%
