@@ -208,7 +208,12 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     mutate(status_as_integer = ifelse(status == "pos", 1, 0)) %>%
     group_by(barcode, type) %>%
     mutate(sum_status = sum(status_as_integer)) %>%
-    mutate(simple_status = ifelse(sum_status >= 1, "pos", "neg")) %>%
+    # mutate(simple_status = ifelse(sum_status >= 1, "pos", "neg")) %>%
+    mutate(simple_status=case_when(
+      sum_status >= 2 & type %in% c("HPV16", "HPV18") ~ "pos",
+      sum_status >= 1 & (!type %in% c("HPV16", "HPV18")) ~ "pos",
+      TRUE ~ "neg"
+    )) %>%
     ungroup() %>%
     glimpse() %>%
     select(-status_as_integer, -CHROM, -sum_status, -status) %>%
@@ -276,7 +281,7 @@ typing_variant_filter <- function(variants, lineage_defs, manifest,
     select(-control_fail)  %>%
     spread(type,status.x) %>% 
     inner_join(read_counts_matrix_wide %>% select(barcode,Owner_Sample_ID,total_reads), by = c("barcode","Owner_Sample_ID"))
-    
+
   #Adding manifest to the final results 
    control_results_final = manifest %>% 
     mutate(barcode = paste0(BC1,BC2)) %>%
