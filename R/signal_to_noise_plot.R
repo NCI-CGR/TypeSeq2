@@ -100,7 +100,7 @@ theme(
   plot.background = element_rect(
     fill = "grey90",
     colour = "black",
-    size = 1)) + scale_color_discrete(name="Mean of the read counts", limits=c("Amin_reads", "Bpos", "Cneg"), labels=c("100", "Bottom 10 positive samples", "Top 10 negative samples")) + 
+    size = 1)) + scale_color_discrete(name="Mean of the read counts", limits=c("Amin_reads", "Bpos", "Cneg"), labels=c("Positive call threshold", "Avg of bottom 10 positive samples", "Avg of top 10 negative samples")) + 
     theme(legend.title = element_text(color = "blue", size = 20), legend.text = element_text(size=18)) +
        guides(colour = guide_legend(override.aes = list(size=2)))
        
