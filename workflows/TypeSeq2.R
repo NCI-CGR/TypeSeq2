@@ -51,6 +51,20 @@ if(is.null(tvc_cores)){
 workers <- num_cores - 1
 
 
+vcf_file_func <- function(sorted_bam, args_df){
+    tmp_workers <- floor(num_cores/tvc_cores)
+        plan_workers(tmp_workers, num_cores)
+ 
+        rv <- sorted_bam %T>%
+        map_df(~ system(paste0("cp ", args_df$reference, " ./"))) %T>%
+        map_df(~ system(paste0("samtools faidx ", basename(args_df$reference)))) %>%
+        split(.$sample) %>%
+        future_map_dfr(tvc_cli, args_df) %>%
+        glimpse()
+
+        plan_workers(workers, num_cores)
+        rv      
+}
 
 plan_workers <- function(workers, num_cores){
     if(is.null(workers) || workers<1){
@@ -86,20 +100,7 @@ ion_plan <- drake::drake_plan(
         glimpse(),
 
     #### 5. run tvc on demux bams ####
-    vcf_files = {
-        tmp_workers <- floor(num_cores/tvc_cores)
-        plan_workers(tmp_workers, num_cores)
- 
-        rv <- sorted_bam %T>%
-        map_df(~ system(paste0("cp ", args_df$reference, " ./"))) %T>%
-        map_df(~ system(paste0("samtools faidx ", basename(args_df$reference)))) %>%
-        split(.$sample) %>%
-        future_map_dfr(tvc_cli, args_df) %>%
-        glimpse()
-
-        plan_workers(workers, num_cores)
-        rv
-    },
+    vcf_files = vcf_file_func(sorted_bam, args_df), 
 
     #### 6. merge vcf files in to 1 table ####
     variant_table = vcf_files %>%
