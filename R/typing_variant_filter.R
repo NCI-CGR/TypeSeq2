@@ -2,7 +2,7 @@
 
 typing_variant_filter <- function(variants, lineage_defs, manifest,
                                   specimen_control_defs, internal_control_defs,
-                                  pn_filters, scaling_table){
+                                  pn_filters, scaling_table, is_clinical=F){
   
   require(fuzzyjoin)
   ##test
@@ -457,8 +457,11 @@ for (i in code){
       write.csv(failed_pn_matrix_final,paste0(i,"-","failed_samples_pn_matrix_results.csv"), row.names = F)
       write.csv(control_results_final, paste0(i,"-","control_results.csv"), row.names = F)
       write.csv(lineage_final,paste0(i,"-","lineage_filtered_results.csv"), row.names = F)
-      
+      if(is_clinical){
+        # write.csv(deatiled_pn_matrix_for_report1 %>% select(-starts_with("HPV"), -Num_Types_Pos), paste0(i,"-","detailed_pn_matrix_results.laboratory.csv"), row.names = F)
+        write.csv(simple_pn_matrix_final %>% select(-starts_with("HPV"), -Num_Types_Pos) ,paste0(i,"-","pn_matrix_results.laboratory.csv"), row.names = F)
       }
+  }
    
       
 }

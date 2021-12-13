@@ -1,7 +1,7 @@
 #' plate_summary
 #'
 
-plate_summary <- function(control_for_report,samples_only_for_report){
+plate_summary <- function(control_for_report,samples_only_for_report, is_clinical=F){
 
     require(pander)
 
@@ -57,8 +57,10 @@ plate_summary <- function(control_for_report,samples_only_for_report){
                `total reads` = plate_total_reads,
                `# samples total` = number_of_samples,
                `# samples failed` = num_samples_failed,
+        ) %>% when(
+            is_clinical ~  select(., -`HPV % Positive`),
+            ~ .
         ) %>%
-
         pandoc.table(style = "multiline",
                      caption = "Assay Plate Performance")
     

@@ -10,6 +10,8 @@
 #' html_document:
 #'    toc: true
 #'    theme: united
+#' params:
+#'    is_clinical: false
 #' ---
 
 #' ## Run Metadata
@@ -20,6 +22,8 @@
 get_run_metadata_safe <- possibly(get_run_metadata, otherwise = data.frame())
 
 startPluginDf = get_run_metadata_safe(args_df)
+
+is_clinical <- params$is_clinical
 
 #' \newpage
 #' ## SAMPLE Results Summary
@@ -36,7 +40,7 @@ temp = sample_summary_safe(samples_only_for_report)
 #+ PLATE Results Summary, echo=FALSE, message=FALSE, warning=FALSE, fig.align = "center", results='asis', eval=TRUE
 plate_summary_safe <- possibly(plate_summary, otherwise = data.frame())
 #needs controls only and samples only matrix
-temp = plate_summary_safe(control_for_report,samples_only_for_report)
+temp = plate_summary_safe(control_for_report,samples_only_for_report, is_clinical)
 
 
 #' \newpage
@@ -48,19 +52,21 @@ temp = Internal_control_summary_safe(detailed_pn_matrix_for_report,manifest,cont
 
 
 
-#' \newpage
-#' ## Counts and Percentage of Types Positive by Project
 
-#+ Counts and Percent Types Positive by Project, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center"
+#+ Counts and Percent Types Positive by Project, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center", eval=!is_clinical, results='asis'
 #samples_only matrix
+cat("\n\n\\pagebreak\n")
+cat("## Counts and Percentage of Types Positive by Project\n\n") 
 percent_positive_histogram_safe <- possibly(TypeSeqHPV::percent_positive_histogram, otherwise = data.frame())
 
 temp = percent_positive_histogram_safe(samples_only_for_report)
 
-#' \newpage
-#' ## Coinfection Rate Histogram
-#+ coinfection rate histogram, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center"
+#+ coinfection rate histogram, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center",  eval=!is_clinical, results='asis'
 #samples only matrix
+# cat("\\newpage\n")
+cat("\n\n\\pagebreak\n")
+cat("## Coinfection Rate Histogram\n\n")
+
 coinfection_rate_histogram_safe <- possibly(coinfection_rate_histogram,
                                             otherwise = data.frame())
 
@@ -73,26 +79,26 @@ temp = coinfection_rate_histogram_safe(samples_only_for_report)
 signal_to_noise_plot_safe <- possibly(TypeSeqHPV::signal_to_noise_plot, otherwise = data.frame())
 temp = signal_to_noise_plot_safe(read_count_matrix_report,detailed_pn_matrix_for_report,pn_filters)
 
-#' \newpage
-#' ## Distribution of Sample HPV Positivity by Project
 
-#+ HPV Status Circle Plot, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center"
+#+ HPV Status Circle Plot, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center", eval=!is_clinical, results='asis'
 # samples only matrix
+cat("\n\n\\pagebreak\n")
+cat("## Distribution of Sample HPV Positivity by Project\n\n")
 hpv_status_circle_plot_safe <- possibly(TypeSeqHPV::hpv_status_circle_plot, otherwise = data.frame())
 
 temp = hpv_status_circle_plot_safe(samples_only_for_report)
 
-#' \newpage
-#' ## Lineage Plots
 
-#+ lineage table plot 1, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=9, fig.align = "center"
+#+ lineage table plot 1, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=9, fig.align = "center", eval=!is_clinical, results='asis'
+cat("\n\n\\pagebreak\n")
+cat("## Lineage Plots\n\n")
 lineage_plot_safe <- possibly(TypeSeqHPV::lineage_plot, otherwise = data.frame())
 # lineage results .csv
 temp = lineage_plot_safe(lineage_for_report, 1)
 
-#' \newpage
 
-#+ normalized lineage table plot, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=9, fig.align = "center"
+#+ normalized lineage table plot, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=9, fig.align = "center", eval=!is_clinical, results='asis'
+cat("\n\n\\pagebreak\n")
 temp = lineage_plot_safe(lineage_for_report, 2)
 
 

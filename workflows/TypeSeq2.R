@@ -1,5 +1,5 @@
 #### A. load packages ####
-library(TypeSeqHPV)
+library(TypeSeqHPV2)
 library(drake)
 library(tidyverse)
 library(parallel)
@@ -23,8 +23,10 @@ command_line_args = tibble(
     region_bed = optigrab::opt_get('region_bed'),
     hotspot_vcf = optigrab::opt_get('hotspot_vcf'),
     is_torrent_server = optigrab::opt_get('is_torrent_server'),
+    is_clinical = optigrab::opt_get('is_clinical'),
     start_plugin = optigrab::opt_get('start_plugin'),
     config_file = optigrab::opt_get('config_file'),
+    config_set = optigrab::opt_get('config_set'), # this option is ignored in the server mode
     lineage_defs = optigrab::opt_get('lineage_defs'),
     scaling_table = optigrab::opt_get('scaling_table'),
     pn_filters = optigrab::opt_get('pn_filters'),
@@ -119,8 +121,7 @@ ion_plan <- drake::drake_plan(
                                                  specimen_control_defs = user_files$control_definitions,
                                                  internal_control_defs = args_df$internal_control_defs,
                                                  pn_filters = args_df$pn_filters,
-                                                 scaling_table = args_df$scaling_table) %T>%
-        map_df(~ system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")),
+                                                 scaling_table = args_df$scaling_table, args_df$is_clinical == "yes" ) ,
     
     #### 8. generate qc report ####
     ion_qc_report = render_ion_qc_report(variants_final_table = variants_final_table,
@@ -132,8 +133,7 @@ ion_plan <- drake::drake_plan(
                                          read_count_matrix_report = read.csv("read_count_matrix_report"),
                                          pn_filters = read.csv("pn_filters_report"),
                                          specimen_control_defs = user_files$control_definitions,
-                                         lineage_for_report = read.csv("lineage_for_report") ) %T>%
-        map_df(~ system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")),
+                                         lineage_for_report = read.csv("lineage_for_report") ) ,
     
     #### 9. generate grouped pn_matrix           
     grouped_outputs = get_grouped_df(simple_pn_matrix_final = read.csv("pn_matrix_for_groupings"),
@@ -152,10 +152,18 @@ system("mkdir vcf")
 plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
+
+### Compress file here
+system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")
+if(command_line_args$is_clinical == "yes"){
+    system("zip -j TypeSeq2_outputs.laboratory.zip read_summary.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
+}
+
 #### E. make html block for torrent server ####
 html_block = if ( command_line_args$is_torrent_server == "yes") {
-    system("cp /TypeSeqHPV2/inst/typeseq2/torrent_server_html_block.R ./")
+    # system("cp /TypeSeqHPV2/inst/typeseq2/torrent_server_html_block.R ./")
+    system(paste0("cp ", system.file("typeseq2", "torrent_server_html_block.R",  package = "TypeSeqHPV2"), " ./"))
 
-    render("./torrent_server_html_block.R", output_dir = "./")
+    render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = command_line_args$is_clinical == "yes"))
 }
 

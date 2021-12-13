@@ -4,6 +4,8 @@
 #' date: "`r format(Sys.time(), '%d %B, %Y')`"
 #' output:
 #'  html_document
+#' params:
+#'    is_clinical: false
 #' ---
 
 
@@ -21,20 +23,26 @@ plugin_json = fromJSON(file("/mnt/startplugin.json"), simplifyDataFrame = TRUE, 
 run_type = plugin_json$runplugin$run_type
 
 #' # {.tabset}
-#' ## Analysis Output
 
-#+ full run, echo=FALSE, results='asis', eval=run_type!="thumbnail"
+#+ laboratory use, echo=FALSE, results='asis', eval=params$is_clinical
+cat("
+
+
+## Laboratory Use
+
+")
+
+if (run_type!="thumbnail"){
 
 cat('
 
-<a href="./TypeSeqHPV_QC_report.pdf" target="_blank">QC Report</a>
+<a href="./TypeSeq2HPV_laboratory_report.pdf" target="_blank">Laboratory Report</a>
 
-[archive of outputs](./TypeSeq2_outputs.zip)
+[archive of outputs for laboratory use](./TypeSeq2_outputs.laboratory.zip)
 
 
 ')
-
-#+ thumbnail run, echo=FALSE, results='asis', eval=run_type=="thumbnail"
+}else{
 cat('
 
 Thumbnail data insufficient for methylation analysis.
@@ -42,3 +50,31 @@ Thumbnail data insufficient for methylation analysis.
 Please see full report.
 
 ')
+}
+
+#+ clinical use, echo=FALSE, results='asis', eval=TRUE
+cat("
+
+## Analysis Output
+
+")
+
+if (run_type!="thumbnail"){
+
+cat('
+
+<a href="./TypeSeq2HPV_QC_report.pdf" target="_blank">QC Report</a>
+
+[archive of outputs](./TypeSeq2_outputs.zip)
+
+
+')
+}else{
+cat('
+
+Thumbnail data insufficient for methylation analysis.
+
+Please see full report.
+
+')
+}

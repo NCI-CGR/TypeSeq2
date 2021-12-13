@@ -21,13 +21,18 @@ library(pander)
 
 system(paste0("cp ",
               system.file(
-                  "typeseq2", "Ion_Torrent_report.R", package = "TypeSeqHPV"),
+                  "typeseq2", "Ion_Torrent_report.R", package = "TypeSeqHPV2"),
               " ./"))
 
 # system("cp /TypeSeqHPV2/inst/typeseq2/Ion_Torrent_report.R ./")
 
 render(input = "Ion_Torrent_report.R",
-       output_dir = "./", output_file = "TypeSeqHPV_QC_report.pdf", clean = FALSE)
+       output_dir = "./", output_file = "TypeSeq2HPV_QC_report.pdf", clean = FALSE)
+
+if("is_clinical" %in% names(args_df) && args_df$is_clinical == "yes"){
+    render(input = "Ion_Torrent_report.R",
+       output_dir = "./", output_file = "TypeSeq2HPV_laboratory_report.pdf", clean = FALSE, params = list(is_clinical = TRUE))
+}
 
 return(data_frame(path = "Ion_Torrent_report.pdf"))
 
