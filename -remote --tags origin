@@ -1,0 +1,1163 @@
+[33mc3a7903[m[33m ([m[1;36mHEAD[m[33m, [m[1;33mtag: v2.1.3[m[33m)[m feat(many files): refine input and output for the clinical setting
+[33m6f02313[m[33m ([m[1;33mtag: v2.1.2[m[33m)[m feat(methyl_command_line_args.r): move the config files to the pluginMedia
+[33m2843121[m fix(typeseq2.r): fix "Execution halted" error
+[33m0874a7e[m fix(coinfection_rate_histogram.r): fix the invisible bar at "0"
+[33m337ff1b[m[33m ([m[1;33mtag: v2.1-alpha.1[m[33m)[m perf(signal_to_noise_plot.r): modify the figure legend as suggested by Sarah
+[33mad48455[m perf(typing_variant_filter.r): require 2 minimum of 5 HPV16 and HPV18 amplicons to be pos
+[33m3714962[m fix(typing_variant_filter.r): make a right contrl fail code
+[33m4d9ab4a[m fix(6 files): address several issues about the PDF report
+[33mc46e665[m[33m ([m[1;33mtag: v2.1-alpha.0[m[33m)[m commit changes after successful test with singularity
+[33mddf627a[m Updating vcfR to prevent recent failures with vcf to dataframe
+[33m45810c5[m For issue #70 this will help prevent hardlink issue and prevent bams from corrupting - see #70 for more info
+[33m9162ab7[m Adding all the metrics files required to working directory
+[33md9ff67b[m Adding detailed_pn_matrix to filter out neg result contigs from AF calculation. This will fix #60
+[33ma12f083[m Adding control_fail_code which will now report the kind of failure as requested in #58
+[33m3ce6f3a[m Removes key in Lineage distribution by type plot
+[33mdb26fce[m 1. Changed code to prevent HPV6 printing extra "_" this was happening because of how it used str_split 2.Adjusted x-axis text size for Lineage distribution by type plot 3. Added bar labels for Normalized lineage distribution plot
+[33m157d128[m Remove B2M_L in the rename function. This was already changed previously.
+[33m288ac98[m B2MS@ Change was missed here
+[33m66b4494[m Removing links to all other files on the GUI except report and zipped archive
+[33m2ec3694[m Removing B2M-L and replacing it with B2M-S2 for #64
+[33mcdbe040[m Adding a switch to check if it is control-only run. Prevents failing with samples_only_pn_matrix
+[33m3bff94c[m NaN issues fixed for num_pass_freq, num_fail_freq and num_NA_freq in  control_freq
+[33m327c4ad[m Adding row.names = F to remove the extra number column from results
+[33mc967492[m Remove contigs and keep only types before final counting to avoid duplicates
+[33m7aee126[m Adapting the same counting policy as simple pn matirx for detailed pn matrix
+[33mfdfd6b9[m Removing ESIC from control report
+[33mf252415[m Remove Ext
+[33m47d0632[m Commiting ESIC changes
+[33mc096ecb[m Fixing sample summary code
+[33ma841dce[m Reverting to development dockers -- this was changed for merging
+[33mff0342d[m Merge branch 'development' of https://github.com/NCI-CGR/TypeSeqHPV2 into development
+[33m6d2b925[m Percent positive plot now includes all types even when the positivity rate is zero
+[33m2b982bb[m Represent "0" for no pass/fail in report sample summary table
+[33me4f1e78[m Adding a switch to handle projects with all controls
+[33m43097e9[m Merge branch 'master' into development
+[33m1e9d4dd[m Typo fix
+[33me176aad[m Save return table and fix typo
+[33mfa8cd56[m Moving the return table to after detailed pn matrix caused error - create it before and merge with detailed pn to get num_type_pos later
+[33m5cc2ec8[m Cleaning up
+[33m18e69fa[m Sorting frequency matrix results #46
+[33m98e1585[m Issue #21 and #6. Writing the target variants after detailed pn is made to get num type pos
+[33mef91419[m Issue - #43 Now it will update all my changes
+[33ma7d6e32[m Change FRO / FDP
+[33m699bafe[m Adding simple and detailed pn matrix to result output
+[33m8798cbc[m Changing repo for methylation dev
+[33m73c6fa6[m Changing repo name for methylation dev
+[33m0595e54[m Variants table is missing T hotspot allele #7 changing pos to pos_from_conversion_table
+[33m5e804cc[m Updating repo for stable version
+[33m12c05cf[m Changing path to new repo
+[33mbe390c4[m Filer NA in code
+[33me80d38d[m Merge branch 'master' of https://github.com/NCI-CGR/TypeSeqHPV2
+[33mf5a36b0[m Reverting changes I did for development pull
+[33m6ac14e4[m Merge pull request #1 from NCI-CGR/development
+[33m38eaa5e[m Change the date for upload to GUI
+[33mc756b6d[m Chaging this to pull from development. Undo this after the merge is complete. This changes the docker name
+[33m991551a[m Changing repo name in dockerfile
+[33m492aa53[m Fixing one more place with repo name and sorting order for sample only matrix results
+[33mef0cdbf[m Change repo name for ion qc report
+[33md9d6c51[m Changing repo name for scala
+[33mc97fefd[m This prevents the issue of R automatically changing data types from character to integer. Plate map will be correctly reported.
+[33m10df8c2[m Chaning repo for typeseq
+[33m8d66cf6[m Changing repo name in dockerfile
+[33m7e6c863[m Change repo path in the launch file
+[33m591f721[m Fixing the HPV type filter
+[33m8a036a9[m Fixing methyl freq calculation Fixing update variant table issue
+[33mbd2430e[m Chaning plugin name for stable version
+[33m69e5eab[m updates to pull from new docker
+[33me4cc9e5[m Changed git to match new repo
+[33mb3f21bb[m changes from master
+[33m40aeac9[m Copying changes from old repo
+[33m3c63d9e[m Updated repo to match the new dev repo Updated URL and branch from dev to master. Change it back to dev when you are testing.
+[33m3cd3667[m Delete freq_matrix_results.csv
+[33mbfbdbe4[m Merge pull request #32 from NCI-CGR/development
+[33m3bccf6c[m Fixing a bug in write.csv
+[33m109a437[m Sorting platemaps Adding labels
+[33m7c4bf03[m Fixes the count error in control results
+[33m82964ce[m Prevent row_numbers from being added to results
+[33m8d2b2b3[m Remove NA from read_count_matrix
+[33m74b2026[m Remove redundant rows to avoid RG tag issues
+[33m0743c64[m Remove all wall times
+[33ma8a1a54[m Increase time by 10X for spark config hearbeat Interval executor change back the bam name to select all bams
+[33mf9e8ebc[m Editing to pick up only one bam to see if the process works correctly
+[33m442959b[m Removing resultsize limit from spark config
+[33md22544b[m Giving more memory
+[33m994472d[m Increasing ram for demux
+[33m9a795a1[m Fixing scala runtime error
+[33m275ad81[m Trying to fix scala error
+[33m20e5fde[m Trying to print the error from scala
+[33m75ac566[m More bugs
+[33md147a1a[m Swap contig with CHROM
+[33m1bb82d3[m Fixing bugs
+[33mcf57b8c[m Changing validation for NA in pn_filters
+[33m592f7f6[m Fixing grouping defs error. Now if grouping is missing, it will construct an empty dataframe
+[33m7d3f509[m Remove NA rows before writing to any file
+[33md7d1f1d[m Trying code from v1 for hyperlink
+[33m7dbce0b[m Adding wildcard to pull all hyperlinks
+[33m28cd485[m Submit working now so removing all the reverts
+[33mc2b138e[m Revert all
+[33m04d1ed2[m Trying to use version 1 code to see if the button works
+[33mc09213a[m Adding the mapping of output files back to see if solves the submit button issue
+[33m16332b4[m REmoving everything before the submit issue
+[33m933dfdd[m delete revert
+[33m95b37f9[m Reverting to master for instance and plan
+[33m866c9f6[m Changing instance to check it works with short javascript url
+[33mbd1ec86[m Changing URL to check
+[33m6a7e962[m Testing javascript access
+[33ma9b00d9[m Testing for submit
+[33me9f3e36[m undo all commits before sumbit problem
+[33m57b8fbc[m Trying submit
+[33mf7c2f51[m Reverting to orginal since submit button not working
+[33mae6f689[m Trying to fix linking in html output
+[33m8dc3e58[m Fixed the summary count to include all the samples correctly.
+[33md024f80[m Changing the names of GUI output files to wildcards to match any project/batch code
+[33m33ba8d5[m Changing the type for Assay_batch_code column
+[33m960ec9c[m added pn matrix for groupings
+[33me801392[m Added lineage results as separate file for report so that the batch code don't interfere
+[33m29bedd7[m Removed the extra loops I created for testing
+[33ma1f1ebb[m Sorting failed_pn_matrix Adding assay code to result files and project code to samples_only_matrix
+[33m89ef156[m Added failed_samples_pn_matrix.csv to zipped outputs
+[33m57a69cd[m Moved total reads next to barcode in read counts matrix, simple pn and control results. Moved num_type_pos next to barcode in detailed pn removed control_code from samples_only_matrix_results
+[33m8c63f79[m Moved control summary next to plate summary
+[33m035ed29[m Added failed_samples_pn_matrix to zipped output
+[33m8787872[m Workaround that removes the need of temporary fix in the previous commit. Refer Gitlab issue for more
+[33m658edd7[m restore adam demux
+[33m023ec68[m Fixing accidental push to this file
+[33md2cf7a2[m Kepp the split cell
+[33mdc382b3[m Run without error in report
+[33m2e0b713[m temp fix to errror
+[33mec80da5[m Temporary fix for pass error
+[33m44300dd[m fixed control freq sort error
+[33m7e5fb60[m Separate counting for MASIC Added new columns for num_fail_MASIC Sorting changes
+[33m7061631[m Checks for pn_filters
+[33m674ff00[m fixed return table error
+[33mbdbf826[m Removed BC1 and BC2 from lineage results
+[33me1c458d[m Adding control_freq_defs QC filters Checks for barcode class checks for NA
+[33m9ee4388[m Added owner sample ID back.
+[33mc758c5c[m Moved Plate summary to the end
+[33mb68cd32[m Adding control frequency to html input
+[33m5417c44[m Added a new control_freq_defs part
+[33m2c376c7[m Added control_defs filter
+[33m69701da[m Added frequency filter to remove failed samples from freq calculation
+[33me1dcd41[m Correcting a typo
+[33m5a5d439[m Fixed filter error
+[33m76c4f5f[m checks for NA removal in all output files
+[33m0793113[m Correcting barcode substring
+[33mde5d5e4[m taking off BC2 part from manifest
+[33mf2071bc[m Removing barcode from html interface
+[33mf441dfd[m Testing index portion of demux
+[33me3e0fea[m Removing barcode option from startplugin
+[33mfa164f3[m Changing the class of barcode from numeric to character. This needs to be added as a check later.
+[33me5e3fbd[m Added a missing '\' which was leaving out all other options
+[33mbe95ea4[m Removing sort step
+[33mf2b083a[m using the new meth_startplugin_parse instead of typeseq2's plugin_parse
+[33mf158ea6[m Added new function
+[33mdf3a816[m Removed the extra ')'
+[33m67681ae[m fixed a typo in the function
+[33m70f5dc6[m removing barcode 2 from variant filter step
+[33m70c40ad[m Beginning - Changes from dual barcode to single barcode
+[33mf638363[m Changed depth to integer from character to help prevent the error during pos/neg classification
+[33m8a191f6[m Check to verify whether a sample has dropped out because of no variants and retain it
+[33m4e727f3[m Put in a check to see if there are failed samples
+[33m1ee571e[m Fixing the width
+[33md81ef72[m Adjusting height since width did not fix the issue
+[33m2173a64[m Adjusting the width of the plate map
+[33m3730cd5[m Removing csv extensionf from intermediate files to make sure they are not being added to the final zipped output
+[33md81b25c[m Added zip file output after pdf generation
+[33m2c9c75a[m Moved failed matrix generation to next step to make sure all the required files are generated in the previous steps.
+[33m1364aaf[m Adding manifest to all results file Sorting columns to represent the order from original file
+[33m544a1d6[m Fixes NA issue in the manifest Modifies control definitions to include SIC contigs and B2M
+[33m6482534[m Printing one plot per page instead of two
+[33m0b803b2[m Removed PreExtraction Plate ID
+[33m8c5dcc8[m Transfrom Panel to character to prevent it from turning into an integer value
+[33m82a83f3[m Group_defs check is failing. Removing this for now.
+[33md6b50fd[m Drake needs to use output of previous step to do the next step. Linking steps to prevent it running steps randomly.
+[33mc9710b6[m changed grouping to grouping defs
+[33m8e6e61e[m Adding grouped_df
+[33m3e41c66[m Changed a typo
+[33mfed4fbc[m Added character encoding
+[33md1cab83[m Grouping_defs fixed
+[33m31d1045[m Fixing grouping defs
+[33m930afac[m Changed the javascript error
+[33me6aff3b[m Fixed the error with barcode
+[33m8b509b0[m replaced typo with barcode
+[33m998d70a[m chaged grouping to barcode
+[33m68495bc[m Added missing semi colon
+[33mb96c65f[m Adding grouping defs to startplugin parse file
+[33m288ac82[m Added missing variable
+[33m66fe943[m Added new input file to the workflow. This should include the grouping definitions options now
+[33mfbdd0fb[m Push back to old Docker
+[33mf0f4d3d[m Adding new input file to the workflow
+[33m3fea75c[m Removed safe to see errors
+[33m19403a9[m Added the required package
+[33m143c801[m Adding clean=False to prevent deletion of intermediate files
+[33m5fd2836[m Changed typo
+[33m209a56d[m Add back the old docker
+[33mf26785c[m Changed to old docker to test gridExtra
+[33m32f86c1[m Adding safe to prevent failing
+[33m0b2fd75[m Added package name with the function to make sure it calls the right one
+[33m9b59452[m Changed AF back to lineage_percent. Spread was done for final result
+[33m6dc1df9[m Error with scale_color_igv. Library not working properly. Temp fix.
+[33mb5504f8[m Filter na because drop_na is creating issues
+[33m27f8eae[m Removed safe
+[33md682bca[m Removed safe option to see actual errors
+[33mb7869a3[m Added a differnt method for lineage_percentage. Renamed AF as percentage
+[33m86da7df[m Print the plots in rows
+[33maf3e49e[m drop nas which were causing problem
+[33mb34b62d[m Adding the pandoc again because it was failing
+[33mf29d0c9[m Changed back to new docker
+[33m5ecd7d2[m Fixing the NA issue
+[33mf21f6cb[m Change it back to original docker
+[33m7e8a2ca[m We will use a new docker from now on!
+[33mee6b84c[m Changed to args_df and added a missing input variable in internal control summary
+[33mbccee08[m Changed args_startplugin_parse to args_df
+[33mdbee3bb[m Wrong input variable changed
+[33m9f08f96[m Trying to fix missing table
+[33md343953[m Added missing input for the function
+[33m428c461[m Commenting out grouped_defs to fix qc report output
+[33m7e47ca4[m Edited headings in control summary
+[33m4cb06c2[m Lineage percent calculation.
+[33m2963ed8[m Added missing comma
+[33m67c2de2[m New script
+[33m9f7ad4f[m Changes to platemap display and new section to main workflow
+[33m126850e[m added figure headings
+[33maf08675[m Fix the empty output issue.
+[33m3909361[m Fixing the step where it writes to csv.
+[33m54dabfe[m Changes to the table
+[33m0f4f631[m wrapped into a function
+[33m275ce59[m Fixed the detailed_pn_matrix_for_report
+[33m3a4a035[m Added new variables to report function Fixed detailed_pn_matrix in signal to noise Added more steps to the report
+[33mc1d3116[m Fixed the plate_summary -> removed some columns
+[33md11c4ee[m Adding a new feature to the report
+[33m2a7d3c5[m Added new function
+[33ma4d1c67[m Added quotes
+[33m6283d41[m Adding dplyr to avoid the docker message
+[33m7b024da[m Modified entries
+[33m062ea13[m Added new file
+[33m66eb217[m Updates to report
+[33maba5cdf[m Changed a typo (control_matrix)
+[33m8fb976f[m Remove plate_map
+[33mabd03cf[m Changes to B2M - Added Control_defs which will classify controls and samples in the plate map
+[33ma852f8e[m Added new packages to the base docker
+[33m576ac1f[m Testing errors
+[33m7ce9e08[m Empty rows, ordered x axis and fixed the shapes
+[33me724183[m Merge branch 'development' of https://github.com/cgrlab/TypeSeqHPV into development
+[33mbb97774[m Adding a new script for plate map.
+[33m2dbf21a[m Retaining Control_code since we need it in the report
+[33me38260c[m Update render_report.R
+[33mb35b735[m Changed Assay_Plate_ID code here.
+[33mc02ca30[m Update TypeSeq2.R
+[33me905dbe[m Update render_report.R
+[33mafd9d8c[m Update TypeSeq2.R
+[33md492751[m Update render_report.R
+[33me65ae98[m Update TypeSeq2.R
+[33m6e6361b[m Update TypeSeq2.R
+[33m084f0e5[m Update TypeSeq2.R
+[33m0bc2414[m Update TypeSeq2.R
+[33m3f41c2f[m update
+[33m89678f2[m Update TypeSeq2.R
+[33ma199ce4[m Update TypeSeq2.R
+[33m6849e85[m Update TypeSeq2.R
+[33mdf46643[m Update TypeSeq2.R
+[33m0d54c15[m Update TypeSeq2.R
+[33m70a3eef[m Update render_report.R
+[33me626534[m Update TypeSeq2.R
+[33m4790045[m Update TypeSeq2.R
+[33mf0ae000[m Update TypeSeq2.R
+[33m8b4d501[m Update render_report.R
+[33m815e141[m Update render_report.R
+[33m6191cc2[m Update TypeSeq2.R
+[33m67977ce[m Update TypeSeq2.R
+[33mb222653[m remove the bam header
+[33m75fcb46[m changes for V2 report
+[33m9605da0[m Update for V2 report
+[33mf5818e6[m Update for V2 report Removed the need for bam_header
+[33ma5c158f[m Update for V2
+[33m40071b6[m Updates for report
+[33mdca9315[m Updates for V2 report. 1. Changed colors to orange(labels) 2. Modified group names from 16 to HPV16
+[33mc309bbe[m Update for V2
+[33ma9773a9[m Removing B2M.S check
+[33m30ec886[m Update for the V2 report
+[33m5cba9a2[m update for v2 report
+[33mf20502b[m Update for V2 report
+[33m25aa8f7[m Update for V2 report
+[33m9ba10b2[m Update for V2 report - chnaged to human_control
+[33m39fff5b[m Update for V2 report
+[33m46f8aef[m Updates for V2
+[33m314b7f0[m Updates to lineage_df,includes all samples for the analysis and changes to control_results
+[33m2c14677[m Updates for V2
+[33mf482f1d[m Update for Version 2
+[33m67b0b79[m Rename column ID for the specimen_control_defs. Check control
+[33m5812330[m Update TypeSeq2.R
+[33m54b1d56[m Select the colnames of the filtered dataframe instead of temp directly. Avoid missing columns with actual value and NA in some other place
+[33m098d627[m Merge branch 'development' of https://github.com/cgrlab/TypeSeqHPV into development
+[33m2286799[m Added a step to prevent failure of row seperation due to NAs in some column
+[33m168ba64[m Update launch.sh
+[33me026e94[m Update create_plugin_zip.sh
+[33m12eaca7[m table_final_count changed to table_with_final_count
+[33me28418e[m Fixed num_Types_pos count - Now it counts by types and not by lineage Fixed the header for the final matrix.
+[33m1d26407[m Remove extra braces @get_list
+[33me28a9a6[m fix get_list levels
+[33mcca6db1[m Changed TypeSeq2 to TypeSeq2-Dev
+[33m6b81473[m Added missing read.csv for scaling, internal_control_defs and pn_filter. This was causing the character error.
+[33m01ce5ae[m Merge branch 'development' of https://github.com/cgrlab/TypeSeqHPV into development
+[33m5cf3b50[m Changed string manipulation for get_list
+[33mac55d6d[m added
+[33me809190[m Changes to tying_variant_filter
+[33md8d7443[m Add files via upload
+[33mc35c7cf[m Update README.md
+[33m80e7819[m Update README.md
+[33mec8872f[m Merge pull request #9 from cgrlab/dev2
+[33mb428b0e[m updated launch.sh to include development tag
+[33m55d1d61[m docker references development branch now
+[33m84b4a57[m[33m ([m[1;33mtag: 2.1912.2001[m[33m)[m updating typeseq2 zip to May docker tag
+[33m83fe598[m Update README.md
+[33mfb3a738[m Update README.md
+[33meeb9a7f[m updated to use v2 barcodes
+[33m9e887d1[m Update TypeSeq2.R
+[33m3a6718b[m Update typing_variant_filter.R
+[33m14cbe4a[m Merge pull request #5 from Ashastry2/patch-1
+[33mcfb7dc8[m Update typing_variant_filter.R
+[33m801ce13[m typo
+[33m9f7194e[m fixed typo
+[33md33f686[m messing with lineage qc filters
+[33m6092714[m comment out select cols
+[33m0d04ed1[m changed lineage filtered results file name
+[33m71ddddc[m added lineage_filtered.csv
+[33m4025e55[m removed Control_type
+[33mf40f5a3[m fix typo
+[33m9a595e2[m added samples only and failed samples matrics to zip
+[33mb6e7635[m Update typing_variant_filter.R
+[33m1cedee4[m Update typing_variant_filter.R
+[33m2a591eb[m Update typing_variant_filter.R
+[33m82aa15b[m Update typing_variant_filter.R
+[33m049a769[m Update typing_variant_filter.R
+[33m430aa55[m Update typing_variant_filter.R
+[33m1ab0970[m Update typing_variant_filter.R
+[33m59ae1c2[m factor_key = TRUE
+[33m28344fe[m Update typing_variant_filter.R
+[33m2f75879[m fixing samples only matrix
+[33m4b1eaa5[m Update typing_variant_filter.R
+[33mf1eaf02[m Update typing_variant_filter.R
+[33m4d120b9[m Update typing_variant_filter.R
+[33mb4a9fff[m Update typing_variant_filter.R
+[33me8fc04d[m Update typing_variant_filter.R
+[33mf7ce6c4[m fix hyper link
+[33m01122c6[m Update typing_variant_filter.R
+[33med75038[m fixing filename
+[33m49dc7aa[m Update vcf_2_dataframe.R
+[33m2f9ba05[m Update ion_methyl_workflow.R
+[33m8a68d93[m Update ion_methyl_workflow.R
+[33m4445e88[m joining with manifest
+[33m50bb1ab[m put manifest back on read counts
+[33md010da0[m added lineage table output
+[33mbd74c5f[m fixing coalesce
+[33m2b33738[m adding control results code
+[33m7699c8c[m indet
+[33mecf09f4[m coalesce
+[33m3fce7ab[m old startplugin
+[33ma5b1e62[m working on typing v2 code
+[33m533d077[m TypeSeq2
+[33m2b28ebf[m added TypeSeq2
+[33mbae6b41[m inner join
+[33m9887ad2[m Merge pull request #4 from cgrlab/dev2
+[33m63f5d39[m fix html block
+[33m2377175[m magrittr
+[33mf022005[m added zip of archives
+[33mc539927[m added non hs variant table
+[33mf808ac6[m split multi allele
+[33m1bf44f0[m require(fuzzyjoin)
+[33m399f2c7[m put some csv outputs back in
+[33mfdf4d51[m fixing control def parameter
+[33mad6d013[m more stuff
+[33mb700d84[m fixed methyl html block
+[33m8847a8e[m added control results output
+[33m4d4696f[m corrected left join to manifest
+[33m79dd4d9[m added manifest as arg
+[33mfbb6e54[m correcting methyl wf added variant_table to last step
+[33m18e5f9d[m post variant table filtering and more inputs
+[33m8d52cd5[m put filename back in
+[33m58b71e5[m order of columns
+[33mf8c8d76[m added read summary copy back in
+[33m2b36c08[m library optigrab
+[33m734ace4[m smaller final docker
+[33m65c6409[m added read summary and new line breaks
+[33m3fc02b8[m corrected cores arg
+[33m3ff4deb[m put args_df back in
+[33m34b9eaa[m added tvc cores parameter
+[33m7645d56[m fixing vcf table vcf_out
+[33me52a71f[m fixing sam sort
+[33m5ec4b0f[m demux df
+[33m617c3e0[m new split bams
+[33m15de17e[m more filters for barcodes
+[33m973f470[m RG
+[33md901eb8[m less cores
+[33mdc2d06c[m less cores
+[33m7519eab[m fixing demux
+[33m4b2f2c0[m PG
+[33m2db262c[m fixing pg
+[33mcfc85a3[m removed files and bam_path var
+[33ma1b1a71[m read all bams at once
+[33mb00b617[m fixing save as parquet
+[33md4640fd[m one large bam
+[33me05f19a[m removed par foreach
+[33mc7efd95[m filter that file exists
+[33m69ad378[m adding variant table back
+[33md9414b4[m vcf 2 dataframe
+[33mdc23819[m vcf
+[33m5fd3124[m sorted bams
+[33m26ce8a3[m sorted bams
+[33m77b33fb[m index
+[33m6eecee7[m fixing index
+[33mcf46658[m split by barcode
+[33m58bf238[m fixing tvc cli
+[33m927803f[m vcf_df
+[33ma120d2b[m added --sample-name
+[33m05fd74a[m added Names List subfolder
+[33m89ffd4a[m fixing read group name
+[33m9a24af0[m added new read group dictionary
+[33mfc42edf[m recordGroupSample
+[33me1d015b[m less than 1 hamming
+[33m0cc6a9f[m commit force sample name
+[33m6e1b436[m sorted
+[33m3f81f51[m sort
+[33m97f5789[m sort bam
+[33m6bb9ae2[m sam tools
+[33m085868d[m bam demux work
+[33mf0a4414[m fixed barcodes sequence column
+[33mbef2fc9[m less bams
+[33m942a0a2[m removed filename
+[33me01dbb9[m joining with sample sheet
+[33m398edb5[m removed files par
+[33mac8742f[m fixing args
+[33m76f99ae[m added ram and cores args
+[33m834fb4f[m added ram and cores
+[33m596ef4d[m did not specify driver cores or ram
+[33mef98085[m moved par to files
+[33m85d3c03[m par
+[33mf9c2c00[m variant table
+[33m9b3f24a[m variant workflow
+[33m352c909[m variant table
+[33m91f483e[m variant table
+[33m90f9705[m variant table
+[33m9de5d9b[m variant table
+[33me6f954e[m variant table
+[33m5d939f5[m vcf fix
+[33m88ee66e[m vcf work
+[33m1c58e41[m adding vcf 2 dataframe
+[33m1d1b94d[m aded hamming summary csv
+[33md115a05[m cp read_summmary .csv
+[33m999e5b3[m demux
+[33m5206231[m demux
+[33mf4594fc[m demux
+[33m761968f[m demux
+[33m745640b[m demux
+[33m8c86e9c[m demux
+[33mc304687[m demux
+[33m80418cd[m demux
+[33m70f104f[m summary all on 1 line
+[33mbfff38a[m demux
+[33m51783fd[m trying to get summary to work
+[33m0649c8d[m demux
+[33ma342aae[m demux
+[33mc50c4a2[m fix demux
+[33ma2a445a[m fix minReadName
+[33mc5850cb[m fixing demux
+[33mcf0dc59[m corrected tvc input bam path - and a demux location
+[33md6b9136[m comment out remove filtered.vcf
+[33m7defd1d[m new demux strategy
+[33mb373073[m moved group_by
+[33m5feece1[m Merge pull request #3 from cgrlab/master
+[33madbca11[m Merge branch 'dev' of https://github.com/cgrlab/TypeSeqHPV into dev
+[33maff35ff[m added git ignore
+[33m54c1cf0[m adding NA group to plate summary
+[33m951bb43[m Merge pull request #2 from cgrlab/master
+[33mc9ae678[m joining only by assay plate code - not PreExtraction Plate
+[33mb32ea98[m fixing jsquery location
+[33m14cb588[m formmatting
+[33mbc2466e[m na rm
+[33m65c710b[m mnt
+[33m0404479[m file
+[33maca6b6b[m html block
+[33me2c44eb[m startplugin
+[33m4fd7f7c[m startplugin
+[33m8d74376[m start plugin
+[33mdbc869b[m batch_code
+[33m2164172[m Assay_Plate_Code
+[33m042f5b9[m adding back project name
+[33mb04b369[m added pander library
+[33m855e3d2[m more robust path string split
+[33mcd79114[m testing on torrent server
+[33m5310fa6[m added back analysis name, added truncation
+[33m3db0100[m NA issue in plate summary fix
+[33m89e280f[m rm /mnt
+[33m04943a2[m rm mnt
+[33m9aee33e[m removed mnt setwd
+[33m5b2a802[m more methyl
+[33mfc922f4[m args is torrent server
+[33mae13d54[m more methyl
+[33m8744a8c[m methyl
+[33m2225cfb[m methyl updates
+[33med02bc1[m put the change back in
+[33m0e45f97[m revert config_file
+[33m63b9a5a[m fixed config parse
+[33m326d9d7[m removed Samples_Owner as required field
+[33mdc5695f[m getwd
+[33m8eb0e0b[m correcting render directory
+[33mc0707e6[m correcting run_type
+[33m016707d[m html block
+[33meb16a70[m corrected report directory
+[33me955280[m setwd
+[33m7415a2e[m for CGC
+[33m07b67e2[m corrent is_torrent_servrer
+[33mf656c6c[m plate summary
+[33m097c2c5[m caption
+[33mcd49e19[m number samples total
+[33m7aaf2a3[m 2 tables
+[33md4bd056[m plate summary
+[33m3cf0814[m split deliverables type
+[33m9232815[m corrected ion qc report
+[33mc2f9913[m plate summary safe
+[33m37cf53e[m typo
+[33m8bc7764[m rename extraction plate id
+[33m7850bf6[m changes to sample only matrix
+[33mf0fe9ea[m fixing new samples_only_matrix
+[33mfb05d4b[m 112801 version
+[33m8811c43[m corrected render report
+[33md0785c3[m correcting client reports
+[33m18e7326[m updated qc report
+[33m347451d[m correnting ion workflow
+[33m53842a8[m added client html block
+[33mdef00fe[m parse is now a list output
+[33m7a9fb0d[m many config file changes
+[33mf3bb3d6[m correcting sambamba location
+[33m3600b22[m added b2m back to final pn matrix
+[33m9006662[m corrected samtools sort
+[33m8f278f2[m made tvc_run more generic
+[33m8a23ef9[m added spark ram and cores
+[33m482f912[m fixing tvc run function
+[33m9cba3fe[m added methylation server block
+[33m9cabe47[m updating vcf 2 df
+[33m5bd613c[m vcf to df is working now
+[33ma7d765e[m added vcf to json
+[33m2789c66[m added methylation workflow and more functions
+[33m84daa83[m libmariadb-client-lgpl-dev
+[33m648e7ca[m added VariantAnnotation R package
+[33mc4af5f0[m added manifest parse to methyl plugin
+[33m41b4439[m added TVC
+[33mc8aef3e[m added TVC to final Docker file
+[33m5ed7066[m added spark to base_Dockerfile
+[33mf89738b[m created draft methyl plugin
+[33mcbf9825[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33m8da81b3[m added methylation scala code
+[33m93bba05[m Merge pull request #1 from fnothaft/adam-docker-update
+[33m0849928[m Update ADAM dockerfile to point at branch with fixes.
+[33m1762731[m added ADAM Dockerfile
+[33m56801a9[m signal to noise
+[33mcfbdd65[m added possibly to lineage_df
+[33m481c376[m added csv files of plot data back in zip
+[33m4159292[m docker
+[33m4086c5c[m docker instructions on TS
+[33mfe63470[m updated docker install
+[33m395a92d[m added rtichoke
+[33maf823fe[m added software tool references
+[33me8bdb6f[m Update README.md
+[33m9f66eb8[m Update README.md
+[33m1f5c3d1[m Update README.md
+[33m6d9ba09[m[33m ([m[1;33mtag: 2.1808.2701[m[33m)[m added non dev plugin zip
+[33m797cf47[m v 2.1808
+[33m26bebc2[m fixed toc
+[33me66288e[m base_18082301
+[33m89a71d0[m added new pandoc
+[33m753fe51[m removed pandoc
+[33mad7bfd4[m Update Dockerfile
+[33me456cd3[m added pandoc
+[33m994e544[m Update base_Dockerfile
+[33me082a07[m removed double libxml2-dev
+[33m3e2b737[m updated plugin version
+[33mbf077b7[m safe to all RMD
+[33m9e9eb0b[m updated plugin version
+[33m80b82a2[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33m6c7b5d1[m added in html block
+[33mc26d4ff[m INSTRUCTIONS for analysis
+[33m9b6ecc8[m Control definitions file used to generate example results
+[33m3893766[m GROUPINGS file used for example data analysis
+[33m6acbbdf[m Sample manifest used to generate example results
+[33m415894e[m add example results files
+[33mdb43837[m Delete Example-B1_qc_report.pdf
+[33m9b72855[m Rename docs/Example-B1_control_results.csv to docs/example_results/Example-B1_control_results.csv
+[33m9ca6380[m  Example-B1_control_results.csv
+[33mc3815ec[m  Example-B1_qc_report.pdf
+[33mf7d090e[m Delete IonXpress_087_rawlib.txt
+[33m42e3400[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33mcb41d8f[m hpv_positivity_table_safe
+[33m64a6ca6[m SAMPLE_MANIFEST_TypeSeq_Template.csv
+[33mc966a7f[m Delete SAMPLE_MANIFEST_TypeSeq_Template.csv
+[33mb4ff05f[m corrected docker run
+[33m4af80e5[m corrected docker run
+[33mbec795f[m updating plugin version
+[33mfb79176[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33m0633a4b[m removed install_github
+[33m551046d[m Add files via upload
+[33m9b01884[m Rename SAMPLE_MANIFEST_TypeSeqer_Template.csv to SAMPLE_MANIFEST_TypeSeq_Template.csv
+[33ma89f901[m Rename SAMPLE_MANIFEST_TypeSeqer_ION-EXAMPLE.csv to SAMPLE_MANIFEST_TypeSeq_ION-EXAMPLE.csv
+[33m118ab50[m Rename SAMPLE_MANIFEST_TypeSeqer_ILLUMINA-EXAMPLE.csv to SAMPLE_MANIFEST_TypeSeq_ILLUMINA-EXAMPLE.csv
+[33m8e5e4cb[m Rename CONTROLS_TypeSeqer_Control_Definitions.csv to CONTROLS_TypeSeq_Control_Definitions.csv
+[33mba861f9[m qc report pdf
+[33m98280ae[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33mffcc7aa[m added rename of pdf back in
+[33m16060c3[m moved apps to base
+[33me7f3ade[m Update Ion_Torrent_report.R
+[33mc27891b[m rm /mnt
+[33m708fa32[m Merge branch 'master' of https://github.com/cgrlab/TypeSeqHPV
+[33m9b4d678[m removed /mnt
+[33m8ec2e78[m removed sparklyr added furrr
+[33m8a8a3fc[m addedn is torrent server if/then
+[33m72a509f[m comments
+[33m9c97bb6[m extract sam header
+[33m8a819cd[m added extract sambam header function
+[33m288012d[m furrr replaces mclapply
+[33md9881f7[m Delete ion_read_processor_apply.R
+[33mf2b910f[m Update and rename create_bam_json.R to convert_bam_to_json.R
+[33ma1422b9[m Update Dockerfile
+[33m4ddd74e[m added genomic alignments and lmodern for pdf
+[33m78719df[m Update Dockerfile
+[33ma35c9f2[m Update ion_read_processor.R
+[33m2e430e1[m Update ion_read_processor.R
+[33me03c0bf[m Update ion_read_processor.R
+[33mc8f8228[m Update ion_read_processor.R
+[33m95c7728[m Update ion_read_processor.R
+[33m6d02464[m Update ion_read_processor.R
+[33m7e9ddc2[m Update ion_read_processor.R
+[33mb79410d[m Update ion_read_processor.R
+[33ma638ea7[m Update ion_read_processor.R
+[33me4d53b0[m Update ion_read_processor.R
+[33mc477be2[m Update ion_read_processor.R
+[33m09f7221[m base_2018081002
+[33m01d5c02[m  libssl-dev
+[33m089f245[m Update base_Dockerfile
+[33m0f6d895[m added sparklyr
+[33m815395b[m Update base_Dockerfile
+[33mdf3852f[m Update base_Dockerfile
+[33m732a690[m Update base_Dockerfile
+[33m49367c3[m Update base_Dockerfile
+[33m481f0de[m Update base_Dockerfile
+[33m99db276[m Update base_Dockerfile
+[33mec81578[m added java 8
+[33md6da25b[m simplified base and added samtools and gatk4.0
+[33m2f557a0[m added dag
+[33mec882ef[m new docker tag
+[33m09ae1d3[m new plugin version
+[33m6fc0883[m new plugin version
+[33mad42dff[m html block
+[33m31056d7[m pdf report mv
+[33ma279810[m html block
+[33md1e3841[m render html block
+[33m0d5cca8[m ion plugin specific files
+[33mb338f6f[m render html block
+[33m456cbd9[m render html block
+[33m8ac95d4[m adding html block
+[33mb27e769[m adding -i
+[33mc0a4778[m launch.sh fixing bam header arg
+[33m25227d7[m Update launch.sh
+[33mad7f4fe[m added plugin zip
+[33m2c082a4[m Update launch.sh
+[33m56387cb[m Update launch.sh
+[33m2fe2860[m Update launch.sh
+[33maf4934b[m Create NAMESPACE
+[33mb75ae72[m Update DESCRIPTION
+[33mc228071[m Delete NAMESPACE
+[33me213d2b[m readme updates
+[33m582920a[m documentation
+[33mc22f60b[m Update README.md
+[33mc0dbd2b[m Update README.md
+[33mb191bb7[m Update README.md
+[33m4994832[m Rename inst/dockerfiles/base_Dockerfile to docker/base_Dockerfile
+[33mdbf2591[m Rename inst/workflows/ion_workflow.R to workflows/ion_workflow.R
+[33ma5cc94c[m Rename inst/dockerfiles/Dockerfile to docker/Dockerfile
+[33m11f12a8[m Rename inst/workflows/illumina_read_processor.R to workflows/illumina_read_processor.R
+[33mecfac54[m Update ion_read_processor_apply.R
+[33m08b8be2[m Update launch.sh
+[33m7b15a62[m Update ion_read_processor_apply.R
+[33m42c743a[m Update ion_read_processor.R
+[33mfdd14bf[m Add files via upload
+[33m9396d19[m Update ion_workflow.R
+[33ma235d5b[m Update launch.sh
+[33m1e1d593[m Create create_plugin_zip.sh
+[33m0e95075[m Update Dockerfile
+[33m759bf61[m Rename workflow.R to ion_workflow.R
+[33m7cb527b[m Update launch.sh
+[33mef3fc5c[m Rename workflow.R to inst/workflows/workflow.R
+[33m48c82e5[m Rename base_Dockerfile to inst/dockerfiles/base_Dockerfile
+[33m249c4c2[m Rename Dockerfile to inst/dockerfiles/Dockerfile
+[33m5fe1715[m Update launch.sh
+[33m08ead7a[m Update workflow.R
+[33m7427de0[m Update workflow.R
+[33m370469d[m Update startplugin_parse.R
+[33m7f70618[m Update startplugin_parse.R
+[33m98f95a9[m Update and rename plugin_manifest_parse.R to startplugin_parse.R
+[33m8f5134b[m Create plugin_manifest_parse.R
+[33m2a3e5f4[m Update launch.sh
+[33mad0534f[m Update launch.sh
+[33mcb57951[m Update workflow.R
+[33mf5d24a8[m Update ion_read_processor_apply.R
+[33m2a2ebc1[m Update ts_demultiplex_bc2.R
+[33mf6aca7e[m Update ion_read_processor.R
+[33m326402d[m Update ts_read_metrics.R
+[33m4134efa[m Update ts_read_metrics.R
+[33md579768[m Update ts_demultiplex_bc2.R
+[33m4be57de[m Update ts_demultiplex_bc2.R
+[33m2148f54[m Update ts_demultiplex_bc2.R
+[33mc9e745e[m Update ion_read_processor_apply.R
+[33m5e2064e[m Update ion_read_processor_apply.R
+[33mc8c3d00[m Update ion_read_processor_apply.R
+[33m38a65b8[m Update ion_read_processor_apply.R
+[33mdd2a743[m Update ion_read_processor.R
+[33m1187b49[m Update ion_read_processor.R
+[33m4e601a0[m Update ts_demultiplex_bc2.R
+[33mb8bf0e7[m Update ts_demultiplex_bc2.R
+[33m7b7baf9[m Update workflow.R
+[33mbddf9c5[m Update workflow.R
+[33m75f4d96[m fixing ts_demult
+[33m346844d[m fixing ion_read_processor
+[33m93fca1f[m Update workflow.R
+[33mcf0166d[m Update workflow.R
+[33m0562b48[m Update workflow.R
+[33m852cba1[m Update Ion_Torrent_report.R
+[33mcecadfd[m Update workflow.R
+[33m124447b[m Update Ion_Torrent_report.R
+[33m8634d61[m Update render_report.R
+[33m58ccde2[m Update render_report.R
+[33m4c78299[m Update render_report.R
+[33mc019c31[m Update calculate_expected_control_results.R
+[33m64bd79a[m Update workflow.R
+[33m5e08290[m Update workflow.R
+[33m4585e81[m Update workflow.R
+[33m03799d7[m Update workflow.R
+[33m1a3816b[m Update workflow.R
+[33m9d50e1c[m Update workflow.R
+[33m933493c[m Update ts_read_metrics.R
+[33mfaf313d[m Update ion_read_processor.R
+[33mf97a7c8[m Update ts_demultiplex_bc2.R
+[33m40f2fd2[m Update ion_read_processor.R
+[33m62ac10d[m Update ion_read_processor_apply.R
+[33me7f19f8[m Update ion_read_processor_apply.R
+[33ma4d924e[m Update ts_read_metrics.R
+[33md3411bf[m Update ts_read_metrics.R
+[33mbb73048[m Update ts_read_metrics.R
+[33m34eb9fb[m Update ts_read_metrics.R
+[33mf26b847[m Update ts_read_metrics.R
+[33m7676f45[m Update ts_read_metrics.R
+[33m15f55ce[m Update ion_read_processor.R
+[33mc0f25c8[m Update ion_read_processor.R
+[33m73dbf70[m Update ion_read_processor.R
+[33mf036424[m Update ion_read_processor.R
+[33m71a45f9[m Update ion_read_processor_apply.R
+[33m46d6730[m Update ion_read_processor.R
+[33m4aac66b[m Update ion_read_processor.R
+[33mb8ce0ed[m Update ion_read_processor.R
+[33me47106f[m Update workflow.R
+[33mf4482a1[m Update ion_read_processor.R
+[33m3ee6926[m Update ts_demultiplex_bc2.R
+[33m54a96b8[m Update ts_read_metrics.R
+[33m4d40772[m Update ts_read_metrics.R
+[33m3e2e21c[m Update ts_read_metrics.R
+[33mbd8a63c[m Update ts_read_metrics.R
+[33m9b0525f[m Update ion_read_processor.R
+[33m34a553f[m Update ts_demultiplex_bc2.R
+[33m6225baf[m Update ion_read_processor.R
+[33maab3323[m Update ion_read_processor_apply.R
+[33m8e56fca[m Update ion_read_processor.R
+[33m99a559b[m Update ion_read_processor.R
+[33mbea0356[m Update ion_read_processor.R
+[33m127f8fe[m Update ion_read_processor.R
+[33mcf55668[m Update ion_read_processor_apply.R
+[33mfa79500[m Update workflow.R
+[33ma8d57fd[m Update workflow.R
+[33mb5f58de[m Update workflow.R
+[33mace4dfd[m Update workflow.R
+[33m2dee556[m Update workflow.R
+[33m455be2d[m Update workflow.R
+[33mca12be3[m Update ion_read_processor.R
+[33m95a617e[m Update ion_read_processor_apply.R
+[33m7dfedf1[m Update workflow.R
+[33mc62f496[m Update ion_read_processor_apply.R
+[33m642a986[m Update ion_read_processor.R
+[33m5babe9a[m Update ion_read_processor_apply.R
+[33ma7e4ed2[m Update workflow.R
+[33mface19e[m Update workflow.R
+[33mb8c27a4[m Update ion_read_processor_apply.R
+[33m9aecbe7[m Update workflow.R
+[33mbe18535[m Update workflow.R
+[33mcd8929f[m Update workflow.R
+[33m074e792[m Update workflow.R
+[33m9751442[m Update create_bam_json.R
+[33m1633418[m Update workflow.R
+[33m27bf434[m Update workflow.R
+[33m98f8d7e[m Update ion_read_processor_apply.R
+[33m8866bef[m Update create_bam_json.R
+[33mc277bad[m Update workflow.R
+[33m3129ddc[m Update workflow.R
+[33m12ae517[m Update workflow.R
+[33me4c24a0[m Rename inst/workflow.R to workflow.R
+[33mf2dd268[m Rename app to inst/workflow.R
+[33m280ae53[m Rename workflow to app
+[33m7345392[m Rename inst/workflow to workflow
+[33m64fce97[m Rename inst/workflows/Ion_TypeSeqHPV.R to inst/workflow
+[33m7dd9d5a[m Update Ion_TypeSeqHPV.R
+[33m229afb3[m Update Ion_TypeSeqHPV.R
+[33m9a8c79a[m Update Ion_TypeSeqHPV.R
+[33m51d470b[m Update Ion_TypeSeqHPV.R
+[33ma510499[m Update Ion_TypeSeqHPV.R
+[33mf34436f[m Update Ion_TypeSeqHPV.R
+[33mcd5ba95[m Update Ion_TypeSeqHPV.R
+[33md5dbb06[m Update Ion_TypeSeqHPV.R
+[33m5d2c116[m Update Ion_TypeSeqHPV.R
+[33m4b1bff3[m Update Ion_TypeSeqHPV.R
+[33m8bc0da5[m Update Ion_TypeSeqHPV.R
+[33m016f55a[m added more R libraries
+[33m1c4cf09[m Update base_Dockerfile
+[33m6433a31[m removed R packages install
+[33mc762e81[m Update ion_report_load_packages.R
+[33m7109ed5[m Rename inst/docs/Ion/2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt to docs/Ion/2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt
+[33m7dc42cc[m Rename inst/Dockerfile to Dockerfile
+[33m190d249[m Rename inst/docker/Dockerfile to inst/Dockerfile
+[33m7d58fb7[m Update Dockerfile
+[33m7991b5b[m Rename inst/docs/Ion2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt to inst/docs/Ion/2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt
+[33mdbca1a6[m Rename docs/Ion/2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt to inst/docs/Ion2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt
+[33m3be0a5f[m added ion_report_load_packages
+[33mc9ad8f7[m Rename inst/docker/base_Dockerfile to base_Dockerfile
+[33mb5b3e62[m Update Ion_Torrent_report.R
+[33m3ea2d92[m Update Ion_Torrent_report.R
+[33m833b9c1[m Update percent_positve_histogram.R
+[33m9665eec[m Update Ion_Torrent_report.R
+[33m7be5667[m Update Ion_Torrent_report.R
+[33m8127aad[m Update percent_positve_histogram.R
+[33mab7e127[m Update Ion_Torrent_report.R
+[33m5da3aa7[m Update Ion_Torrent_report.R
+[33ma5cd0ae[m Update Ion_Torrent_report.R
+[33m8d4b415[m Update render_report.R
+[33m56c6b74[m Update Ion_Torrent_report.R
+[33m75ac2b8[m Update signal_to_noise_plot.R
+[33m2c79a67[m Update signal_to_noise_plot.R
+[33m9d80a28[m Update ion_read_processor_apply.R
+[33m6c7fe6e[m Update create_bam_json.R
+[33mcc82a6f[m Update Ion_TypeSeqHPV.R
+[33m2555315[m Update ts_read_metrics.R
+[33m4218557[m Update ts_read_metrics.R
+[33ma830a39[m Update ion_read_processor_apply.R
+[33m36922bc[m Update ion_read_processor.R
+[33m456eb9c[m Update ts_read_metrics.R
+[33mf31e1b8[m Update ts_read_metrics.R
+[33mc614018[m Update render_report.R
+[33mad183c4[m Update scaling_of_b2m_human_control.R
+[33m4fb2e84[m Update scaling_of_b2m_human_control.R
+[33mec5dd93[m Update create_full_run_read_metrics_df.R
+[33m6f53f87[m Update create_full_run_read_metrics_df.R
+[33md5f6337[m Update ts_read_metrics.R
+[33m4e56f81[m Update create_hpv_types_table.R
+[33m5961a24[m Update create_hpv_types_table.R
+[33m739fff5[m Update ts_read_metrics.R
+[33m321b1f1[m Update ts_demultiplex_bc2.R
+[33mef0fc31[m Update ion_read_processor.R
+[33maadfa6f[m Update ts_read_metrics.R
+[33mee6dbf8[m Update ion_read_processor.R
+[33m71d1b9d[m Update ion_read_processor_apply.R
+[33ma3e421a[m Update create_bam_json.R
+[33mf88f6f0[m Update create_bam_json.R
+[33mfdb41ba[m Update create_bam_json.R
+[33m41d04f3[m Update create_bam_json.R
+[33m364f4eb[m Create ion_read_processor_apply.R
+[33m1912cf4[m Create create_bam_json.R
+[33meef6b17[m Update install_binaries.R
+[33m6a398b7[m added optigrab
+[33m41e7b0b[m Create install_binaries.R
+[33mc21c630[m Rename inst/extdata/ion_plugin_specific_files/pluginsettings.json to inst/ion_plugin_specific_files/pluginsettings.json
+[33mee62a89[m Rename inst/extdata/ion_plugin_specific_files/plan.html to inst/ion_plugin_specific_files/plan.html
+[33ma336c49[m Rename inst/extdata/ion_plugin_specific_files/launch.sh to inst/ion_plugin_specific_files/launch.sh
+[33m91126c9[m Rename inst/extdata/ion_plugin_specific_files/instance.html to inst/ion_plugin_specific_files/instance.html
+[33m9594b72[m Rename inst/extdata/ion_report/torrent_server_html_block.R to inst/ion_plugin_specific_files/torrent_server_html_block.R
+[33mcd79a7f[m Delete ion_read_processor.R
+[33m07711cc[m Rename inst/extdata/illumina_read_processor/illumina_read_processor.R to inst/workflows/illumina_read_processor.R
+[33m0b7c933[m Rename inst/TypeSeqHPV.R to inst/workflows/Ion_TypeSeqHPV.R
+[33m8da48ee[m Rename final_Dockerfile to inst/docker/final_Dockerfile
+[33m07f1e32[m Delete TypeSeqHPV_illumina_typing_workflow.cwl
+[33m8cd073f[m Delete README.md
+[33mccdd9f2[m Delete TypeSeqHPV_ion_torrent_workflow.cwl
+[33m98133b6[m Rename base_Dockerfile to inst/docker/base_Dockerfile
+[33mc83531c[m Rename TypeSeqHPV.R to inst/TypeSeqHPV.R
+[33m201957f[m Rename docker/final_Dockerfile to final_Dockerfile
+[33md3f30db[m Rename docker/base_Dockerfile to base_Dockerfile
+[33mc219144[m Rename inst/extdata/ion_report/Ion_Torrent_report.R to inst/reports/Ion_Torrent_report.R
+[33m61aa619[m Delete README.md
+[33m7b534a9[m Update README.md
+[33m374aae7[m Update README.md
+[33m89e1c98[m Create TypeSeqHPV.R
+[33m0032a38[m Update Ion_Torrent_report.R
+[33me2ec07a[m Update hpv_positivity_table.R
+[33m56c59fc[m Update hpv_positivity_table.R
+[33m458e8a5[m Update render_report.R
+[33mc4cdfb1[m Update Ion_Torrent_report.R
+[33m7fd82a0[m Update Ion_Torrent_report.R
+[33m49a28b6[m Update render_report.R
+[33m3e2df9d[m Update render_report.R
+[33mf32cb2a[m Update Ion_Torrent_report.R
+[33m418fa65[m Create render_report.R
+[33ma791ac2[m Update create_full_run_read_metrics_df.R
+[33m2b592ec[m Update create_full_run_read_metrics_df.R
+[33ma6bb13e[m Update create_full_run_read_metrics_df.R
+[33m98cfbc0[m Update prepare_lineage_df.R
+[33mefe294b[m Update create_hpv_types_table.R
+[33md071646[m Update ion_report_load_packages.R
+[33m615ccbf[m Update ts_demultiplex_bc2.R
+[33m6b9861e[m Update ts_demultiplex_bc2.R
+[33mdf0a1cd[m Update ts_read_metrics.R
+[33m539ff67[m Update ts_read_metrics.R
+[33m53ff63a[m Update ts_demultiplex_bc2.R
+[33m8c1fbc6[m Update ts_read_metrics.R
+[33m3ca8f71[m Update ts_demultiplex_bc2.R
+[33m062c6ca[m Update ts_demultiplex_bc2.R
+[33m2cdd638[m Update ts_read_metrics.R
+[33m608a9a2[m Update ion_read_processor.R
+[33m0c0012c[m Update ion_read_processor.R
+[33m52190c1[m Update ion_read_processor.R
+[33m4e3696f[m Update ion_read_processor.R
+[33md780ca7[m Update ion_read_processor.R
+[33m46f5a6c[m Update ion_read_processor.R
+[33m95341b5[m Update ion_read_processor.R
+[33me02444b[m Update ion_read_processor.R
+[33m8b5df3b[m Update ion_read_processor.R
+[33me365a65[m Update ion_read_processor.R
+[33mf95407b[m Update ion_read_processor.R
+[33m41be56e[m Update ion_read_processor.R
+[33mef85f95[m Update ts_demultiplex_bc2.R
+[33m82ebe09[m Update ts_demultiplex_bc2.R
+[33macfd90e[m Update ts_read_metrics.R
+[33m30c1efc[m Update ts_demultiplex_bc2.R
+[33mcc03215[m Update ion_read_processor.R
+[33ma663f43[m Update ts_read_metrics.R
+[33m864e501[m Update ion_read_processor.R
+[33mf9afc1f[m Update ts_demultiplex_bc2.R
+[33mac1c3fa[m Update ion_read_processor.R
+[33mc6449f6[m Create ts_read_metrics.R
+[33me181386[m Update ion_report_load_packages.R
+[33m517ef51[m Update ion_read_processor.R
+[33m7910647[m Update ion_read_processor.R
+[33m671826c[m Create ts_demultiplex_bc2.R
+[33m20ee482[m Create ion_read_processor.R
+[33m57dfdaa[m Update ion_report_load_packages.R
+[33m4204d5c[m Create ion_read_processor.R
+[33mcd5eebd[m Update calculate_expected_control_results.R
+[33m85017be[m Update ion_report_load_packages.R
+[33maddf658[m added Drake
+[33mc627798[m Update prepare_grouped_samples_only_matrix_outputs.R
+[33m61f6121[m Update create_inital_pos_neg_matrix.R
+[33m12df34a[m Update create_inital_pos_neg_matrix.R
+[33m87e2294[m 1.18.07.2601 -> docker container upgrade
+[33m884530a[m Update signal_to_noise_plot.R
+[33m8ac630f[m looking at highest and lowest 10 instead...
+[33m1df3a90[m fixing spread issue
+[33m05136aa[m Update launch.sh
+[33m42000b4[m Update TypeSeqHPV_ion_torrent_workflow.cwl
+[33mf61ed4f[m Update TypeSeqHPV_ion_torrent_workflow.cwl
+[33mfbba77f[m Update launch.sh
+[33m6a4d3d5[m version 1.18.07.2501
+[33m8d3c882[m Update TypeSeqHPV_ion_torrent_workflow.cwl
+[33m669bd69[m multiline
+[33m5aaacbf[m no hyphen
+[33me735a2b[m added table split
+[33m2d11db6[m Update hpv_positivity_table.R
+[33md8563ff[m added table justify
+[33m09501b4[m better cell split
+[33m98cea1d[m Update hpv_positivity_table.R
+[33m9cbf50e[m Update hpv_positivity_table.R
+[33m86f4f22[m style = multiline
+[33m26860c6[m style = grid
+[33m4d826c3[m style = simple
+[33m340520b[m pandoc style = rmarkdown
+[33mf83c91c[m Update Ion_Torrent_report.R
+[33mdde8f74[m sorting table
+[33mb185621[m removed justify in pandoc
+[33md3a253f[m Update Ion_Torrent_report.R
+[33mbccb348[m added HPV Positivity table
+[33mf487426[m Update hpv_positivity_table.R
+[33mb6ef308[m Create hpv_positivity_table.R
+[33m14b1541[m Update launch.sh
+[33m27d510d[m version 64
+[33mcd6f43f[m removed more typeseqer text
+[33mb082d90[m removed more typeseqer text
+[33m8108a69[m correct html block copy
+[33mced58a7[m 1.18.07.2401
+[33m5b8ae44[m Update final_Dockerfile
+[33m86f4f54[m Update final_Dockerfile
+[33m5f8d058[m Update final_Dockerfile
+[33m70880fd[m Update final_Dockerfile
+[33m417cb4c[m switched base to typeseqhpv
+[33m876b0ae[m Update TypeSeqHPV_ion_torrent_workflow.cwl
+[33m488f894[m TypeSeq = TypeSeqer
+[33m3d2b0cd[m TypeSeq = TypeSeqer
+[33m88031da[m removed extra rm
+[33m2b85371[m specifying which pdf to add to zip file - more specific
+[33m13d876e[m added ion specific files directory
+[33m3fc8c90[m Update prepare_grouped_samples_only_matrix_outputs.R
+[33m56d26da[m correct the order of the output column
+[33m8988df9[m Update write_all_csv_files.R
+[33m5f2e1e2[m correcting column order in hpv reads output csv
+[33mbcfec77[m  correct column order in reads matrix
+[33m606ab59[m updated barcode list to v1 and increased version number
+[33m60c786f[m Add files via upload
+[33m3d23c1a[m Update launch.sh
+[33m2b16f00[m Update launch.sh
+[33m4fe58f4[m updated docker name and tag for report app
+[33mb027820[m corrected cwl file name
+[33md082ef3[m Update launch.sh
+[33m9389d0c[m Update launch.sh
+[33macbdba4[m added TypeSeqHPV
+[33m2b6bfea[m TypeSeqHPV
+[33mf5e3e67[m Add files via upload
+[33mbd62f73[m Add files via upload
+[33mb794007[m Add files via upload
+[33mc128540[m Update final_Dockerfile
+[33mb589b93[m removed pdflscape
+[33m43b2484[m Update Ion_Torrent_report.R
+[33m1728631[m Update lineage_plot.R
+[33m5825d7d[m Update lineage_plot.R
+[33mf086b75[m Update lineage_plot.R
+[33m285bf60[m Update lineage_plot.R
+[33m6d518fd[m Update lineage_plot.R
+[33m19e6b4a[m lineage plots bigger
+[33m40f625b[m Update lineage_plot.R
+[33m87a6693[m Update signal_to_noise_plot.R
+[33mdb8c546[m Update signal_to_noise_plot.R
+[33m4978121[m Update signal_to_noise_plot.R
+[33md274bb3[m Update signal_to_noise_plot.R
+[33m5dea5f5[m Update signal_to_noise_plot.R
+[33m48acf4e[m Update signal_to_noise_plot.R
+[33me578521[m increasing size of labels
+[33m48180e7[m adjusting size of signal to noise plot
+[33me10d785[m switched to landscape orientation
+[33m463a47d[m fixed many column headers
+[33m542abde[m Update prepare_lineage_df.R
+[33mba96cb6[m Update prepare_lineage_df.R
+[33m9290f3a[m Update prepare_lineage_df.R
+[33m684760a[m Update lineage_plot.R
+[33medf7bdd[m Update lineage_plot.R
+[33mb7448c1[m remove Control_type
+[33m7c8bead[m Update create_full_run_read_metrics_df.R
+[33mc032c45[m removed Control_type
+[33m2dafdb4[m Update write_all_csv_files.R
+[33ma91b3f2[m removed control_type from failed sample matrix
+[33m497b676[m Update split_pn_matrix_into_multiple_deliverables.R
+[33m291c14f[m removed control_type from failed sample matrix
+[33m615db10[m removed qualified reads column put total reads back in
+[33me313142[m Update write_all_csv_files.R
+[33m8babfd7[m removed bc1_id
+[33mc629996[m removed bc1_id from pn matrix
+[33m6df71e8[m Update illumina_read_processor.R
+[33m8d313bc[m Update illumina_read_processor.R
+[33mf011baa[m Update illumina_read_processor.R
+[33m138144b[m Update illumina_read_processor.R
+[33m3e60a4b[m Update illumina_read_processor.R
+[33m967db0c[m Update illumina_read_processor.R
+[33m7dce40c[m Update illumina_read_processor.R
+[33m0176a39[m Update illumina_read_processor.R
+[33me0c6abb[m Update illumina_read_processor.R
+[33m39fc6a3[m Update illumina_read_processor.R
+[33mcff5f9a[m Update illumina_read_processor.R
+[33m6e07180[m Update illumina_read_processor.R
+[33m991106b[m Update illumina_read_processor.R
+[33m107b194[m Update illumina_read_processor.R
+[33m9a6ccb8[m Update illumina_read_processor.R
+[33ma926727[m Update illumina_read_processor.R
+[33m0bd3b61[m Update illumina_read_processor.R
+[33m3fc6bc0[m Update illumina_read_processor.R
+[33m0e9f822[m Update illumina_read_processor.R
+[33mf874267[m Update illumina_read_processor.R
+[33m2d889b1[m Update illumina_read_processor.R
+[33mb036d8f[m Update illumina_read_processor.R
+[33me1e711c[m Update illumina_read_processor.R
+[33mb2ddb3f[m Update illumina_read_processor.R
+[33md3e7a92[m Update illumina_read_processor.R
+[33m5e0b8d6[m Update illumina_read_processor.R
+[33m9828d9c[m Update illumina_read_processor.R
+[33m185a86a[m Update illumina_read_processor.R
+[33ma77cc53[m Update illumina_read_processor.R
+[33m3d2d610[m Update illumina_read_processor.R
+[33m022a668[m Update illumina_read_processor.R
+[33m75864cd[m Update illumina_read_processor.R
+[33mb0a2a63[m Add files via upload
+[33m22a223c[m removed sdf_sample
+[33mea2c991[m Update illumina_read_processor.R
+[33m73ccd3c[m Add files via upload
+[33me2e4ce8[m switched to dev version of sparklyr
+[33mc964333[m Update illumina_read_processor.R
+[33ma2af972[m sys env
+[33md0517ed[m Add files via upload
+[33m186a9d5[m Add files via upload
+[33mcac0ac4[m Add files via upload
+[33m4d89b36[m Add files via upload
+[33m39d6a3b[m Add files via upload
+[33meb8eac5[m Add files via upload
+[33m1794e1b[m commented out some code near end
+[33m15a99b2[m master = local
+[33m8fa3226[m Rename illumina_read_processor.R to inst/extdata/illumina_read_processor/illumina_read_processor.R
+[33m51043fc[m Add files via upload
+[33md05c88c[m Update final_Dockerfile
+[33m24fce9b[m Update final_Dockerfile
+[33md0d3d22[m Update final_Dockerfile
+[33m7158233[m Update final_Dockerfile
+[33m256c502[m Update final_Dockerfile
+[33md6cf767[m Update final_Dockerfile
+[33m3a676ac[m adding spark 2.3.0
+[33m2b6b1f4[m Update ion_read_processor_load_packages.R
+[33ma1d57c0[m Rename ion_read_proccessor_load_packages.R to ion_read_processor_load_packages.R
+[33mb2fcc20[m Create ion_read_proccessor_load_packages.R
+[33mcf1ca27[m Update illumina_read_processor_load_packages.R
+[33m6e8909f[m Update DESCRIPTION
+[33m805179f[m Update illumina_read_processor_load_packages.R
+[33m1e19f01[m Update illumina_read_processor_load_packages.R
+[33m66c4d29[m Create illumina_read_processor_load_packages.R
+[33mdf83c0e[m added clone repo
+[33m6a323fb[m removed repo clone stuff
+[33me05b8ff[m Update README.md
+[33m2b46c16[m Create README.md
+[33m413d650[m Rename apps/illumina_TypeSeqer.cwl to apps/illumina_typing_workflow/TypeSeqHPV_illumina_typing_workflow.cwl
+[33m62c8a58[m Rename apps/ion_torrent_hpv_workflow/README.md to apps/ion_torrent_typing_workflow/README.md
+[33m2b331fe[m Rename apps/TypeSeqHPV_Ion_Torrent_workflow.cwl to apps/ion_torrent_typing_workflow/TypeSeqHPV_ion_torrent_workflow.cwl
+[33m5aea12c[m Create README.md
+[33me21eed6[m latest version as of today for Ion workflow
+[33m5206c55[m v136
+[33m2ee53c0[m Rename inst/extdata/Ion_Torrent_report.R to inst/extdata/ion_report/Ion_Torrent_report.R
+[33m2ff8c6b[m Rename inst/extdata/final_Dockerfile to docker/final_Dockerfile
+[33madca7c5[m Create torrent_server_html_block.R
+[33m9d697f4[m Create Ion_Torrent_report.R
+[33m45936a3[m Rename inst/extdata/base_Dockerfile to docker/base_Dockerfile
+[33m8f0366e[m added R functions
+[33m33ccaf8[m Create NAMESPACE
+[33me2f2bd3[m Create DESCRIPTION
+[33me3db5b0[m Rename Dockerfile to inst/extdata/base_Dockerfile
+[33m4c85433[m Create final_Dockerfile
+[33m3196f88[m Update README.md
+[33m7057401[m Update README.md
+[33mbcb0a7d[m Update README.md
+[33mc5d9ed9[m version 126
+[33ma5d5e5c[m Create illumina_TypeSeqer_minQual_minLen_filters.csv
+[33mde67c67[m Create 2017-11-24_TypeSeqer_Filtering_Scaling_Table_v2.csv
+[33m47abb0a[m Create 2017-06-11_Pos-Neg_matrix_filtering_criteria_RefTable_v3.txt
+[33mf87f4a2[m Update Dockerfile
+[33mb43674b[m Rename 125.cwl to apps/illumina_TypeSeqer.cwl
+[33mb0aae27[m added illumina cwl
+[33m25b8ca1[m added Dockerfile
+[33ma46a4a6[m Dual barcode combinations for copying into manifest
+[33m66a3741[m Illumina barcode sequences
+[33mdc3d4a1[m Add files via upload
+[33m2b28f97[m Dual barcode combinations for copying to sample manifest
+[33m128c681[m Example manifest for Illumina analysis
+[33m2354209[m Example manifest for Ion analysis
+[33m9c04954[m Add files via upload
+[33m0413cde[m Add files via upload
+[33m3bb21d5[m Rename docs/TypeSeqer_Ion_Custom_Reference.fasta to docs/Ion/TypeSeqer_Ion_Custom_Reference.fasta
+[33me801cf8[m Add files via upload
+[33mc094dc7[m Rename CONTROLS_TypeSeqer_Control_Definitions.csv to docs/CONTROLS_TypeSeqer_Control_Definitions.csv
+[33me163ed5[m Add files via upload
+[33m28a2e22[m Create README.md
