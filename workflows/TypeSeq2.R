@@ -134,14 +134,26 @@ ion_plan <- drake::drake_plan(
                                          pn_filters = read.csv("pn_filters_report"),
                                          specimen_control_defs = user_files$control_definitions,
                                          lineage_for_report = read.csv("lineage_for_report") ) ,
-    
-    #### 9. generate grouped pn_matrix           
+
+    #### 9. render_batch_qc_report
+    ion_batch_report = render_batch_qc_report(variants_final_table = variants_final_table,
+                                         args_df = args_df,
+                                         manifest = user_files$manifest,
+                                         control_for_report = read.csv("control_for_report"),
+                                         samples_only_for_report = read.csv("samples_only_for_report"),
+                                         detailed_pn_matrix_for_report = read.csv("detailed_pn_matrix_report"),
+                                         read_count_matrix_report = read.csv("read_count_matrix_report"),
+                                         pn_filters = read.csv("pn_filters_report"),
+                                         specimen_control_defs = user_files$control_definitions,
+                                         lineage_for_report = read.csv("lineage_for_report") ) ,
+
+    #### 10. generate grouped pn_matrix           
     grouped_outputs = get_grouped_df(simple_pn_matrix_final = read.csv("pn_matrix_for_groupings"),
                                      groups_defs = user_files$grouping_defs,
-                                     ion_qc_report = ion_qc_report)
-    
-    
-    
+                                     ion_qc_report = ion_qc_report),
+
+    ### 11. collect run matrics
+    run_metrics <- collect_metrics(user_files, variants_final_table)  
 )  
 
 #### C. execute workflow plan ####
@@ -152,11 +164,12 @@ system("mkdir vcf")
 plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
-
+  
+    
 ### Compress file here
 system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")
 if(command_line_args$is_clinical == "yes"){
-    system("zip -j TypeSeq2_outputs.laboratory.zip read_summary.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
+    system("zip -j TypeSeq2_outputs.laboratory.zip read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
 }
 
 #### E. make html block for torrent server ####
