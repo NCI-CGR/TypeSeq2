@@ -19,19 +19,21 @@ require(scales)
 require(ggsci)
 library(pander)
 
+template_fn <- "batch_qc_report_template.R"
+
 system(paste0("cp ",
               system.file(
-                  "typeseq2", "Ion_Torrent_report.R", package = "TypeSeqHPV2"),
+                  "typeseq2", template_fn, package = "TypeSeqHPV2"),
               " ./"))
 
 # system("cp /TypeSeqHPV2/inst/typeseq2/Ion_Torrent_report.R ./")
 
-render(input = "Ion_Torrent_report.R",
-       output_dir = "./", output_file = "TypeSeq2HPV_QC_report.pdf", clean = FALSE)
+render(input = template_fn,
+       output_dir = "./", output_file = "TypeSeq2HPV_QC_report.pdf", clean = T, params = list(is_clinical = F, for_batch=F))
 
 if("is_clinical" %in% names(args_df) && args_df$is_clinical == "yes"){
-    render(input = "Ion_Torrent_report.R",
-       output_dir = "./", output_file = "TypeSeq2HPV_laboratory_report.pdf", clean = FALSE, params = list(is_clinical = TRUE))
+    render(input = template_fn,
+       output_dir = "./", output_file = "TypeSeq2HPV_laboratory_report.pdf", clean = T, params = list(is_clinical = TRUE, for_batch=F))
 }
 
 return(data_frame(path = "Ion_Torrent_report.pdf"))
