@@ -436,33 +436,58 @@ Project_code = levels(unique(man$Project))
 # Add a check for control-only run. If this is control-only run, samples_only_pn_matrix will be empty and 
 # there will not be a samples_only_pn_matrix_final #see line 304
     
-for (i in Project_code){
+## for (i in Project_code){
   
-  if(nrow(samples_only_pn_matrix) > 0){
-  samples_only_pn_matrix_final %>%
-    filter(!is.na(Owner_Sample_ID)) %>%
-    filter(Project == i) %>%
-    write_csv(paste0(i,"_","samples_only_matrix_results.csv"))
+##   if(nrow(samples_only_pn_matrix) > 0){
+##   samples_only_pn_matrix_final %>%
+##     filter(!is.na(Owner_Sample_ID)) %>%
+##     filter(Project == i) %>%
+##     write_csv(paste0(i,"_","samples_only_matrix_results.csv"))
   
-}    
+## }    
 
-}    
+## }    
     
-for (i in code){
+## for (i in code){
+##       print(i)
+##       write.csv(read_counts_matrix_wide_final ,file = paste0(i,"-","read_counts_matrix_results.csv"), row.names = F)
+##       write.csv(pn_filters,file = paste0(i,"-","pn_filters_report"), row.names = F)
+##       write.csv(deatiled_pn_matrix_for_report1, paste0(i,"-","detailed_pn_matrix_results.csv"), row.names = F)
+##       write.csv(simple_pn_matrix_final,paste0(i,"-","pn_matrix_results.csv"), row.names = F)
+##       write.csv(failed_pn_matrix_final,paste0(i,"-","failed_samples_pn_matrix_results.csv"), row.names = F)
+##       write.csv(control_results_final, paste0(i,"-","control_results.csv"), row.names = F)
+##       write.csv(lineage_final,paste0(i,"-","lineage_filtered_results.csv"), row.names = F)
+##       if(is_clinical){
+##         # write.csv(deatiled_pn_matrix_for_report1 %>% select(-starts_with("HPV"), -Num_Types_Pos), paste0(i,"-","detailed_pn_matrix_results.laboratory.csv"), row.names = F)
+##         write.csv(simple_pn_matrix_final %>% select(-starts_with("HPV"), -Num_Types_Pos) ,paste0(i,"-","pn_matrix_results.laboratory.csv"), row.names = F)
+##       }
+##   }
+   
+  write_batch_csv <- function(df, batch, fn){
+    df %>% filter(Assay_Batch_Code == batch ) %>% write.csv(paste0(batch,"-",fn), row.names = F)
+  }
+
+  for (i in code){
       print(i)
-      write.csv(read_counts_matrix_wide_final ,file = paste0(i,"-","read_counts_matrix_results.csv"), row.names = F)
-      write.csv(pn_filters,file = paste0(i,"-","pn_filters_report"), row.names = F)
-      write.csv(deatiled_pn_matrix_for_report1, paste0(i,"-","detailed_pn_matrix_results.csv"), row.names = F)
-      write.csv(simple_pn_matrix_final,paste0(i,"-","pn_matrix_results.csv"), row.names = F)
-      write.csv(failed_pn_matrix_final,paste0(i,"-","failed_samples_pn_matrix_results.csv"), row.names = F)
-      write.csv(control_results_final, paste0(i,"-","control_results.csv"), row.names = F)
-      write.csv(lineage_final,paste0(i,"-","lineage_filtered_results.csv"), row.names = F)
+      write_batch_csv(read_counts_matrix_wide_final, i, "read_counts_matrix_results.csv")
+      # write_batch_csv(pn_filters, i, "pn_filters_report")
+      write_batch_csv(deatiled_pn_matrix_for_report1, i, "detailed_pn_matrix_results.csv")
+
+      write_batch_csv(simple_pn_matrix_final, i, "pn_matrix_results.csv")
+      write_batch_csv(failed_pn_matrix_final, i, "failed_samples_pn_matrix_results.csv")
+      write_batch_csv(control_results_final, i, "control_results.csv")
+      write_batch_csv(lineage_final, i, "lineage_filtered_results.csv")
+
+      if(nrow(samples_only_pn_matrix) > 0){
+        write_batch_csv(samples_only_pn_matrix_final %>%
+        filter(!is.na(Owner_Sample_ID)), i ,"samples_only_matrix_results.csv")
+      }
+
       if(is_clinical){
-        # write.csv(deatiled_pn_matrix_for_report1 %>% select(-starts_with("HPV"), -Num_Types_Pos), paste0(i,"-","detailed_pn_matrix_results.laboratory.csv"), row.names = F)
-        write.csv(simple_pn_matrix_final %>% select(-starts_with("HPV"), -Num_Types_Pos) ,paste0(i,"-","pn_matrix_results.laboratory.csv"), row.names = F)
+        write_batch_csv(simple_pn_matrix_final %>% select(-starts_with("HPV"), -Num_Types_Pos) , i, "pn_matrix_results.laboratory.csv")
       }
   }
-   
+
       
 }
 
