@@ -70,3 +70,42 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 }
 
 # plate_summary (control_for_report,samples_only_for_report, is_clinical=F,for_batch=T)
+
+#' Make data frame
+#' @param df is a data.frame with 3 columns: row id, column id, value
+#' @param dimnames, a list of two character vectors for dimnames of the output df
+#' @param default_value, default value for the data frame
+#' @NoRd
+.make_df <- function( df, dimnames, default_value = 0){
+
+    df <- df[,1:3] %>% as.data.frame 
+    out <- matrix(default_value, nrow=length(dimnames[[1]]), ncol=length(dimnames[[2]]), dimnames=dimnames) %>% as.data.frame
+    
+    for( i in 1:nrow(df)){
+        out[df[i,1], df[i,2]] <- df[i,3]
+    }
+    return(out)
+}
+
+.convert_numeric_config <- function(v){
+    v %>% sub("^/user_files/", "",.) %>% as.numeric
+}
+
+write_batch_csv <- function(df, batch, fn) {
+    df %>%
+        filter(Assay_Batch_Code == batch) %>%
+        write.csv(paste0(batch, "-", fn), row.names = F)
+}
+
+.align_by_barcode <- function(df, barcode){
+    rv <- data.frame(barcode=barcode, stringsAsFactors=F) %>% left_join(df, by="barcode")
+    return(rv)
+}
+
+renaming_read_summary <- function(user_files){
+    # rename read_summary.csv
+    orig_fn <- "read_summary.csv"
+    new_fn <- sprintf("%s.read_summary.csv",  user_files$manifest$Assay_Batch_Code %>% unique %>% paste(collapse="_")) 
+    system(sprintf("cp %s %s", orig_fn, new_fn) ) # use cp to keep the original file for the time being
+    return(new_fn)
+}
