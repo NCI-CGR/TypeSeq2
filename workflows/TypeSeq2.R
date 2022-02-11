@@ -115,14 +115,15 @@ ion_plan <- drake::drake_plan(
         write_csv("variant_table.csv"),
 
     #### 7. joining variant table with sample sheet and write to file ####
-    variants_final_table = typing_variant_filter(variants = variant_table,
-                                                 lineage_defs = args_df$lineage_defs,
-                                                 manifest = user_files$manifest,
-                                                 specimen_control_defs = user_files$control_definitions,
-                                                 internal_control_defs = args_df$internal_control_defs,
-                                                 pn_filters = args_df$pn_filters,
-                                                 scaling_table = args_df$scaling_table, args_df$is_clinical == "yes" ) ,
+    # variants_final_table = typing_variant_filter(variants = variant_table,
+    #                                              lineage_defs = args_df$lineage_defs,
+    #                                              manifest = user_files$manifest,
+    #                                              specimen_control_defs = user_files$control_definitions,
+    #                                              internal_control_defs = args_df$internal_control_defs,
+    #                                              pn_filters = args_df$pn_filters,
+    #                                              scaling_table = args_df$scaling_table, args_df$is_clinical == "yes" ) ,
     
+    variants_final_table = typing_variant_filter2(variants=variant_table, args_df, user_files),
     #### 8. generate qc report ####
     ion_qc_report = render_ion_qc_report(variants_final_table = variants_final_table,
                                          args_df = args_df,
@@ -153,7 +154,9 @@ ion_plan <- drake::drake_plan(
                                      ion_qc_report = ion_qc_report),
 
     ### 11. collect run matrics
-    run_metrics <- collect_metrics(user_files, variants_final_table)  
+    run_metrics <- collect_metrics(user_files, variants_final_table)
+
+
 )  
 
 #### C. execute workflow plan ####
@@ -165,11 +168,15 @@ plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
   
-    
+
+### Rename read_summary.csv
+new_fn <- renaming_read_summary(readd(user_files))
+
 ### Compress file here
-system("zip -j TypeSeq2_outputs.zip read_summary.csv *results.csv *QC_report.pdf")
+system( "zip -j TypeSeq2_outputs.zip *.read_summary.csv *results.csv *QC_report.pdf *.batch_metrics_summary.csv run_metrics.csv ")
+
 if(command_line_args$is_clinical == "yes"){
-    system("zip -j TypeSeq2_outputs.laboratory.zip read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
+    system("zip -j TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
 }
 
 #### E. make html block for torrent server ####
