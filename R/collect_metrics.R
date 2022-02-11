@@ -80,8 +80,7 @@ collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics
     metrics$Perc_Reads_Usable_Total <- read_summary %$% { sum(pass_hamming) / sum(total)}
 
     ### Get the link between batch and plate
-    # manifest <- read.csv("RD111_SampleSheet_TS2-TR2-3_SCENARIO1.csv")
-    manifest <- read.csv("manifest.csv")
+    manifest <- user_files$manifest
 
     metrics$Assay_Batch_Code <- manifest %>% select(Assay_Batch_Code) %>% distinct %>% pull %>% paste( collapse=",")
 
@@ -113,17 +112,18 @@ collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics
     ### Table 4 (see Internal_control_summary.R)
     # detailed_pn_matrix_for_report,manifest,control_for_report,specimen_control_defs
     detailed_pn_matrix_for_report = read.csv("detailed_pn_matrix_report")
-    manifest = user_files$manifest
     control_for_report = read.csv("control_for_report")
     specimen_control_defs = user_files$control_definitions
 
     # group by batch (not by plate any more)
-    t2 <- detailed_pn_matrix_for_report %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( specimen_control_defs %>% select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% group_by(Assay_Batch_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass")/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% select(-total, -sample_n)
+    t2 <- detailed_pn_matrix_for_report %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( 
+        specimen_control_defs %>% select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% 
+        group_by(Assay_Batch_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type))/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% select(-total, -sample_n)
 
     ### Table 5
     t3 <- control_for_report %>%
-    select(barcode,Owner_Sample_ID,Control_Code, control_result) %>% distinct() %>%
-    inner_join(specimen_control_defs) %>%
+    select(barcode,Owner_Sample_ID, control_result) %>% distinct() %>%
+    inner_join(specimen_control_defs, by=c("Owner_Sample_ID"="Control_Code")) %>%
     inner_join(manifest %>% unite("barcode", BC1, BC2, sep="") ) %>% group_by(Assay_Batch_Code) %>% summarise(n=n(), Num_Pos_Con_Passed=sum(control_result == "pass" & Control_type == "pos"), Num_Neg_Con_Passed=sum( control_result == "pass" & Control_type == "neg"), Num_pos_con_failed=sum(control_result == "fail" & Control_type == "pos"), Num_neg_con_failed= sum(control_result == "fail" & Control_type == "neg")) %>% select(-n)
     
     batch_table <- t1 %>% inner_join(t2) %>% inner_join(t3)
