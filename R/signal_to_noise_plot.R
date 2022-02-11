@@ -23,7 +23,7 @@ filter(plotOrder <= 10) %>%
 transform(HPV_Type_count = as.integer(HPV_Type_count)) %>%
 group_by(HPV_Type, hpvStatus) %>% 
 # find mean!
-summarize(meanCount = mean(HPV_Type_count)) %>%
+summarize(meanCount = mean(HPV_Type_count, na.rm=T)) %>%
 transform(meanCount = as.numeric(meanCount)) %>%
 ungroup() %>%
 do({
