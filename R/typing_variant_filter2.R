@@ -55,7 +55,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
 
   read_count_matrix_report <- read_counts_matrix_wide %>%
     gather(HPV_Type, HPV_Type_count, -barcode, -total_reads, -hpv_reads, -Owner_Sample_ID, -`ASIC-Low`, -`ASIC-High`, -`ASIC-Med`, -`B2M-S2`, -`B2M-S`) %>%
-    write.csv("read_count_matrix_report2")
+    write.csv("read_count_matrix_report")
 
   # Rearranging column names to match the order of contigs in variant file.
   read_counts_matrix_wide_final <- mm %>%
