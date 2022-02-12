@@ -45,7 +45,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
     vv <- v %>% rlang::sym()
     # vn <- v %>% rlang::quo_name()
 
-    rv <- detailed_pn_matrix_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% bind_rows(dplyr::mutate(., !!vv :="", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass")/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% dplyr::select(-total, -sample_n) %>% dplyr::arrange(factor(!!vv, levels=c(unique(manifest %>% dplyr::pull (!!vv) ), "")),Assay_Plate_Code )
+    rv <- detailed_pn_matrix_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% bind_rows(dplyr::mutate(., !!vv :="", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type) )/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% dplyr::select(-total, -sample_n) %>% dplyr::arrange(factor(!!vv, levels=c(unique(manifest %>% dplyr::pull (!!vv) ), "")),Assay_Plate_Code )
 
     return(rv)
 }
@@ -58,7 +58,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 .control_sumamry <- function(control_for_report, specimen_control_defs, for_batch=F){
     vv <- ifelse(! for_batch, "Assay_Batch_Code", "Project") %>% rlang::sym()
 
-        rv <- control_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>%  inner_join(( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique )) %>% bind_rows(dplyr::mutate(., !!vv := "", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code)%>%  summarise(n=n(), Num_Pos_control_Passed=sum(control_result == "pass" & Control_type == "pos"), Num_Neg_control_Passed=sum( control_result == "pass" & Control_type == "neg"), Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(unique(manifest$Project), "")),Assay_Plate_Code )
+        rv <- control_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>%  inner_join(( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique )) %>% bind_rows(dplyr::mutate(., !!vv := "", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code)%>%  summarise(n=n(), Num_Pos_control_Passed=sum(control_result == "pass" & Control_type == "pos"), Num_Neg_control_Passed=sum( control_result == "pass" & Control_type == "neg"), Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(manifest %>% pull(!!vv) %>% unique, "")),Assay_Plate_Code )
 
     return(rv)
 
