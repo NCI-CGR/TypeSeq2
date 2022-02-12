@@ -4,7 +4,7 @@
 #Using detailed_pn_matrix, manifest and control results
 
 Internal_control_summary2 <- function(detailed_pn_matrix_for_report,manifest,control_for_report,specimen_control_defs, for_batch=F){
-
+    requre(pander)
     # use the code developed for collect_metrics
     # Add project for Batch level 
     t4 <- .internal_control_summary(detailed_pn_matrix_for_report,manifest, specimen_control_defs, for_batch)
