@@ -128,21 +128,6 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     tidyr::gather("type_id", "type_status", starts_with("HPV")) %>%
     mutate(line_id = gsub("_.*", "", type_id))
 
-
-  pn_sample2 <- pn_sample %>% left_join(pn_long %>% group_by(barcode) %>% summarise(Num_Types_Pos = sum(type_status == "pos", na.rm = T)))
-
-  # pn_sample2 + pn_wide2 => make detailed pn matrix (no ASIC or B2M as requested by Sarah)
-  detailed_pn_matrix <- pn_sample2 %>% 
-    bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>%
-    left_join(pn_wide2, by = "barcode") %>%
-    glimpse()
-  write.csv(detailed_pn_matrix, "detailed_pn_matrix_report")
-
-  #  print("line 110")
-
-  # with more information from manifest file (used at the end of this function)
-  deatiled_pn_matrix_for_report1 <- mm %>% inner_join(detailed_pn_matrix, by = c("barcode", "Owner_Sample_ID"))
-
   # make simple pn matrix from pn_long
   # pn_wide2_line == simple_pn_matrix
   pn_wide2_line <- pn_long %>%
@@ -158,20 +143,40 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     select(barcode, one_of(hpv_lines_in_order)) %>%
     .align_by_barcode(mm$barcode) %>%
     glimpse()
+
+  ### barcode sequencing_qc human_control Assay_SIC are available in pn_sample  
+  ### Order columns in this way: num_types_pos, sequencing_qc, human_control, and Assay_SIC columns
+  pn_sample2 <- pn_sample %>% mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos") ) %>% select(Owner_Sample_ID, barcode, Num_Types_Pos, sequencing_qc, human_control,Assay_SIC)
+
+  # pn_sample2 + pn_wide2 => make detailed pn matrix (no ASIC or B2M as requested by Sarah)
+  detailed_pn_matrix <- pn_sample2 %>% 
+    bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>%
+    left_join(pn_wide2, by = "barcode") %>%
+    glimpse()
+  write.csv(detailed_pn_matrix, "detailed_pn_matrix_report")
+
+  #  print("line 110")
+
+  # with more information from manifest file (used at the end of this function)
+  deatiled_pn_matrix_for_report1 <- mm %>% inner_join(detailed_pn_matrix, by = c("barcode", "Owner_Sample_ID"))
+
+  
   
 
   # Creating positive-negative matrix
-  simple_pn_matrix_final <- mm %>% left_join(pn_wide2_line)
+  # Add additional informaiton from 
+  simple_pn_matrix_final <- mm %>% left_join(pn_sample2, by=c("Owner_Sample_ID", "barcode")) %>% left_join(pn_wide2_line)
+
   write.csv(simple_pn_matrix_final, "pn_matrix_for_groupings")
 
   print("line 148")
 
   # Creating a list of failed non-control samples
-  ctrl_barcodes <- mm %>%
-    filter(Owner_Sample_ID %in% specimen_control_defs$Control_Code) %>%
-    pull(barcode)
+  ctrl_barcodes <- mm %>% fuzzyjoin::fuzzy_join(specimen_control_defs, mode = "inner", 
+  by = c("Owner_Sample_ID" = "Control_Code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))) %>% pull(barcode)
 
-  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter(pn_sample2$human_control == "failed_to_amplify" & (!barcode %in% ctrl_barcodes))
+  ###  add samples with "fail" for the sequencing_qc
+  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter( (human_control == "failed_to_amplify" | sequencing_qc =="fail") & (!barcode %in% ctrl_barcodes))
 
   # 2.  merge pn matrix with control defs (b2m + hpv)
   # add: "Control_Code","control_fail_code","control_result"
@@ -187,7 +192,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     bind_cols(pn_wide %>% select(starts_with("B2M"))) %>%
     bind_cols(mm %>% select(Owner_Sample_ID)) %>%
     gather(type, status, -barcode, -Owner_Sample_ID) %>%
-    inner_join(specimen_control_defs_long, by = c("Owner_Sample_ID" = "Control_Code", "type")) %>%
+    fuzzyjoin::fuzzy_join(specimen_control_defs_long %>% select(-type), mode = "inner", by = c("Owner_Sample_ID" = "Control_Code"),          match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE)))  %>%
     mutate(control_fail = ifelse(status.x == status.y, "", ifelse(status.x == "pos", "false-pos", "false-neg"))) %>%
     group_by(barcode) %>%
     summarise(control_result = ifelse(all(status.x == status.y), "pass", "fail"), control_fail_code = paste0(control_fail %>% unique() %>% setdiff(""), collapse = ";"))
@@ -306,7 +311,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     distinct() %>%
     group_by(barcode, Lineage_ID) %>%
     mutate(key = row_number()) %>%
-    mutate(AF = AF * 100) %>%
+    mutate(AF = round(AF * 100,1) ) %>%
     spread(Lineage_ID, AF) %>%
     select(-key)
 
