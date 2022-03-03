@@ -8,7 +8,7 @@
 ### typing_variant_filter has no value in the prevous step,
 # That I include it in the argument is just for to show this step depends on the step 7
 
-collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics.csv", metrics_source_dir="./raw_metrics"){
+collect_metrics <- function(user_files, variants_final_table, metrics_source_dir="./raw_metrics"){
     metrics <- list()
 
     ### Run metrics from expMeta.dat
@@ -17,7 +17,11 @@ collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics
     metrics$Run_Date <- meta[["Run Date"]]
     metrics$Analysis_Name <- meta[["Analysis Name"]]
     metrics$Run_Plan_Notes <- meta[["Notes"]]
-    metrics$Chip_Barcode <- meta[["Barcode Set"]]
+
+    ### Get the barcde from startplugin.json
+    # metrics$Chip_Barcode <- meta[["Barcode Set"]]
+    startplugin <- parse_json("startplugin.json", "./")
+    metrics$Chip_Barcode <- startplugin$expmeta$chipBarcode
 
     ### raw_peak_signal
     peak_signal <- parse_key_value(file.path(metrics_source_dir, "raw_peak_signal"))
@@ -63,7 +67,8 @@ collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics
     ### Work on read_summary.csv
     read_summary <- read.csv("read_summary.csv") %>% setNames(c("id", "total", "pass_za", "pass_mapq", "pass_hamming", "pass_za_perc", "pass_mapq_perc", "pass_hamming_perc"))
 
-    metrics$TypeSeq2_Usable_Reads <- sum(read_summary$total)
+    # use pass_hamming instead
+    metrics$TypeSeq2_Usable_Reads <- sum(read_summary$pass_hamming)
 
     ## Ref: read_summary_calcs.xlsx
     ## Perc_Reads_Filtered_ZA	(reads lost at this step)
@@ -131,6 +136,9 @@ collect_metrics <- function(user_files, variants_final_table, outfn="run_metrics
     ### Assign NA if no value assigned
     # see https://stackoverflow.com/questions/50940269/r-using-the-unlist-function-for-a-list-that-has-some-elements-being-integer0/50940340
     is.na(metrics) <- lengths(metrics) == 0
+
+    #  outfn="run_metrics.csv"
+    outfn <- sprintf("%s.run_metrics.csv", gsub(",", "_", metrics$Assay_Batch_Code) )
 
     write.table(data.frame(Name=names(metrics), Value=unlist(metrics)),file=outfn, sep="," , row.names=F) 
 
