@@ -17,7 +17,8 @@ arrange(HPV_Type, Lineage_ID) %>%
 group_by(HPV_Type) %>%
 mutate(lineage_num = 1:n()) %>%
 mutate(lineage_num = factor(lineage_num)) %>%
-mutate(sub_type = ifelse(typeCount == 0,"",sub_type))
+mutate(sub_type = ifelse(typeCount == 0,"",sub_type)) %>% 
+ungroup %>% mutate(HPV_Type=.sort_ids(HPV_Type), Lineage_ID = .sort_ids(Lineage_ID))
   
 returnPlot1 = ggplot(lineage_plot_table, aes(x=Lineage_ID, y=typeCount, fill = lineage_num)) +
 geom_bar(stat="identity", position = position_dodge(width=0.5)) +
@@ -32,6 +33,7 @@ labs(title="Lineage Distribution By Type.  Colors Represent Within Type Grouping
       plot.title = element_text(size=18, face="bold")) +
 theme(
   panel.background = element_rect(fill = "white"),
+  legend.position="none",
   plot.margin = margin(0.5, 0.5, 0.5, 0, "cm"),
   plot.background = element_rect(
     fill = "grey90",
