@@ -109,3 +109,8 @@ renaming_read_summary <- function(user_files){
     system(sprintf("cp %s %s", orig_fn, new_fn) ) # use cp to keep the original file for the time being
     return(new_fn)
 }
+
+.sort_ids <- function(str){
+    rv <- factor(str, levels=stringr::str_sort(unique(str), numeric=T))
+    return(rv)
+}
