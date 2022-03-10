@@ -95,7 +95,8 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   pn_sample <- read_counts_matrix_wide %>%
     mutate(sequencing_qc = ifelse(total_reads >= min_reads_per_sample, "pass", "fail"), human_control = ifelse(hpv_reads >= min_hpv_reads_per_sample, "pass", NA)) %>%
     select(Owner_Sample_ID, barcode, sequencing_qc, human_control)
-
+  
+  ### pn_wide has all the internal control columns
   # join pn_sample first and reset depth of HPV amplicons to 0 if sequencing_qc is failed
   pn_wide <- (read_counts_matrix_long %>% inner_join(pn_sample %>% select(barcode, sequencing_qc), by = "barcode") %>% mutate(depth = ifelse(grepl("^HPV", CHROM) & sequencing_qc == "fail", 0, depth))) %>%
     inner_join(pn_filter_df, by = "CHROM") %>%
@@ -192,13 +193,21 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     bind_cols(pn_wide %>% select(starts_with("B2M"))) %>%
     bind_cols(mm %>% select(Owner_Sample_ID)) %>%
     gather(type, status, -barcode, -Owner_Sample_ID) %>%
-    fuzzyjoin::fuzzy_join(specimen_control_defs_long %>% select(-type), mode = "inner", by = c("Owner_Sample_ID" = "Control_Code"),          match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE)))  %>%
+    fuzzyjoin::fuzzy_join(specimen_control_defs_long, mode = "inner", 
+      by = c("Owner_Sample_ID" = "Control_Code", "type"),          match_fun = list(
+        function(x, y) str_detect(x, fixed(y, ignore_case = TRUE)),
+        `==`
+        )) %>%
     mutate(control_fail = ifelse(status.x == status.y, "", ifelse(status.x == "pos", "false-pos", "false-neg"))) %>%
     group_by(barcode) %>%
     summarise(control_result = ifelse(all(status.x == status.y), "pass", "fail"), control_fail_code = paste0(control_fail %>% unique() %>% setdiff(""), collapse = ";"))
 
-  # Adding manifest to the final results
-  control_results_final <- mm %>%
+  # Adding manifest to the final results 
+  # also add B2M and ASIC columns, num_types_pos
+  control_results_final <- mm %>% 
+    # add extra internal control status for QC/QA
+    bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>% 
+    inner_join(pn_sample2) %>%
     inner_join(control_results) %>%
     inner_join(pn_wide2_line)
 
