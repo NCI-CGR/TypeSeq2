@@ -5,22 +5,28 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   lineage_defs <- args_df$lineage_defs
   manifest <- user_files$manifest
   specimen_control_defs <- user_files$control_definitions
-  internal_control_defs <-  args_df$internal_control_defs
+  internal_control_defs <- args_df$internal_control_defs
   pn_filters <- args_df$pn_filters
   scaling_table <- args_df$scaling_table
   is_clinical <- args_df$is_clinical == "yes"
-  min_reads_per_sample <- args_df$min_reads_per_sample %>% .convert_numeric_config
-  min_hpv_reads_per_sample <-  args_df$min_hpv_reads_per_sample %>% .convert_numeric_config
+  min_reads_per_sample <- args_df$min_reads_per_sample %>% .convert_numeric_config()
+  min_hpv_reads_per_sample <- args_df$min_hpv_reads_per_sample %>% .convert_numeric_config()
 
   # add manifest to variants table ----
   mm <- manifest %>%
     unite("barcode", BC1, BC2, sep = "") %>%
     mutate_if(is.factor, ~ as.character(.))
 
-  barcode2sample_id <- mm %>% select(barcode, Owner_Sample_ID) %>%  deframe()
+  barcode2sample_id <- mm %>%
+    select(barcode, Owner_Sample_ID) %>%
+    deframe()
 
-  contigs <- variants %>% filter(HS) %>% pull(CHROM) %>% unique()
-  
+  contigs <- variants %>%
+    filter(HS == 1) %>%
+    pull(CHROM) %>%
+    unique() %>%
+    str_sort(numeric = T)
+
   hpv_ids_in_order <- str_sort(contigs %>% grep("^HPV", ., v = T), numeric = T)
   hpv_lines_in_order <- hpv_ids_in_order %>%
     gsub("_.*", "", .) %>%
@@ -28,27 +34,41 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     str_sort(numeric = T)
 
 
-  empty_cnt <- expand.grid(
-    barcode = mm$barcode %>% unique(), CHROM = contigs,
-    depth = 0, stringsAsFactors = F
-  )
+  ## empty_cnt <- expand.grid(
+  ##   barcode = mm$barcode %>% unique(), CHROM = contigs,
+  ##   depth = 0, stringsAsFactors = F
+  ## )
+
+  dp_df <- variants %>%
+    filter(HS == 1) %>%
+    group_by(barcode, CHROM) %>%
+    summarize(depth = max(c(0, DP), na.rm = T))
+
+  # "Owner_Sample_ID" "barcode"         "total_reads"
+  dp_full_df <- .make_df(dp_df, list(mm$barcode, contigs)) %>%
+    mutate(total_reads = rowSums(.), hpv_reads = select(., starts_with("HPV")) %>% rowSums())
+
+  read_counts_matrix_wide <- mm %>%
+    select(Owner_Sample_ID, barcode) %>%
+    bind_cols(dp_full_df)
+
 
   # Match the same row order with manifest
-  read_counts_matrix_wide <- mm %>%
-    inner_join(variants %>% filter(HS), by = "barcode") %>%
-    group_by(barcode, CHROM) %>%
-    summarize(depth = max(c(0, DP), na.rm = T)) %>%
-    bind_rows(empty_cnt) %>%
-    group_by(barcode, CHROM) %>%
-    summarize(depth = max(depth)) %>%
-    group_by(barcode) %>%
-    mutate(total_reads = sum(depth, na.rm = T)) %>%
-    spread(CHROM, depth, fill = 0) %>%
-    mutate(Owner_Sample_ID = barcode2sample_id[barcode]) %>%
-    select(Owner_Sample_ID, everything()) %>%
-    ungroup() %>%
-    mutate(hpv_reads = select(., starts_with("HPV")) %>% rowSums()) %>%
-    arrange(match(barcode, mm$barcode))
+  ## read_counts_matrix_wide <- mm %>%
+  ##   inner_join(variants %>% filter(HS), by = "barcode") %>%
+  ##   group_by(barcode, CHROM) %>%
+  ##   summarize(depth = max(c(0, DP), na.rm = T)) %>%
+  ##   bind_rows(empty_cnt) %>%
+  ##   group_by(barcode, CHROM) %>%
+  ##   summarize(depth = max(depth)) %>%
+  ##   group_by(barcode) %>%
+  ##   mutate(total_reads = sum(depth, na.rm = T)) %>%
+  ##   spread(CHROM, depth, fill = 0) %>%
+  ##   mutate(Owner_Sample_ID = barcode2sample_id[barcode]) %>%
+  ##   select(Owner_Sample_ID, everything()) %>%
+  ##   ungroup() %>%
+  ##   mutate(hpv_reads = select(., starts_with("HPV")) %>% rowSums()) %>%
+  ##   arrange(match(barcode, mm$barcode))
 
   read_counts_matrix_long <- read_counts_matrix_wide %>% gather(CHROM, depth, -total_reads, -hpv_reads, -Owner_Sample_ID, -barcode)
 
@@ -90,12 +110,12 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
 
 
   # make detailed pn matrix ----
-  
+
   # pn_sample should be in the same order as read_counts_matrix_wide and manifest
   pn_sample <- read_counts_matrix_wide %>%
     mutate(sequencing_qc = ifelse(total_reads >= min_reads_per_sample, "pass", "fail"), human_control = ifelse(hpv_reads >= min_hpv_reads_per_sample, "pass", NA)) %>%
     select(Owner_Sample_ID, barcode, sequencing_qc, human_control)
-  
+
   ### pn_wide has all the internal control columns
   # join pn_sample first and reset depth of HPV amplicons to 0 if sequencing_qc is failed
   pn_wide <- (read_counts_matrix_long %>% inner_join(pn_sample %>% select(barcode, sequencing_qc), by = "barcode") %>% mutate(depth = ifelse(grepl("^HPV", CHROM) & sequencing_qc == "fail", 0, depth))) %>%
@@ -103,9 +123,10 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     mutate(status = ifelse(depth >= Min_reads_per_type & depth / total_reads >= Min_perc_per_type, "pos", "neg")) %>%
     glimpse() %>%
     select(-depth, -total_reads, -hpv_reads, -Min_reads_per_type, -Min_perc_per_type) %>%
-    spread(CHROM, status) %>% .align_by_barcode(mm$barcode)
+    spread(CHROM, status) %>%
+    .align_by_barcode(mm$barcode)
 
- 
+
   sic_names <- c("ASIC-Low", "ASIC-Med", "ASIC-High")
   hc_names <- c("B2M-S", "B2M-S2")
 
@@ -145,12 +166,14 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     .align_by_barcode(mm$barcode) %>%
     glimpse()
 
-  ### barcode sequencing_qc human_control Assay_SIC are available in pn_sample  
+  ### barcode sequencing_qc human_control Assay_SIC are available in pn_sample
   ### Order columns in this way: num_types_pos, sequencing_qc, human_control, and Assay_SIC columns
-  pn_sample2 <- pn_sample %>% mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos") ) %>% select(Owner_Sample_ID, barcode, Num_Types_Pos, sequencing_qc, human_control,Assay_SIC)
+  pn_sample2 <- pn_sample %>%
+    mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos")) %>%
+    select(Owner_Sample_ID, barcode, Num_Types_Pos, sequencing_qc, human_control, Assay_SIC)
 
   # pn_sample2 + pn_wide2 => make detailed pn matrix (no ASIC or B2M as requested by Sarah)
-  detailed_pn_matrix <- pn_sample2 %>% 
+  detailed_pn_matrix <- pn_sample2 %>%
     bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>%
     left_join(pn_wide2, by = "barcode") %>%
     glimpse()
@@ -161,23 +184,29 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # with more information from manifest file (used at the end of this function)
   deatiled_pn_matrix_for_report1 <- mm %>% inner_join(detailed_pn_matrix, by = c("barcode", "Owner_Sample_ID"))
 
-  
-  
+
+
 
   # Creating positive-negative matrix
-  # Add additional informaiton from 
-  simple_pn_matrix_final <- mm %>% left_join(pn_sample2, by=c("Owner_Sample_ID", "barcode")) %>% left_join(pn_wide2_line)
+  # Add additional informaiton from
+  simple_pn_matrix_final <- mm %>%
+    left_join(pn_sample2, by = c("Owner_Sample_ID", "barcode")) %>%
+    left_join(pn_wide2_line)
 
   write.csv(simple_pn_matrix_final, "pn_matrix_for_groupings")
 
   print("line 148")
 
   # Creating a list of failed non-control samples
-  ctrl_barcodes <- mm %>% fuzzyjoin::fuzzy_join(specimen_control_defs, mode = "inner", 
-  by = c("Owner_Sample_ID" = "Control_Code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))) %>% pull(barcode)
+  ctrl_barcodes <- mm %>%
+    fuzzyjoin::fuzzy_join(specimen_control_defs,
+      mode = "inner",
+      by = c("Owner_Sample_ID" = "Control_Code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))
+    ) %>%
+    pull(barcode)
 
   ###  add samples with "fail" for the sequencing_qc
-  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter( (human_control == "failed_to_amplify" | sequencing_qc =="fail") & (!barcode %in% ctrl_barcodes))
+  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter((human_control == "failed_to_amplify" | sequencing_qc == "fail") & (!barcode %in% ctrl_barcodes))
 
   # 2.  merge pn matrix with control defs (b2m + hpv)
   # add: "Control_Code","control_fail_code","control_result"
@@ -193,20 +222,22 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     bind_cols(pn_wide %>% select(starts_with("B2M"))) %>%
     bind_cols(mm %>% select(Owner_Sample_ID)) %>%
     gather(type, status, -barcode, -Owner_Sample_ID) %>%
-    fuzzyjoin::fuzzy_join(specimen_control_defs_long, mode = "inner", 
-      by = c("Owner_Sample_ID" = "Control_Code", "type"),          match_fun = list(
+    fuzzyjoin::fuzzy_join(specimen_control_defs_long,
+      mode = "inner",
+      by = c("Owner_Sample_ID" = "Control_Code", "type"), match_fun = list(
         function(x, y) str_detect(x, fixed(y, ignore_case = TRUE)),
         `==`
-        )) %>%
+      )
+    ) %>%
     mutate(control_fail = ifelse(status.x == status.y, "", ifelse(status.x == "pos", "false-pos", "false-neg"))) %>%
     group_by(barcode) %>%
     summarise(control_result = ifelse(all(status.x == status.y), "pass", "fail"), control_fail_code = paste0(control_fail %>% unique() %>% setdiff(""), collapse = ";"))
 
-  # Adding manifest to the final results 
+  # Adding manifest to the final results
   # also add B2M and ASIC columns, num_types_pos
-  control_results_final <- mm %>% 
+  control_results_final <- mm %>%
     # add extra internal control status for QC/QA
-    bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>% 
+    bind_cols(pn_wide %>% select(one_of(sic_names), one_of(hc_names))) %>%
     inner_join(pn_sample2) %>%
     inner_join(control_results) %>%
     inner_join(pn_wide2_line)
@@ -232,7 +263,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     # add total count, human control, Num_Types_Pos
     samples_only_for_report <- samples_only_pn_matrix %>%
       inner_join(read_counts_matrix_wide %>% select(barcode, total_reads)) %>%
-      inner_join(pn_sample2 %>% select(barcode, human_control, Num_Types_Pos)) 
+      inner_join(pn_sample2 %>% select(barcode, human_control, Num_Types_Pos))
 
     write_csv(samples_only_for_report, "samples_only_for_report")
   } else {
@@ -299,35 +330,54 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     unique() %>%
     str_sort(numeric = T)
 
+  # lineage_filtered_pass takes avg (AF) as AF and keep one barcode
+  # We need filter lineage to have all component variants with "pos" status
+  ## lineage_filtered_pass <- lineage_all %>%
+  ##   filter(lineage_status == 1) %>%
+  ##   group_by(barcode, Lineage_ID) %>%
+  ##   mutate(AF = sum(AF) / sum(lineage_status)) %>%
+  ##   ungroup() %>%
+  ##   left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = F) %>% select(barcode, CHROM, Owner_Sample_ID, status, Num_Types_Pos), by = c("barcode", "CHROM")) %>%
+  ##   unique() %>%
+  ##   filter(status != "neg") %>% #TODO filter it earlier.
+  ##   select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF)
+
   lineage_filtered_pass <- lineage_all %>%
+    select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF, def_count, lineage_status) %>%
     filter(lineage_status == 1) %>%
+    # to have additional dp status which is assigned to CHROM
+    left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = F) %>% select(barcode, CHROM, status), by = c("barcode", "CHROM")) %>%
+    # now we required all have "pos" status to "pass"
     group_by(barcode, Lineage_ID) %>%
-    mutate(AF = sum(AF) / sum(lineage_status)) %>%
-    ungroup() %>%
-    left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = F) %>% select(barcode, CHROM, Owner_Sample_ID, status, Num_Types_Pos), by = c("barcode", "CHROM")) %>%
-    unique() %>%
-    filter(status != "neg") %>%
-    select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF)
+    filter(sum(status == "pos") == def_count) %>%
+    mutate(AF = mean(AF)) %>%
+    # there is no need for CHROM, POS, REF, ALT any more
+    select(barcode, Lineage_ID, AF) %>%
+    unique()
 
   # Join the passed table to original table
   # a matrix of AF*100 (barcode x Lineage_ID) with the barcode column
+  # TODO a better way to make it
 
-  lineage_for_report <- lineage_all %>%
-    select(barcode, CHROM, POS, REF, ALT, Lineage_ID) %>%
-    full_join(lineage_filtered_pass) %>%
-    mutate(AF = ifelse(is.na(AF), 0, AF)) %>%
-    select(-CHROM, -POS, -REF, -ALT) %>%
-    distinct() %>%
-    group_by(barcode, Lineage_ID) %>%
-    mutate(key = row_number()) %>%
-    mutate(AF = round(AF * 100,1) ) %>%
-    spread(Lineage_ID, AF) %>%
-    select(-key)
+  # The old code is too complicate and problematic
+  ## lineage_for_report <- lineage_all %>%
+  ##   select(barcode, CHROM, POS, REF, ALT, Lineage_ID) %>%
+  ##   full_join(lineage_filtered_pass) %>%
+  ##   mutate(AF = ifelse(is.na(AF), 0, AF)) %>%
+  ##   select(-CHROM, -POS, -REF, -ALT) %>%
+  ##   distinct() %>%
+  ##   group_by(barcode, Lineage_ID) %>%
+  ##   mutate(key = row_number()) %>%
+  ##   mutate(AF = round(AF * 100,1) ) %>%
+  ##   spread(Lineage_ID, AF) %>%
+  ##   select(-key)
 
+  # we just need to create a AF matrix with 0 by default, filled with AF values from
+  # lineage_filtered_pass
+  lineage_for_report <- .make_df(lineage_filtered_pass, list(mm$barcode, lineage_ids), 0)
 
   # Join manifest to add all the information
-  lineage_final <- mm %>%
-    inner_join(lineage_for_report[, str_sort(colnames(lineage_for_report), numeric = T)])
+  lineage_final <- mm %>% bind_cols(lineage_for_report)
 
   write.csv(lineage_final, "lineage_for_report")
 
