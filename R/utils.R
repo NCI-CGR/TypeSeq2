@@ -79,7 +79,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 .make_df <- function( df, dimnames, default_value = 0){
 
     df <- df[,1:3] %>% as.data.frame 
-    out <- matrix(default_value, nrow=length(dimnames[[1]]), ncol=length(dimnames[[2]]), dimnames=dimnames) %>% as.data.frame
+    out <- matrix(default_value, nrow=length(dimnames[[1]]), ncol=length(dimnames[[2]]), dimnames=dimnames) %>% as.data.frame(check.names = F)
     
     for( i in 1:nrow(df)){
         out[df[i,1], df[i,2]] <- df[i,3]
@@ -113,4 +113,15 @@ renaming_read_summary <- function(user_files){
 .sort_ids <- function(str){
     rv <- factor(str, levels=stringr::str_sort(unique(str), numeric=T))
     return(rv)
+}
+
+numCheck <- function(x, na.coding = c("NA", "")) {
+    x[x %in% na.coding] <- NA
+
+    x <- x[!is.na(x)]
+    if (suppressWarnings(all(!is.na(as.numeric(x))))) {
+        return(T)
+    } else {
+        return(F)
+    }
 }
