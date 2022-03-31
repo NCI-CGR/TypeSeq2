@@ -110,6 +110,7 @@ ion_plan <- drake::drake_plan(
         split(.$vcf_out) %>%
         future_map_dfr(vcf_to_dataframe) %>%
         glimpse() %>%
+        mutate_if(numCheck, ~ as.numeric(.)) %>%
         mutate(barcode = str_sub(filename, 5, 10)) %>%
         glimpse() %>%
         write_csv("variant_table.csv"),

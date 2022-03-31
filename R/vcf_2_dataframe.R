@@ -34,7 +34,7 @@ vcf_to_dataframe <- function(vcf_files){
       separate_rows(id_intersect, sep = ",") %>%
       glimpse()
 
-    variant_table_return = bind_rows(variant_table_snv, variant_table_mult_split) %>% mutate_if(numCheck, ~ as.numeric(.))
+    variant_table_return = bind_rows(variant_table_snv, variant_table_mult_split) 
 
     return(variant_table_return)
 
