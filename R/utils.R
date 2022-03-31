@@ -65,12 +65,6 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 }
 
 
-.plate_summary <- function(control_for_report,samples_only_for_report, is_clinical=F,for_batch=F){
-
-}
-
-# plate_summary (control_for_report,samples_only_for_report, is_clinical=F,for_batch=T)
-
 #' Make data frame
 #' @param df is a data.frame with 3 columns: row id, column id, value
 #' @param dimnames, a list of two character vectors for dimnames of the output df
