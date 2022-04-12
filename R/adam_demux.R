@@ -3,7 +3,7 @@ adam_demux <- function(user_files, ram, cores){
   require(dplyr)
   require(fs)
   
-  system(paste0("/home/adam/bin/adam-shell --driver-memory ",ram," --driver-cores ",cores," -i /TypeSeqHPV2/inst/methylation/demux_3prime_barcode_adam.scala"))
+  system(paste0("/home/adam/bin/adam-shell --driver-memory ",ram," --driver-cores ",cores," -i /TypeSeq2/inst/methylation/demux_3prime_barcode_adam.scala"))
   
   system(paste0("samtools index demux_reads.bam"), wait = TRUE)
   

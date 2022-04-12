@@ -1,6 +1,6 @@
-Package: TypeSeqHPV2
-Title: TypeSeqHPV Analysis Functions and Workflows (Version 2)
-Version: 2.1.3
+Package: TypeSeq2
+Title: TypeSeq2 HPV Analysis Functions and Workflows
+Version: 2.1.4
 Authors@R: person("David", "Roberson", email = "david.roberson@nih.gov", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.0)

@@ -1,5 +1,5 @@
 #### A. load packages ####
-library(TypeSeqHPV2)
+library(TypeSeq2)
 library(drake)
 library(tidyverse)
 library(parallel)
@@ -182,8 +182,8 @@ if(command_line_args$is_clinical == "yes"){
 
 #### E. make html block for torrent server ####
 html_block = if ( command_line_args$is_torrent_server == "yes") {
-    # system("cp /TypeSeqHPV2/inst/typeseq2/torrent_server_html_block.R ./")
-    system(paste0("cp ", system.file("typeseq2", "torrent_server_html_block.R",  package = "TypeSeqHPV2"), " ./"))
+    # system("cp /TypeSeq2/inst/typeseq2/torrent_server_html_block.R ./")
+    system(paste0("cp ", system.file("typeseq2", "torrent_server_html_block.R",  package = "TypeSeq2"), " ./"))
 
     render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = command_line_args$is_clinical == "yes"))
 }

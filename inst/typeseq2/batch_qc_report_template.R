@@ -59,7 +59,7 @@ temp = Internal_control_summary_safe(detailed_pn_matrix_for_report,manifest,cont
 #samples_only matrix
 cat("\n\n\\pagebreak\n")
 cat("## Counts and Percentage of Types Positive by Project\n\n") 
-percent_positive_histogram_safe <- possibly(TypeSeqHPV2::percent_positive_histogram, otherwise = data.frame())
+percent_positive_histogram_safe <- possibly(TypeSeq2::percent_positive_histogram, otherwise = data.frame())
 
 temp = percent_positive_histogram_safe(samples_only_for_report)
 
@@ -78,7 +78,7 @@ temp = coinfection_rate_histogram_safe(samples_only_for_report)
 ## #' ## Signal-to-Noise Plot
 ## #+ signal to noise plot, echo=FALSE, message=FALSE, warning=FALSE, fig.width=20, fig.height=9, fig.align = "center"
 ## #scaling file and simple pn matrix and read counts matrix
-## signal_to_noise_plot_safe <- possibly(TypeSeqHPV2::signal_to_noise_plot, otherwise = data.frame())
+## signal_to_noise_plot_safe <- possibly(TypeSeq2::signal_to_noise_plot, otherwise = data.frame())
 ## temp = signal_to_noise_plot_safe(read_count_matrix_report,detailed_pn_matrix_for_report,pn_filters)
 
 
@@ -86,7 +86,7 @@ temp = coinfection_rate_histogram_safe(samples_only_for_report)
 # samples only matrix
 cat("\n\n\\pagebreak\n")
 cat("## Distribution of Sample HPV Positivity by Project\n\n")
-hpv_status_circle_plot_safe <- possibly(TypeSeqHPV2::hpv_status_circle_plot, otherwise = data.frame())
+hpv_status_circle_plot_safe <- possibly(TypeSeq2::hpv_status_circle_plot, otherwise = data.frame())
 
 temp = hpv_status_circle_plot_safe(samples_only_for_report)
 
@@ -94,7 +94,7 @@ temp = hpv_status_circle_plot_safe(samples_only_for_report)
 #+ lineage table plot 1, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=9, fig.align = "center", eval=!is_clinical, results='asis'
 cat("\n\n\\pagebreak\n")
 cat("## Lineage Plots\n\n")
-lineage_plot_safe <- possibly(TypeSeqHPV2::lineage_plot, otherwise = data.frame())
+lineage_plot_safe <- possibly(TypeSeq2::lineage_plot, otherwise = data.frame())
 # lineage results .csv
 temp = lineage_plot_safe(lineage_for_report, 1)
 

@@ -23,10 +23,10 @@ template_fn <- "batch_qc_report_template.R"
 
 system(paste0("cp ",
               system.file(
-                  "typeseq2", template_fn, package = "TypeSeqHPV2"),
+                  "typeseq2", template_fn, package = "TypeSeq2"),
               " ./"))
 
-# system("cp /TypeSeqHPV2/inst/typeseq2/Ion_Torrent_report.R ./")
+# system("cp /TypeSeq2/inst/typeseq2/Ion_Torrent_report.R ./")
 
 render(input = template_fn,
        output_dir = "./", output_file = "TypeSeq2HPV_QC_report.pdf", clean = T, params = list(is_clinical = F, for_batch=F))

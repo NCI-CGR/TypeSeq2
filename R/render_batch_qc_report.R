@@ -23,7 +23,7 @@ render_batch_qc_report <- function(variants_final_table,
 
     system(paste0("cp ",
                 system.file(
-                    "typeseq2", template_fn, package = "TypeSeqHPV2"),
+                    "typeseq2", template_fn, package = "TypeSeq2"),
                 " ./"))
 
 
