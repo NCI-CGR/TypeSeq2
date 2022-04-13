@@ -51,7 +51,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
         # join manifest to have Assay_Batch_Code/Project for all samples
         inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% 
         # join control_for_report to get the number of control samples
-        left_join( control_for_report %>% dplyr::select(barcode,Control_type) unique ) %>% 
+        left_join( control_for_report %>% dplyr::select(barcode,Control_type) %>% unique ) %>% 
         # A trick to have summary row
         bind_rows(dplyr::mutate(., !!vv :="", Assay_Plate_Code = "All_plates")) %>% 
         group_by(!!vv, Assay_Plate_Code) %>% 
