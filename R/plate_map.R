@@ -161,34 +161,30 @@ empty_wells = as.data.frame(expand.grid(rownum=well_ID, colnum= well_num,strings
     print(plot)
     data
   })
-#print(gridExtra::grid.arrange(grobs = plot_list,  nrow = 6,ncol = 2, newpage = T))
+# print(gridExtra::grid.arrange(grobs = plot_list,  nrow = 6,ncol = 2, newpage = T))
 
 
 
-#B2M_plot(manifest,detailed_pn_matrix_for_report)
+# B2M_plot(manifest,detailed_pn_matrix_for_report)
 
-#Plate map for all batch-controls
+# Plate map for all batch-controls
 
-#batch_control_plot = function(control_results_final,specimen_control_defs,detailed_pn_matrix_for_report) {
+# batch_control_plot = function(control_results_final,specimen_control_defs,detailed_pn_matrix_for_report) {
 
-  plate_data <- control_for_report %>% 
-  select(barcode, Owner_Sample_ID,control_result) %>% 
-  inner_join(specimen_control_defs %>% select(Control_Code,Control_type), by =c("Owner_Sample_ID" ="Control_Code")) %>%
-  full_join(detailed_pn_matrix_for_report %>% select(barcode,Owner_Sample_ID)) %>%
-  transform(Control_type = as.character(Control_type), control_result = as.character(control_result)) %>%
-  mutate(control_result = ifelse(is.na(control_result),"sample",control_result)) %>%
-  mutate(Control_type = ifelse(is.na(Control_type),as.character("sample"),Control_type)) %>%
-  inner_join(manifest %>% mutate(barcode = paste0(BC1,BC2)),by = c("barcode","Owner_Sample_ID")) %>% 
-  select(barcode,Owner_Sample_ID,control_result, Control_type, Assay_Plate_Code,Assay_Well_ID, Assay_Batch_Code) %>%
-  mutate(color = "white") %>%
-  mutate(color = ifelse(control_result == "pass" & Control_type == "pos","pos_pass",color)) %>%
-  mutate(color = ifelse(control_result == "fail" & Control_type == "pos",'pos_fail',color)) %>%
-  mutate(color = ifelse(control_result == "pass" & Control_type == "neg",'neg_pass',color)) %>%
-  mutate(color = ifelse(control_result == "fail" & Control_type == "neg",'neg_fail',color)) %>%
-  mutate(color =ifelse(control_result == "sample","sample",color)) %>%
-  mutate(Control_code = ifelse(Control_type == "sample","sample",Owner_Sample_ID)) %>%
-  separate(Assay_Well_ID,c("rownum","colnum"),sep =1) %>%
-  drop_na() 
+plate_data <- control_for_report %>%
+              mutate_if(is.factor, ~ as.character(.)) %>%
+              full_join(detailed_pn_matrix_for_report %>% select(barcode, Owner_Sample_ID)) %>%
+              mutate(control_result = ifelse(is.na(control_result), "sample", control_result)) %>%
+              mutate(Control_type = ifelse(is.na(Control_type),as.character("sample"),Control_type)) %>%
+              mutate(color = "white") %>%
+              mutate(color = ifelse(control_result == "pass" & Control_type == "pos","pos_pass",color)) %>%
+              mutate(color = ifelse(control_result == "fail" & Control_type == "pos",'pos_fail',color)) %>%
+              mutate(color = ifelse(control_result == "pass" & Control_type == "neg",'neg_pass',color)) %>%
+              mutate(color = ifelse(control_result == "fail" & Control_type == "neg",'neg_fail',color)) %>%
+              mutate(color =ifelse(control_result == "sample","sample",color)) %>%
+              mutate(Control_code = ifelse(Control_type == "sample","sample",Owner_Sample_ID)) %>%
+              separate(Assay_Well_ID,c("rownum","colnum"),sep =1) %>%
+              drop_na() 
 
 # creat empty wells
 well_num = seq(1,12,length.out = 12)  
