@@ -35,17 +35,34 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 #' Make internal contrl summary (Table 4)
 #' @param detailed_pn_matrix_for_report
 #' @param manifest
-#' @param specimen_control_defs
+#' @param control_for_report
 #' @NoRd
 
-.internal_control_summary <- function(detailed_pn_matrix_for_report,manifest, specimen_control_defs, for_batch=F){
+.internal_control_summary <- function(detailed_pn_matrix_for_report, manifest, control_for_report, for_batch=F){
     # when the data is for each batch, data is straitified by Project
     v <- ifelse(!for_batch, "Assay_Batch_Code", "Project")
     
     vv <- v %>% rlang::sym()
     # vn <- v %>% rlang::quo_name()
 
-    rv <- detailed_pn_matrix_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% bind_rows(dplyr::mutate(., !!vv :="", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type) )/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% dplyr::select(-total, -sample_n) %>% dplyr::arrange(factor(!!vv, levels=c(unique(manifest %>% dplyr::pull (!!vv) ), "")),Assay_Plate_Code )
+    # we need Assay_Batch_Code/Project, Control_type
+    rv <- detailed_pn_matrix_for_report %>% 
+        dplyr::mutate_if(is.factor, ~ as.character(.) ) %>% 
+        # join manifest to have Assay_Batch_Code/Project for all samples
+        inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% 
+        # join control_for_report to get the number of control samples
+        left_join( control_for_report %>% dplyr::select(barcode,Control_type) unique ) %>% 
+        # A trick to have summary row
+        bind_rows(dplyr::mutate(., !!vv :="", Assay_Plate_Code = "All_plates")) %>% 
+        group_by(!!vv, Assay_Plate_Code) %>% 
+        summarise( total = n(), 
+                   sample_n = sum(is.na(Control_type)), 
+                   B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type) )/sample_n), 
+                   ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>%
+        # remove those intermediate variabes           
+        dplyr::select(-total, -sample_n) %>% 
+        # to make sure to order rows properly
+        dplyr::arrange(factor(!!vv, levels=c(unique(manifest %>% dplyr::pull (!!vv) ), "")),Assay_Plate_Code )
 
     return(rv)
 }
@@ -55,15 +72,24 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 #' @param specimen_control_defs
 #' @NoRd
 
-.control_sumamry <- function(control_for_report, specimen_control_defs, for_batch=F){
+.control_sumamry <- function(control_for_report,  for_batch=F){
     vv <- ifelse(! for_batch, "Assay_Batch_Code", "Project") %>% rlang::sym()
 
-        rv <- control_for_report %>% dplyr::mutate_if(is.factor, ~ as.character(.) ) %>%  inner_join(( specimen_control_defs %>% dplyr::select(Owner_Sample_ID=Control_Code,Control_type) %>% unique )) %>% bind_rows(dplyr::mutate(., !!vv := "", Assay_Plate_Code = "All_plates")) %>% group_by(!!vv, Assay_Plate_Code)%>%  summarise(n=n(), Num_Pos_control_Passed=sum(control_result == "pass" & Control_type == "pos"), Num_Neg_control_Passed=sum( control_result == "pass" & Control_type == "neg"), Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(control_for_report %>% pull(!!vv) %>% unique, "")),Assay_Plate_Code )
+        rv <- control_for_report %>% 
+            dplyr::mutate_if(is.factor, ~ as.character(.) )  %>% 
+            # a trick to have summary row
+            bind_rows(dplyr::mutate(., !!vv := "", Assay_Plate_Code = "All_plates")) %>% 
+            group_by(!!vv, Assay_Plate_Code)%>%  
+            summarise(n=n(), 
+                Num_Pos_control_Passed=sum(control_result == "pass" & Control_type == "pos"), 
+                Num_Neg_control_Passed=sum( control_result == "pass" & Control_type == "neg"), 
+                Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), 
+                Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% 
+            dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(control_for_report %>% pull(!!vv) %>% unique, "")),Assay_Plate_Code )
 
     return(rv)
 
 }
-
 
 #' Make data frame
 #' @param df is a data.frame with 3 columns: row id, column id, value
