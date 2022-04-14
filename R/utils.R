@@ -76,7 +76,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
 #' @param specimen_control_defs
 #' @NoRd
 
-.control_sumamry <- function(control_for_report,  for_batch=F){
+.control_summary <- function(control_for_report,  for_batch=F){
     vv <- ifelse(! for_batch, "Assay_Batch_Code", "Project") %>% rlang::sym()
 
         rv <- control_for_report %>% 
