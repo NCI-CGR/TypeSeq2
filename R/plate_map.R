@@ -172,10 +172,13 @@ empty_wells = as.data.frame(expand.grid(rownum=well_ID, colnum= well_num,strings
 # batch_control_plot = function(control_results_final,specimen_control_defs,detailed_pn_matrix_for_report) {
 
 plate_data <- control_for_report %>%
+              select(barcode, control_result, Control_type) %>%
+              full_join(detailed_pn_matrix_for_report %>% select(barcode)) %>%
               mutate_if(is.factor, ~ as.character(.)) %>%
-              full_join(detailed_pn_matrix_for_report %>% select(barcode, Owner_Sample_ID)) %>%
               mutate(control_result = ifelse(is.na(control_result), "sample", control_result)) %>%
-              mutate(Control_type = ifelse(is.na(Control_type),as.character("sample"),Control_type)) %>%
+              mutate(Control_type = ifelse(is.na(Control_type), as.character("sample"), Control_type)) %>%
+              inner_join(manifest %>% mutate(barcode = paste0(BC1,BC2)),by = c("barcode")) %>% 
+              select(barcode,Owner_Sample_ID,control_result, Control_type, Assay_Plate_Code,Assay_Well_ID, Assay_Batch_Code) %>%
               mutate(color = "white") %>%
               mutate(color = ifelse(control_result == "pass" & Control_type == "pos","pos_pass",color)) %>%
               mutate(color = ifelse(control_result == "fail" & Control_type == "pos",'pos_fail',color)) %>%
