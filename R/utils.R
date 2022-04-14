@@ -17,7 +17,11 @@ parse_json <- function(fn, metrics_source_dir="./raw_metrics"){
 #' @param x a float number between 0 and 1
 #' @NoRd
 fmt_perc <- function(x, digits=2){
-    ifelse(x != 0,paste0(round(x * 100, digits=digits), "%"),"0")
+    if(is.na(x) || is.infinite(x)){
+        return(NA_character_)
+    }
+    rv <- ifelse(x != 0, paste0(round(x * 100, digits = digits), "%"), "0")
+    return(rv)
 }
 
 #' take subset by batch
