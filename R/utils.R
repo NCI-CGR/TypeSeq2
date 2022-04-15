@@ -89,7 +89,7 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
                 Num_Neg_control_Passed=sum( control_result == "pass" & Control_type == "neg"), 
                 Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), 
                 Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% 
-            dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(control_for_report %>% pull(!!vv) %>% unique, "")),Assay_Plate_Code )
+            dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(control_for_report %>% pull(!!vv) %>% as.character %>% unique, "")),Assay_Plate_Code )
 
     return(rv)
 
