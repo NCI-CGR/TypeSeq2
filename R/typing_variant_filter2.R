@@ -343,18 +343,24 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   ##   filter(status != "neg") %>% #TODO filter it earlier.
   ##   select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF)
 
+  ### Join with simple_pn_matrix_long to acquire the status from simple pn
+  simple_pn_matrix_long <- gather(pn_wide2_line, key="simple.id", value="simple.status", -barcode )
+  
   lineage_filtered_pass <- lineage_all %>%
-    select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF, def_count, lineage_status) %>%
-    filter(lineage_status == 1) %>%
-    # to have additional dp status which is assigned to CHROM
-    left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = F) %>% select(barcode, CHROM, status), by = c("barcode", "CHROM")) %>%
-    # now we required all have "pos" status to "pass"
-    group_by(barcode, Lineage_ID) %>%
-    filter(sum(status == "pos") == def_count) %>%
-    mutate(AF = mean(AF)) %>%
-    # there is no need for CHROM, POS, REF, ALT any more
-    select(barcode, Lineage_ID, AF) %>%
-    unique()
+      select(barcode, CHROM, POS, REF, ALT, Lineage_ID, AF, def_count, lineage_status) %>%
+      filter(lineage_status == 1) %>%
+      # to have additional dp status which is assigned to CHROM
+      left_join(detailed_pn_matrix %>% gather("CHROM", "status", starts_with("HPV"), factor_key = F) %>% select(barcode, CHROM, status), by = c("barcode", "CHROM")) %>%
+      # now we required all have "pos" status to "pass"
+      group_by(barcode, Lineage_ID) %>%
+      # add status from simple_pn here
+      mutate(simple.id = gsub("_.*", "", Lineage_ID)) %>% 
+      left_join(simple_pn_matrix_long, by=c("barcode", "simple.id")) %>% 
+      filter(sum(status == "pos") == def_count & simple.status == "pos") %>%
+      mutate(AF = mean(AF)) %>%
+      # there is no need for CHROM, POS, REF, ALT any more
+      select(barcode, Lineage_ID, AF) %>%
+      unique()
 
   # Join the passed table to original table
   # a matrix of AF*100 (barcode x Lineage_ID) with the barcode column
