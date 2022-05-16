@@ -149,3 +149,27 @@ numCheck <- function(x, na.coding = c("NA", "")) {
         return(F)
     }
 }
+
+### add new "overall_qc"
+###  "overall_qc", "sequencing_qc", "human_control", "Assay_SIC" after barcode
+# pn_sample: Owner_Sample_ID  barcode sequencing_qc total_HPV_reads Assay_SIC human_control
+# output: Owner_Sample_ID    barcode overall_qc sequencing_qc Assay_SIC human_control 
+add_overall_qc <- function(pn_sample, overall_qc_defs.fn){
+  # OVERALL_QC sequencing_qc human_control total_HPV_reads Assay_SIC
+  defs.df <- read.csv(overall_qc_defs.fn, stringsAsFactors=F)  
+  
+  cols <- names(defs.df)[-1]
+
+  .d <- pn_sample %>% mutate(human_control = ifelse(grepl("pass", human_control), "pass", "fail")) %>% unite("combo", one_of(cols))
+
+  rv <- pn_sample %>% mutate(overall_qc = 
+    .d %>% left_join( 
+        defs.df %>% unite("combo", one_of(cols)), 
+        by="combo") %>% 
+        pull(OVERALL_QC) %>% 
+        replace_na("fail")) %>% 
+    # .after is not supported so use the old way to order the columns
+    # drop total_HPV_reads as it is not required
+    select(Owner_Sample_ID, barcode, overall_qc, everything(), -total_HPV_reads)
+  return(rv)
+}
