@@ -101,7 +101,7 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
 
     # metrics$Num_Samples <- samples %>% group_by(Assay_Batch_Code) %>% summarize(n=n(), Perc_HPV_Pos = sum(Num_Types_Pos>0)/n )
 
-    ### Table 2 in the pdf reporot
+    ### Table 2 in the pdf report
     # ss <- sample_summary(samples)
     # Error: Column `Perc Failed` can't be converted from numeric to character
 
@@ -109,7 +109,22 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
     # sampleSummary <- samples %>% group_by(Project) %>% summarize(n=n(), pass_n = sum (str_detect(human_control,'pass')), fail_n= sum (str_detect(human_control,'failed_to_amplify')), pass_perc = fmt_perc(pass_n/n), fail_perc= fmt_perc(fail_n/n)) %>%  select(Project_ID=Project,`Number Samples Tested`=n,`Number Passed`=pass_n,`Number Failed`=fail_n, `Perc Passed`=pass_perc,`Perc Failed`=fail_perc) %>% glimpse
 
     ### Using the similar code to generate summary for batch
-    t1 <- samples %>% group_by(Assay_Batch_Code) %>% summarize(n=n(), pass_n = sum (str_detect(human_control,'pass')), fail_n= sum (str_detect(human_control,'failed_to_amplify')), pass_perc = fmt_perc(pass_n/n), fail_perc= fmt_perc(fail_n/n)) %>%  select(Assay_Batch_Code,`Number Samples Tested`=n,`Number Passed`=pass_n,`Number Failed`=fail_n, `Perc Passed`=pass_perc,`Perc Failed`=fail_perc) 
+    t1 <- samples %>% group_by(Assay_Batch_Code) %>% 
+        summarize(  n=n(), 
+                    pass_n = sum (overall_qc == "pass"), 
+                    fail_n= sum (overall_qc == "fail"), 
+                    pass_perc = fmt_perc(pass_n/n), 
+                    fail_perc= fmt_perc(fail_n/n),
+                    seq_qc_perc = fmt_perc(sum(sequencing_qc == "pass") /n),
+                    ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/n)) %>%  
+        select(Assay_Batch_Code,
+               `Number Samples Tested`=n,
+               `Number Passed`=pass_n,
+               `Number Failed`=fail_n, 
+               `Overall QC Perc Passed`=pass_perc,
+               `Overall QC Perc Failed`=fail_perc,
+               `Sequencing QC perc passed` = seq_qc_perc,
+               `ASIC perc passed` = ASIC_perc) 
 
 
     # specimen_control_defs = user_files$control_definitions
@@ -121,9 +136,13 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
     specimen_control_defs = user_files$control_definitions
 
     # group by batch (not by plate any more)
-    t2 <- detailed_pn_matrix_for_report %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( 
-        specimen_control_defs %>% select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% 
-        group_by(Assay_Batch_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type))/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% select(-total, -sample_n)
+    # we need sample_n here so we cannot get the metrics from t1
+    # since b2m_perc is dropped, we can get asic_perc from t2,
+    # so t2 is not needed any more
+
+    ## t2 <- detailed_pn_matrix_for_report %>% inner_join(manifest %>% unite("barcode", BC1, BC2, sep="")) %>% left_join( 
+    ##     specimen_control_defs %>% select(Owner_Sample_ID=Control_Code,Control_type) %>% unique ) %>% 
+    ##     group_by(Assay_Batch_Code) %>% summarise( total = n(), sample_n = sum(is.na(Control_type)), B2M_perc = fmt_perc(sum(human_control=="pass" & is.na(Control_type))/sample_n), ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/total) ) %>% select(-total, -sample_n)
 
     ### Control_for_report has all the informatino
     t3 <- control_for_report %>%
@@ -135,7 +154,7 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
             Num_neg_con_failed = sum(control_result == "fail" & Control_type == "neg")) %>%
         select(-n)
     
-    batch_table <- t1 %>% inner_join(t2) %>% inner_join(t3)
+    batch_table <- t1 %>% left_join(t3)
 
     ### Assign NA if no value assigned
     # see https://stackoverflow.com/questions/50940269/r-using-the-unlist-function-for-a-list-that-has-some-elements-being-integer0/50940340
