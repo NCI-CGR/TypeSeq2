@@ -112,9 +112,10 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # make detailed pn matrix ----
 
   # pn_sample should be in the same order as read_counts_matrix_wide and manifest
+  # add total_HPV_reads status (and drop human_control here)
   pn_sample <- read_counts_matrix_wide %>%
-    mutate(sequencing_qc = ifelse(total_reads >= min_reads_per_sample, "pass", "fail"), human_control = ifelse(hpv_reads >= min_hpv_reads_per_sample, "pass", NA)) %>%
-    select(Owner_Sample_ID, barcode, sequencing_qc, human_control)
+    mutate(sequencing_qc = ifelse(total_reads >= min_reads_per_sample, "pass", "fail"), total_HPV_reads = ifelse(hpv_reads >= min_hpv_reads_per_sample, "pass", "fail")) %>%
+    select(Owner_Sample_ID, barcode, sequencing_qc, total_HPV_reads)
 
   ### pn_wide has all the internal control columns
   # join pn_sample first and reset depth of HPV amplicons to 0 if sequencing_qc is failed
@@ -136,8 +137,13 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     left_join(icd_df %>% unite(sic, one_of(sic_names)), by = "sic") %>%
     pull(qc_print)
 
-  pn_sample$human_control <- coalesce(pn_sample$human_control, pn_wide %>% unite(human_control, one_of(hc_names)) %>% left_join(icd_df %>% unite(human_control, one_of(hc_names)), by = "human_control") %>% pull(qc_print))
+  # pn_sample$human_control <- coalesce(pn_sample$human_control, pn_wide %>% unite(human_control, one_of(hc_names)) %>% left_join(icd_df %>% unite(human_control, one_of(hc_names)), by = "human_control") %>% pull(qc_print))
+  
+  # now take human_control status directly from b2m-s/s2
+  pn_sample$human_control <- pn_wide %>% unite(human_control, one_of(hc_names)) %>% left_join(icd_df %>% unite(human_control, one_of(hc_names)), by = "human_control") %>% pull(qc_print)
 
+  # add the new overall_qc column
+  pn_sample <- add_overall_qc(pn_sample, args_df$overall_qc)
 
   # Override step: assign HPV as neg if human control is failed to amplify
   pn_wide2 <- pn_wide %>%
@@ -170,7 +176,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   ### Order columns in this way: num_types_pos, sequencing_qc, human_control, and Assay_SIC columns
   pn_sample2 <- pn_sample %>%
     mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos")) %>%
-    select(Owner_Sample_ID, barcode, Num_Types_Pos, sequencing_qc, human_control, Assay_SIC)
+    select(Owner_Sample_ID, barcode, Num_Types_Pos, overall_qc, sequencing_qc, human_control, Assay_SIC)
 
   # pn_sample2 + pn_wide2 => make detailed pn matrix (no ASIC or B2M as requested by Sarah)
   detailed_pn_matrix <- pn_sample2 %>%
@@ -212,9 +218,12 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # add: "Control_Code","control_fail_code","control_result"
 
   print("line 158")
+
   specimen_control_defs_long <- specimen_control_defs %>%
     filter(!is.na(Control_Code)) %>%
     tidyr::gather("type", "status", -Control_Code, -qc_name, -Control_type, factor_key = F) %>%
+    # ignore "either" here
+    filter(status != "either") %>% 
     glimpse()
 
   # barcode control_result control_fail_code
@@ -384,7 +393,10 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   lineage_for_report <- .make_df(lineage_filtered_pass, list(mm$barcode, lineage_ids), 0)
 
   # Join manifest to add all the information
-  lineage_final <- mm %>% bind_cols(lineage_for_report)
+  # add qc column from pn_sample2
+  lineage_final <- mm %>% 
+      bind_cols(pn_sample2 %>% select(overall_qc:Assay_SIC)) %>% 
+      bind_cols(lineage_for_report)
 
   write.csv(lineage_final, "lineage_for_report")
 
