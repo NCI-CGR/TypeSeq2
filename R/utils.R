@@ -173,3 +173,24 @@ add_overall_qc <- function(pn_sample, overall_qc_defs.fn){
     select(Owner_Sample_ID, barcode, overall_qc, everything(), -total_HPV_reads)
   return(rv)
 }
+
+plot_plate <- function(df, color_var, custom_color, title){
+    well_num = seq(1,12,length.out = 12)  %>% as.character
+    well_ID = LETTERS[1:8]
+    empty_wells = as.data.frame(expand.grid(rownum=well_ID, colnum= well_num,stringsAsFactors = F))
+
+    dat2 <- df %>%   
+        full_join(empty_wells ) %>%
+        mutate(Control_Code = ifelse(is.na(Control_Code),"empty",Control_Code)) 
+    
+    p <- dat2 %>% ggplot(aes(x = fct_reorder(colnum,sort(as.numeric(colnum))),y = fct_reorder(rownum,desc(rownum)),shape = Control_Code)) + 
+      geom_point(aes_string(col = color_var), size =12) +
+      scale_shape_manual(name="Control Code", values = c("empty"=16,"control"=17,"sample"=16), limit = c("empty","control","sample"), drop = F) +
+      custom_color + 
+      labs(x= sprintf("Batch: %s, Plate: %s", dat2$Assay_Batch_Code[1], dat2$Assay_Plate_Code[1]), y = "TypeSeqHPV_plate_data")+
+      ggtitle(title)
+      
+
+    print(p)
+    dat2
+}
