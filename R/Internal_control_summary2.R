@@ -17,7 +17,7 @@ Internal_control_summary2 <- function(detailed_pn_matrix_for_report,manifest,con
     t5 <- .control_summary(control_for_report, for_batch)
     
     # Introduce spaces to enable multiple lines
-    t5 %>% rename_all(~ gsub("_", " ", .)) %>% pandoc.table(caption = "Control Summary", split.table=100, split.cells=12, style="multiline")
+    t5 %>% rename_all(~ gsub("_", " ", .)) %>% pandoc.table(caption = "Batch Control Summary", split.table=100, split.cells=12, style="multiline")
 }
 
 
