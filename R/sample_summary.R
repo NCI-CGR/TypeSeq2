@@ -27,7 +27,15 @@ sample_summary <- function(df){
       #  mutate(`Perc Passed` = paste0(round(pass/numSamplesTested) %>%
       #  mutate(`Perc Failed` = paste0(round(failed_to_amplify/numSamplesTested * 100, digits=2), "%"))
 
-    sampleSummary <- df %>% group_by(Project) %>% summarize(n=n(), pass_n = sum (str_detect(human_control,'pass')), fail_n= sum (str_detect(human_control,'failed_to_amplify')), pass_perc = fmt_perc(pass_n/n), fail_perc= fmt_perc(fail_n/n)) %>%  select(Project_ID=Project,`Number Samples Tested`=n,`Number Passed`=pass_n,`Number Failed`=fail_n, `Perc Passed`=pass_perc,`Perc Failed`=fail_perc) 
+    sampleSummary <- df %>% 
+      group_by(Project) %>% 
+      summarize(n=n(), 
+        pass_n = sum (overall_qc == "pass"), 
+        fail_n= sum (overall_qc == "fail"), 
+        pass_perc = fmt_perc(pass_n/n), 
+        fail_perc= fmt_perc(fail_n/n)
+      ) %>%  
+      select(Project_ID=Project,`Number Samples Tested`=n,`Number Passed`=pass_n,`Number Failed`=fail_n, `Perc Passed`=pass_perc,`Perc Failed`=fail_perc) 
         
     panderOptions("table.split.table", 100)
     panderOptions("table.split.cells", 6)
@@ -36,4 +44,6 @@ sample_summary <- function(df){
                  caption = "SAMPLE Summary",
                  use.hyphening=FALSE)
 
+    t4 <- qc_summary(df)
+    t4 %>% pandoc.table(caption = "QC Metrics Summary") 
 }
