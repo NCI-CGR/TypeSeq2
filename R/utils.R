@@ -71,6 +71,8 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
     return(rv)
 }
 
+
+
 #' Make contrl sumamry (Table 5)
 #' @param control_for_report
 #' @param specimen_control_defs
@@ -90,6 +92,25 @@ subset_by_batch <- function(df, ids, is.batch_id=T){
                 Num_pos_control_failed=sum(control_result == "fail" & Control_type == "pos"), 
                 Num_neg_control_failed= sum(control_result == "fail" & Control_type == "neg")) %>% 
             dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(control_for_report %>% pull(!!vv) %>% as.character %>% unique, "")),Assay_Plate_Code )
+
+    return(rv)
+
+}
+
+qc_summary <- function(samples_only_for_report,  for_batch=F){
+    vv <- ifelse(! for_batch, "Assay_Batch_Code", "Project") %>% rlang::sym()
+
+    rv <- samples_only_for_report %>% 
+        dplyr::mutate_if(is.factor, ~ as.character(.) )  %>% 
+        # a trick to have summary row
+        bind_rows(dplyr::mutate(., !!vv := "", Assay_Plate_Code = "All_plates")) %>% 
+        group_by(!!vv, Assay_Plate_Code) %>%  
+        summarise(n=n(), 
+            Sequencing_qc_pass=fmt_perc(sum(sequencing_qc == "pass")/n), 
+            ASIC_qc_pass=fmt_perc(sum(Assay_SIC == "pass")/n), 
+            Overall_qc_pass=fmt_perc(sum(overall_qc == "pass")/n )
+        )%>% 
+        dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(samples_only_for_report %>% pull(!!vv) %>% as.character %>% unique, "")),Assay_Plate_Code )
 
     return(rv)
 
