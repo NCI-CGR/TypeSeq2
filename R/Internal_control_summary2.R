@@ -9,9 +9,9 @@ Internal_control_summary2 <- function(detailed_pn_matrix_for_report,manifest,con
     require(pander)
     # use the code developed for collect_metrics
     # Add project for Batch level 
-    t4 <- .internal_control_summary(detailed_pn_matrix_for_report, manifest, control_for_report, for_batch)
     
-    t4 %>% pandoc.table(caption = "Internal Control Summary")
+    # t4 <- .internal_control_summary(detailed_pn_matrix_for_report, manifest, control_for_report, for_batch)
+    
     
     #table5 
     t5 <- .control_summary(control_for_report, for_batch)
