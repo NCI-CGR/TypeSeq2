@@ -105,9 +105,9 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     rename(CHROM = contig) %>%
     mutate(Min_reads_per_type = Min_reads_per_type * scaling_factor)
 
-  # pn_filters will be used in signal_to_noise_plot
+  # pn_filters was used in signal_to_noise_plot
   write.csv(pn_filter_df, "pn_filters_report")
-
+  write.csv(pn_filter_df, "Scaled_min-filters.csv")
 
   # make detailed pn matrix ----
 
