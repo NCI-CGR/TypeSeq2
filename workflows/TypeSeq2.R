@@ -174,10 +174,10 @@ drake::make(ion_plan)
 new_fn <- renaming_read_summary(readd(user_files))
 
 ### Compress file here
-system( "zip -j TypeSeq2_outputs.zip *.read_summary.csv *results.csv *QC_report.pdf *.batch_metrics_summary.csv *.run_metrics.csv ")
+system( "zip -j TypeSeq2_outputs.zip *.read_summary.csv *results.csv *QC_report.pdf *.batch_metrics_summary.csv *.run_metrics.csv Scaled_min-filters.csv")
 
 if(command_line_args$is_clinical == "yes"){
-    system("zip -j TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf")
+    system("zip -j TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf Scaled_min-filters.csv")
 }
 
 #### E. make html block for torrent server ####
