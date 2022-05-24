@@ -143,7 +143,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   pn_sample$human_control <- pn_wide %>% unite(human_control, one_of(hc_names)) %>% left_join(icd_df %>% unite(human_control, one_of(hc_names)), by = "human_control") %>% pull(qc_print)
 
   # add the new overall_qc column
-  pn_sample <- add_overall_qc(pn_sample, args_df$overall_qc)
+  pn_sample <- add_overall_qc(pn_sample, args_df$overall_qc_defs)
 
   # Override step: assign HPV as neg if human control is failed to amplify
   pn_wide2 <- pn_wide %>%
