@@ -3,7 +3,7 @@ signal_to_noise_plot <- function(read_count_matrix_report, detailed_pn_matrix_fo
 # merge final pn matrix and read_counts_matrix_wide
 signalNoiseDf1 = read_count_matrix_report %>%
 # inner_join(final_pn_matrix, by=c("barcode", "HPV_Type")) %>%
-inner_join(detailed_pn_matrix_for_report %>% filter(human_control != "failed_to_amplify") %>% gather(HPV_Type, hpvStatus, starts_with("HPV")), by=c("barcode", "HPV_Type", "Owner_Sample_ID")) %>%
+inner_join(detailed_pn_matrix_for_report %>% filter(overall_qc == "pass") %>% gather(HPV_Type, hpvStatus, starts_with("HPV")), by=c("barcode", "HPV_Type", "Owner_Sample_ID")) %>%
 filter(HPV_Type!="B2M") %>%
 select(barcode, HPV_Type, HPV_Type_count, hpvStatus) %>%
 #sort by types and count
@@ -15,7 +15,7 @@ arrange(desc(HPV_Type_count)) %>%
 mutate(negOrder = 1:n()) %>%
 ungroup()
 
-signalNoiseDf = signalNoiseDf1 %>%
+df2 = signalNoiseDf1 %>%
 mutate(plotOrder = ifelse(hpvStatus == "pos", posOrder, negOrder)) %>%
 select(HPV_Type, hpvStatus, HPV_Type_count, plotOrder) %>%
 # select top 10 lowest count positives and 5 highest negatives ()
@@ -31,14 +31,16 @@ temp = as_tibble(.)
 
 tempReturn = pn_filters %>%
 mutate(hpvStatus = "min_reads") %>%
-rename(meanCount = Min_reads_per_type) %>%
-transform(meanCount = as.numeric(meanCount)) %>%
+# rename(meanCount = Min_reads_per_type) %>%
+transform(meanCount = apply(pn_filters[,-(1:3)], 1, max, na.rm=T)  ) %>%
 select(HPV_Type = CHROM, hpvStatus, meanCount) %>%
 semi_join(temp, by="HPV_Type") %>%
 bind_rows(temp)
 
-}) %>%
+}) 
 
+### break the stupid long pipe into small pieces for debugging
+df3 <- df2 %>%
 #better x axis sorting
 separate(HPV_Type, c("temp", "hpvNum"), "HPV", remove=FALSE) %>%
 select(-temp) %>%
@@ -80,6 +82,7 @@ select(HPV_Type,riskStatus, textColor, Cneg = neg, Bpos = pos, Amin_reads = min_
 group_by(HPV_Type,riskStatus, textColor) %>%
 gather(hpvStatus, meanCount, Bpos, Cneg, Amin_reads, -HPV_Type, -riskStatus, -textColor)
 
+signalNoiseDf <- df3
 #plot - two trend lines and log base 10 scale for y
 returnPlot = ggplot(signalNoiseDf, aes(x=HPV_Type, y=meanCount, color=hpvStatus, group=hpvStatus)) +
 geom_line() +
