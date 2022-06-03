@@ -21,7 +21,7 @@ temp = temp %>%
 }) %>%
 gather(hpvType, hpvStatus, starts_with("HPV")) %>% 
 #filter(hpvStatus == "pos") %>%
-mutate(count = ifelse(hpvStatus == "neg",0,1)) %>%
+mutate(count = ifelse(hpvStatus == "pos",1,0)) %>%
 group_by(hpvType, sampleCount) %>% 
 mutate(posCount = sum(count)) %>% 
 #summarize(posCount = n()) %>% 
