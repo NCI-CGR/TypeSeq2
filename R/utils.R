@@ -215,3 +215,8 @@ plot_plate <- function(df, color_var, custom_color, title){
     print(p)
     dat2
 }
+
+get_scaling_factor <- function( read_count, scaling_df){
+    scaling_df %>% filter(min_avg_reads_boundary <= read_count & max_avg_reads_boundary >= read_count) %>%
+    pull(scaling_factor)
+}
