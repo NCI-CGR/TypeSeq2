@@ -1,6 +1,7 @@
 #'
 percent_positive_histogram <- function(df){
-
+require(scales)
+require(ggsci)
 percentPositveHistrogramDf = df %>%
 filter(!is.na(Project)) %>%
 group_by(Project) %>%
@@ -23,7 +24,7 @@ gather(hpvType, hpvStatus, starts_with("HPV")) %>%
 #filter(hpvStatus == "pos") %>%
 mutate(count = ifelse(hpvStatus == "pos",1,0)) %>%
 group_by(hpvType, sampleCount) %>% 
-mutate(posCount = sum(count)) %>% 
+mutate(posCount = sum(count, na.rm=T)) %>% 
 #summarize(posCount = n()) %>% 
 select(hpvType, sampleCount, posCount) %>%
 unique() %>% 
