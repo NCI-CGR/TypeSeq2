@@ -185,7 +185,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   ### barcode sequencing_qc human_control Assay_SIC are available in pn_sample
   ### Order columns in this way: num_types_pos, sequencing_qc, human_control, and Assay_SIC columns
   pn_sample2 <- pn_sample %>%
-    mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos")) %>%
+    mutate(Num_Types_Pos = rowSums(pn_wide2_line[, -1] == "pos", na.rm=T)) %>%
     select(Owner_Sample_ID, barcode, Num_Types_Pos, overall_qc, sequencing_qc, human_control, Assay_SIC)
 
   # pn_sample2 + pn_wide2 => make detailed pn matrix (no ASIC or B2M as requested by Sarah)
