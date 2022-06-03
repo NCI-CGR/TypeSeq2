@@ -88,9 +88,14 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # scale the filters - calculate the average reads per sample ----
   average_read_count <- mean(read_counts_matrix_wide$total_reads)
 
-  scaling_factor <- read.csv(scaling_table, as.is = T) %>%
-    filter(min_avg_reads_boundary <= average_read_count & max_avg_reads_boundary >= average_read_count) %>%
-    pull(scaling_factor)
+  scaling_df <- read.csv(scaling_table, as.is = T)
+
+  # scaling_factor <- read.csv(scaling_table, as.is = T) %>%
+  #   filter(min_avg_reads_boundary <= average_read_count & max_avg_reads_boundary >= average_read_count) %>%
+  #   pull(scaling_factor)
+
+  ### all(names(scaling_factors) == pn_sample2$barcode)
+  scaling_factors <- sapply(read_counts_matrix_wide$total_reads,  get_scaling_factor, scaling_df=scaling_df)
 
   cat("Load internal controls ... \n")
 
@@ -102,12 +107,15 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # !!! pn_filters <- "/user_files/configs/TypeSeq2_Pos-Neg_matrix_filtering_criteria_T90-v2-ref_v1_EXTENDED.csv"
   pn_filter_df <- read.csv(pn_filters, as.is = T) %>%
     glimpse() %>%
-    rename(CHROM = contig) %>%
-    mutate(Min_reads_per_type = Min_reads_per_type * scaling_factor)
+    rename(CHROM = contig)
+  
+  min_reads_per_type <- pn_filter_df %>% select(CHROM, Min_reads_per_type) %>% deframe
+
+  pn_filter_df2 <- pn_filter_df %>% bind_cols (outer( min_reads_per_type, scaling_factors) %>% as.data.frame )
 
   # pn_filters was used in signal_to_noise_plot
-  write.csv(pn_filter_df, "pn_filters_report")
-  write.csv(pn_filter_df, "Scaled_min-filters.csv")
+  write.csv(pn_filter_df2, "pn_filters_report")
+  write.csv(pn_filter_df2, "Scaled_min-filters.csv")
 
   # make detailed pn matrix ----
 
@@ -120,10 +128,10 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   ### pn_wide has all the internal control columns
   # join pn_sample first and reset depth of HPV amplicons to 0 if sequencing_qc is failed
   pn_wide <- (read_counts_matrix_long %>% inner_join(pn_sample %>% select(barcode, sequencing_qc), by = "barcode") %>% mutate(depth = ifelse(grepl("^HPV", CHROM) & sequencing_qc == "fail", 0, depth))) %>%
-    inner_join(pn_filter_df, by = "CHROM") %>%
-    mutate(status = ifelse(depth >= Min_reads_per_type & depth / total_reads >= Min_perc_per_type, "pos", "neg")) %>%
+    inner_join(pn_filter_df2 %>% gather("barcode", "min_reads", -(CHROM:Min_perc_per_type)), by = c("barcode", "CHROM")) %>%
+    mutate(status = ifelse(depth >= min_reads & depth / total_reads >= Min_perc_per_type, "pos", "neg")) %>%
     glimpse() %>%
-    select(-depth, -total_reads, -hpv_reads, -Min_reads_per_type, -Min_perc_per_type) %>%
+    select(-depth, -total_reads, -hpv_reads, -Min_reads_per_type, -Min_perc_per_type, -min_reads) %>%
     spread(CHROM, status) %>%
     .align_by_barcode(mm$barcode)
 
@@ -146,8 +154,9 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   pn_sample <- add_overall_qc(pn_sample, args_df$overall_qc_defs)
 
   # Override step: assign HPV as neg if human control is failed to amplify
+  #TODO 
   pn_wide2 <- pn_wide %>%
-    mutate_at(vars(starts_with("HPV")), ~ ifelse(pn_sample$human_control == "failed_to_amplify", "neg", .)) %>%
+    mutate_at(vars(starts_with("HPV")), ~ ifelse(pn_sample$overall_qc == "fail", NA_character_, .)) %>%
     select(barcode, one_of(hpv_ids_in_order))
 
   # assign line_id to pn_long
@@ -160,13 +169,14 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # pn_wide2_line == simple_pn_matrix
   pn_wide2_line <- pn_long %>%
     group_by(barcode, line_id) %>%
-    summarise(sum_status = sum(type_status == "pos", na.rm = T)) %>%
+    summarise(sum_status = sum(type_status == "pos", na.rm = T), na_status=any(is.na(type_status))) %>%
     mutate(simple_status = case_when(
       sum_status >= 2 & line_id %in% c("HPV16", "HPV18") ~ "pos",
       sum_status >= 1 & (!line_id %in% c("HPV16", "HPV18")) ~ "pos",
+      na_status ~ NA_character_,
       TRUE ~ "neg"
     )) %>%
-    select(-sum_status) %>%
+    select(-sum_status, -na_status) %>%
     spread(line_id, simple_status) %>%
     select(barcode, one_of(hpv_lines_in_order)) %>%
     .align_by_barcode(mm$barcode) %>%
@@ -212,7 +222,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     pull(barcode)
 
   ###  add samples with "fail" for the sequencing_qc
-  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter((human_control == "failed_to_amplify" | sequencing_qc == "fail") & (!barcode %in% ctrl_barcodes))
+  failed_pn_matrix_final <- simple_pn_matrix_final %>% filter((overall_qc == "fail" ) & (!barcode %in% ctrl_barcodes))
 
   # 2.  merge pn matrix with control defs (b2m + hpv)
   # add: "Control_Code","control_fail_code","control_result"
