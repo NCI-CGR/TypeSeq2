@@ -74,12 +74,12 @@ coinfection_rate_histogram_safe <- possibly(coinfection_rate_histogram,
 
 temp = coinfection_rate_histogram_safe(samples_only_for_report)
 
-## #' \newpage
-## #' ## Signal-to-Noise Plot
-## #+ signal to noise plot, echo=FALSE, message=FALSE, warning=FALSE, fig.width=20, fig.height=9, fig.align = "center"
-## #scaling file and simple pn matrix and read counts matrix
-## signal_to_noise_plot_safe <- possibly(TypeSeq2::signal_to_noise_plot, otherwise = data.frame())
-## temp = signal_to_noise_plot_safe(read_count_matrix_report,detailed_pn_matrix_for_report,pn_filters)
+#' \newpage
+#' ## Signal-to-Noise Plot
+#+ signal to noise plot, echo=FALSE, message=FALSE, warning=FALSE, fig.width=20, fig.height=9, fig.align = "center"
+#scaling file and simple pn matrix and read counts matrix
+signal_to_noise_plot_safe <- possibly(TypeSeq2::signal_to_noise_plot, otherwise = data.frame())
+temp = signal_to_noise_plot_safe(read_count_matrix_report,detailed_pn_matrix_for_report,pn_filters)
 
 
 #+ HPV Status Circle Plot, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center", eval=!is_clinical, results='asis'
