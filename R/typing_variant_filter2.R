@@ -248,10 +248,15 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
         `==`
       )
     ) %>%
-    mutate(control_fail = ifelse(status.x == status.y, "", ifelse(status.x == "pos", "false-pos", "false-neg"))) %>%
+    mutate(control_fail = ifelse(status.x == status.y, "", case_when(
+        is.na(status.x)   ~ "NA",
+        status.x == "pos" ~ "false-pos",
+        TRUE              ~ "false-neg"
+      ) 
+    )) %>%
     # to add Control_type information into control_for_reports
     group_by(barcode, Control_type) %>% 
-    summarise(control_result = ifelse(all(status.x == status.y), "pass", "fail"), control_fail_code = paste0(control_fail %>% unique() %>% setdiff(""), collapse = ";"))
+    summarise(control_result = ifelse(all( !is.na(status.x)) & all(status.x == status.y), "pass", "fail"), control_fail_code = paste0(control_fail %>% unique() %>% setdiff(""), collapse = ";"))
 
   # Adding manifest to the final results
   # also add B2M and ASIC columns, num_types_pos
