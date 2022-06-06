@@ -175,13 +175,31 @@ numCheck <- function(x, na.coding = c("NA", "")) {
 ###  "overall_qc", "sequencing_qc", "human_control", "Assay_SIC" after barcode
 # pn_sample: Owner_Sample_ID  barcode sequencing_qc total_HPV_reads Assay_SIC human_control
 # output: Owner_Sample_ID    barcode overall_qc sequencing_qc Assay_SIC human_control 
+
+### Note that pass statuses in Assay_SIC and human_control
+# icd_df %$% table( qc_name, qc_print)
+#                qc_print
+# qc_name         failed_all failed_low-high failed_low-med failed_med-high
+#   Assay_SIC              1               1              1               1
+#   human_control          0               0              0               0
+#                qc_print
+# qc_name         failed_to_amplify pass pass_flag-high pass_flag-low
+#   Assay_SIC                     0    1              1             1
+#   human_control                 1    2              0             0
+#                qc_print
+# qc_name         pass_flag-med pass_low-concentration
+#   Assay_SIC                 1                      0
+#   human_control             0                      1
 add_overall_qc <- function(pn_sample, overall_qc_defs.fn){
   # OVERALL_QC sequencing_qc human_control total_HPV_reads Assay_SIC
   defs.df <- read.csv(overall_qc_defs.fn, stringsAsFactors=F)  
   
   cols <- names(defs.df)[-1]
 
-  .d <- pn_sample %>% mutate(human_control = ifelse(grepl("pass", human_control), "pass", "fail")) %>% unite("combo", one_of(cols))
+  .d <- pn_sample %>% mutate(
+      human_control = ifelse(grepl("pass", human_control), "pass", "fail"),
+      Assay_SIC = ifelse(grepl("pass", Assay_SIC), "pass", "fail")
+      ) %>% unite("combo", one_of(cols))
 
   rv <- pn_sample %>% mutate(overall_qc = 
     .d %>% left_join( 
