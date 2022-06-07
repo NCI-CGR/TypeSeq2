@@ -95,7 +95,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   #   pull(scaling_factor)
 
   ### all(names(scaling_factors) == pn_sample2$barcode)
-  scaling_factors <- sapply(read_counts_matrix_wide$total_reads,  get_scaling_factor, scaling_df=scaling_df)
+  scaling_factors <- sapply(read_counts_matrix_wide$total_reads,  get_scaling_factor, scaling_df=scaling_df) %>% unlist
 
   cat("Load internal controls ... \n")
 
