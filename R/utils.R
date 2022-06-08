@@ -176,6 +176,14 @@ numCheck <- function(x, na.coding = c("NA", "")) {
 # pn_sample: Owner_Sample_ID  barcode sequencing_qc total_HPV_reads Assay_SIC human_control
 # output: Owner_Sample_ID    barcode overall_qc sequencing_qc Assay_SIC human_control 
 
+# > read.csv(args_df$overall_qc_defs)
+#   OVERALL_QC sequencing_qc human_control total_HPV_reads Assay_SIC
+# 1       pass          pass          pass            fail      pass
+# 2       pass          pass          pass            pass      pass
+# 3       pass          pass          fail            pass      pass
+# 4       pass          pass          pass            pass      fail
+# 5       pass          pass          fail            pass      fail
+
 ### Note that pass statuses in Assay_SIC and human_control
 # icd_df %$% table( qc_name, qc_print)
 #                qc_print
@@ -207,6 +215,13 @@ add_overall_qc <- function(pn_sample, overall_qc_defs.fn){
         by="combo") %>% 
         pull(OVERALL_QC) %>% 
         replace_na("fail")) %>% 
+        ### Apply special rule to NTC
+        mutate(overall_qc = ifelse( 
+            grepl("NTC", Owner_Sample_ID) & 
+            sequencing_qc == "pass" &
+            (!grepl("pass", human_control)) &
+            total_HPV_reads == "fail" &
+            grepl("pass", Assay_SIC), "pass", overall_qc )) %>%
     # .after is not supported so use the old way to order the columns
     # drop total_HPV_reads as it is not required
     select(Owner_Sample_ID, barcode, overall_qc, everything(), -total_HPV_reads)
