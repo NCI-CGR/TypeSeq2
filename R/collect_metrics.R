@@ -116,7 +116,7 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
                     pass_perc = fmt_perc(pass_n/n), 
                     fail_perc= fmt_perc(fail_n/n),
                     seq_qc_perc = fmt_perc(sum(sequencing_qc == "pass") /n),
-                    ASIC_perc=fmt_perc(sum(Assay_SIC == "pass")/n)) %>%  
+                    ASIC_perc=fmt_perc(sum(grepl("pass", Assay_SIC))/n)) %>%  
         select(Assay_Batch_Code,
                `Number Samples Tested`=n,
                `Number Passed`=pass_n,
