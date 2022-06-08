@@ -107,7 +107,7 @@ qc_summary <- function(samples_only_for_report,  for_batch=F){
         group_by(!!vv, Assay_Plate_Code) %>%  
         summarise(n=n(), 
             Sequencing_qc_pass=fmt_perc(sum(sequencing_qc == "pass")/n), 
-            ASIC_qc_pass=fmt_perc(sum(Assay_SIC == "pass")/n), 
+            ASIC_qc_pass=fmt_perc(sum(grepl("pass", Assay_SIC))/n), 
             Overall_qc_pass=fmt_perc(sum(overall_qc == "pass")/n )
         )%>% 
         dplyr::select(-n) %>% dplyr::arrange(factor(!!vv, levels=c(samples_only_for_report %>% pull(!!vv) %>% as.character %>% unique, "")),Assay_Plate_Code )
