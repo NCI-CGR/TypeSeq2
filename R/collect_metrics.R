@@ -20,7 +20,7 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
 
     ### Get the barcde from startplugin.json
     # metrics$Chip_Barcode <- meta[["Barcode Set"]]
-    startplugin <- parse_json("startplugin.json", "./")
+    startplugin <- my_parse_json("startplugin.json", "./")
     metrics$Chip_Barcode <- startplugin$expmeta$chipBarcode
 
     ### raw_peak_signal
@@ -28,7 +28,7 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
     metrics$Key_Signal <- peak_signal[["Library"]] # numeric in string
 
     ### TFStats.json 
-    tfstats.json <- parse_json("TFStats.json", metrics_source_dir)
+    tfstats.json <- my_parse_json("TFStats.json", metrics_source_dir)
     metrics$Perc_Test_Fragment_100AQ17 <- tfstats.json$TF_1$`Percent 100Q17`
 
     ### analysis.bfmask.stats in ini format
@@ -37,19 +37,19 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
     metrics$Perc_Chip_Loading <- bfmask %$% {`Live Beads` /(`Total Wells` -`Excluded Wells` ) }
     
     ### ionstats_alignment.json
-    align.json <- parse_json("ionstats_alignment.json", metrics_source_dir)
+    align.json <- my_parse_json("ionstats_alignment.json", metrics_source_dir)
 
     metrics$Aligned_PF_Reads <- align.json$aligned$num_reads
     
     metrics$Perc_Aligned_PF_Reads <- align.json %$% {aligned$num_reads / full$num_reads}
 
     ### datasets_basecaller.json
-    datasets_bc.json <- parse_json("datasets_basecaller.json", metrics_source_dir)
+    datasets_bc.json <- my_parse_json("datasets_basecaller.json", metrics_source_dir)
 
     metrics$No_Barcode_Reads <- datasets_bc.json$datasets %>% filter(basecaller_bam=="nomatch_rawlib.basecaller.bam") %>% pull(read_count)
 
     ### BaseCaller.json
-    basecall <- parse_json("BaseCaller.json", metrics_source_dir)$Filtering$LibraryReport %>% map( ~as.numeric(.x))
+    basecall <- my_parse_json("BaseCaller.json", metrics_source_dir)$Filtering$LibraryReport %>% map( ~as.numeric(.x))
 
     # = 48287626
     # metrics$Usable_Seq_Reads <- basecall$final_library_reads
@@ -154,6 +154,11 @@ collect_metrics <- function(user_files, variants_final_table, metrics_source_dir
             Num_neg_con_failed = sum(control_result == "fail" & Control_type == "neg")) %>%
         select(-n)
     
+
+    if(nrow(t1) ==0){
+        # special case: all samples are controls
+        t1 <- t1 %>% tibble::add_row(Assay_Batch_Code = manifest %>% pull(Assay_Batch_Code) %>% unique)
+    }
     batch_table <- t1 %>% left_join(t3)
 
     ### Assign NA if no value assigned
