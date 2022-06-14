@@ -9,7 +9,7 @@ parse_key_value <- function(fn){
 #' a wrapper to parse the json file under raw_metrics by default
 #' @param fn the josn file name under raw_metrics
 #' @NoRd
-parse_json <- function(fn, metrics_source_dir="./raw_metrics"){
+my_parse_json <- function(fn, metrics_source_dir="./raw_metrics"){
     fromJSON(file.path(metrics_source_dir, fn), simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
 }
 
