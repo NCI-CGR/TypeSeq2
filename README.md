@@ -1,5 +1,5 @@
 
-# TypeSeq HPV
+# TypeSeq HPV2
 ***NCI CGR laboratory HPV typing analysis workflows and R package***
 
 TypeSeq HPV is an R package that includes  
