@@ -24,7 +24,7 @@ save_value_to_csv <- function(values, csv_fn, default_fn=NULL){
     return(csv_fn)
   }else{
     if(is.null(default_fn)){
-      stop("There is no manifest file defined!")
+      stop(sprintf("There is no file defined for %s!", csv_fn))
     }
     return(default_fn)
   }
@@ -40,19 +40,21 @@ if ( args_df$is_torrent_server == "yes") {
 
     plugin_json = fromJSON(file("./startplugin.json"), simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
 
+    # create input folder 
+    dir.create("input")
     #manifest is required, so we not assign the default manifest_fn on purpose
-    args_df$manifest <- save_value_to_csv( plugin_json$pluginconfig$typing_manifest, "manifest.csv")
+    args_df$manifest <- save_value_to_csv( plugin_json$pluginconfig$typing_manifest, sprintf("input/%s", plugin_json$pluginconfig$manifest_fn) )
      
 
     #control_defs
    
-    args_df$control_definitions <- save_value_to_csv(plugin_json$pluginconfig$control_definitions, "control_defs.csv", args_df$control_definitions)
+    args_df$control_definitions <- save_value_to_csv(plugin_json$pluginconfig$control_definitions, sprintf("input/%s", plugin_json$pluginconfig$control_def_fn), args_df$control_definitions)
 
     #barcode_file
-    args_df$barcode_file <- save_value_to_csv(plugin_json$pluginconfig$barcode_file, "barcodes.csv", args_df$barcode_file)
+    args_df$barcode_file <- save_value_to_csv(plugin_json$pluginconfig$barcode_file, sprintf("input/%s", plugin_json$pluginconfig$barcode_fn), args_df$barcode_file)
     
     #grouping
-    args_df$grouping_defs <- save_value_to_csv(plugin_json$pluginconfig$grouping_defs, "grouping_defs.csv", args_df$grouping_defs)
+    args_df$grouping_defs <- save_value_to_csv(plugin_json$pluginconfig$grouping_defs, sprintf("input/%s", plugin_json$pluginconfig$grouping_fn), args_df$grouping_defs)
     
 }
 
