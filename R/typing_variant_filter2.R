@@ -12,6 +12,8 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   min_reads_per_sample <- args_df$min_reads_per_sample %>% .convert_numeric_config()
   min_hpv_reads_per_sample <- args_df$min_hpv_reads_per_sample %>% .convert_numeric_config()
 
+  new_sample_id = c("CGR_Sample_ID", "Blinded_Sample_ID")
+
   # add manifest to variants table ----
   mm <- manifest %>%
     unite("barcode", BC1, BC2, sep = "") %>%
@@ -200,8 +202,35 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # with more information from manifest file (used at the end of this function)
   deatiled_pn_matrix_for_report1 <- mm %>% inner_join(detailed_pn_matrix, by = c("barcode", "Owner_Sample_ID"))
 
+  ### Add code to have new output requested by Casey
+  ctrl_contigs <- c(sic_names, hc_names)
+  new_out <- mm %>% 
+        select(Project, Assay_Batch_Code,	Assay_Plate_Code,	Assay_Well_ID, one_of(new_sample_id), Owner_Sample_ID, barcode) %>% 
+        left_join(pn_sample2, by=c("Owner_Sample_ID", "barcode" )) %>%
+        left_join(read_counts_matrix_long, by=c("Owner_Sample_ID", "barcode" )) %>% left_join(
+           pn_wide2 %>%
+            tidyr::gather("Type", "Call", starts_with("HPV")) %>% 
+            bind_rows( 
+              pn_wide %>% select(barcode, one_of(ctrl_contigs)) %>%
+              gather("Type", "Call", -barcode)
+            ), by=c("barcode", "CHROM"="Type")
+        ) %>% 
+        mutate(Control = barcode %in% ctrl_barcodes) %>% 
+        mutate(per_total = depth/total_reads*100) %>%
+        mutate(per_hpv = ifelse(CHROM %in% ctrl_contigs, NA, depth/hpv_reads*100)) %>% 
+        mutate(LIMS_Sample_ID = NA) %>%
+        select( Project,	Assay_Batch_Code,	Assay_Plate_Code,	Assay_Well_ID,	one_of(new_sample_id),	Owner_Sample_ID,	barcode,	total_reads,	`HPV reads`=hpv_reads,	Control,	Num_Types_Pos,	Overall_qc=overall_qc,	Sequencing_qc=sequencing_qc,	Human_Control=human_control,	Assay_SIC,	Type=CHROM, 	Call,	Reads=depth,`% of Total Reads`=per_total, `% of Total HPV Reads`=per_hpv) %>%
+        glimpse()
 
+  run_id <- parse_key_value(file.path("./raw_metrics", "expMeta.dat"))[["Analysis Name"]];
 
+  ### Save new_out to 
+  write.csv(new_out, sprintf("%s.full.csv", run_id))
+
+  if(is_clinical){
+    # provide additional output as
+    write.csv(new_out %>% filter(Control), sprintf("%s.laboratory.csv", run_id))
+  }
 
   # Creating positive-negative matrix
   # Add additional informaiton from
