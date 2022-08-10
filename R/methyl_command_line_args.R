@@ -11,7 +11,8 @@ get_command_line_args <- function(args_df){
         if(is.null(plugin_json$pluginconfig$config_set)){
             
             # cat("NULL value for config_set is not expected here!\n")
-            # plugin_json$pluginconfig$config_set <- "T90" 
+            # plugin_json$pluginconfig$config_set <- "T90"
+            args_df$config_file <- NA
         }else{
             # Now NOT Null is NOT expected
             # I keep it for the future use
@@ -27,10 +28,9 @@ get_command_line_args <- function(args_df){
     config_general_df = read_csv(args_df$config_general, col_names = c("key", "value")) %>%
         map_if(is.factor, as.character) %>%
         as_tibble() %>%
-        mutate(value = paste0("/user_files/", value)) %>%
-        glimpse()
+        mutate(value = paste0("/user_files/", value)) %>%      glimpse()
 
-    if(is.null(args_df$config_file)){
+    if(  is.na(args_df$config_file) ){
         config_file_df = config_general_df
     }else{
         # combine config_file_df with config_general_df
