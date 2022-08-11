@@ -202,6 +202,25 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # with more information from manifest file (used at the end of this function)
   deatiled_pn_matrix_for_report1 <- mm %>% inner_join(detailed_pn_matrix, by = c("barcode", "Owner_Sample_ID"))
 
+
+  # Creating positive-negative matrix
+  # Add additional informaiton from
+  simple_pn_matrix_final <- mm %>%
+    left_join(pn_sample2, by = c("Owner_Sample_ID", "barcode")) %>%
+    left_join(pn_wide2_line)
+
+  write.csv(simple_pn_matrix_final, "pn_matrix_for_groupings")
+
+  print("line 148")
+
+  # Creating a list of failed non-control samples
+  ctrl_barcodes <- mm %>%
+    fuzzyjoin::fuzzy_join(specimen_control_defs,
+      mode = "inner",
+      by = c("Owner_Sample_ID" = "Control_Code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))
+    ) %>%
+    pull(barcode)
+
   ### Add code to have new output requested by Casey
   ctrl_contigs <- c(sic_names, hc_names)
   new_out <- mm %>% 
@@ -231,24 +250,6 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     # provide additional output as
     write.csv(new_out %>% filter(Control), sprintf("%s.laboratory.csv", run_id))
   }
-
-  # Creating positive-negative matrix
-  # Add additional informaiton from
-  simple_pn_matrix_final <- mm %>%
-    left_join(pn_sample2, by = c("Owner_Sample_ID", "barcode")) %>%
-    left_join(pn_wide2_line)
-
-  write.csv(simple_pn_matrix_final, "pn_matrix_for_groupings")
-
-  print("line 148")
-
-  # Creating a list of failed non-control samples
-  ctrl_barcodes <- mm %>%
-    fuzzyjoin::fuzzy_join(specimen_control_defs,
-      mode = "inner",
-      by = c("Owner_Sample_ID" = "Control_Code"), match_fun = function(x, y) str_detect(x, fixed(y, ignore_case = TRUE))
-    ) %>%
-    pull(barcode)
 
   ###  add samples with "fail" for the sequencing_qc
   failed_pn_matrix_final <- simple_pn_matrix_final %>% filter((overall_qc == "fail" ) & (!barcode %in% ctrl_barcodes))
