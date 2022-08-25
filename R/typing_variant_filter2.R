@@ -82,7 +82,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # Rearranging column names to match the order of contigs in variant file.
   read_counts_matrix_wide_final <- mm %>%
     full_join(read_counts_matrix_wide[, str_sort(colnames(read_counts_matrix_wide), numeric = T)] %>%
-      select(barcode, Owner_Sample_ID, total_reads, hpv_reads, `ASIC-Low`, `ASIC-Med`, `ASIC-High`, `B2M-S2`, `B2M-S`, everything()))
+      select(barcode, Owner_Sample_ID, total_reads, hpv_reads, `ASIC-Low`, `ASIC-Med`, `ASIC-High`, `B2M-S`, `B2M-S2`, everything()))
 
 
   cat("Scale the filters ... \n")
@@ -156,7 +156,6 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   pn_sample <- add_overall_qc(pn_sample, args_df$overall_qc_defs)
 
   # Override step: assign HPV as neg if human control is failed to amplify
-  #TODO 
   pn_wide2 <- pn_wide %>%
     mutate_at(vars(starts_with("HPV")), ~ ifelse(pn_sample$overall_qc == "fail", NA_character_, .)) %>%
     select(barcode, one_of(hpv_ids_in_order))
