@@ -12,15 +12,24 @@
 ##       "pn_filters,TypeSeq2_Pos-Neg_matrix_filtering_criteria_T90-v2-ref_v1.csv\n", 
 ##       "internal_control_defs,TS2_Internal_Control_Defs_v2_no-ESICs.csv"
 ##     ]
-save_value_to_csv <- function(values, csv_fn, default_fn=NULL){
+
+### add static_fn
+## values: is the df data passed in the stings via json
+## csv_fn: the target fn to be saved (original filename); this is expected if values is not NULL
+## static_fn: the static file name to be saved. 
+## default_fn is the default file name passed from the configure file; and will be used if there is no value from JSON.
+
+save_value_to_csv <- function(values, csv_fn, static_fn,  default_fn=NULL){
   if(!is.null(values)){
     data_frame(values = values) %>%
-          mutate(values = str_replace(values, "\n", "" )) %>%
-          filter(values!="") %>%
-          separate(col = values, sep = ",", into = unlist(str_split(.$values[1], ","))) %>%
-          slice(2:n()) %>%
-          glimpse() %>%
-          write_csv(csv_fn)
+      mutate(values = str_replace(values, "\n", "")) %>%
+      filter(values != "") %>%
+      separate(col = values, sep = ",", into = unlist(str_split(.$values[1], ","))) %>%
+      slice(2:n()) %>%
+      glimpse() %T>%
+      write_csv(csv_fn) %>%
+      write_csv(static_fn)
+    
     return(csv_fn)
   }else{
     if(is.null(default_fn)){
@@ -42,19 +51,38 @@ if ( args_df$is_torrent_server == "yes") {
 
     # create input folder 
     dir.create("input")
-    #manifest is required, so we not assign the default manifest_fn on purpose
-    args_df$manifest <- save_value_to_csv( plugin_json$pluginconfig$typing_manifest, sprintf("input/%s", plugin_json$pluginconfig$manifest_fn) )
+    # manifest is required, so we not assign the default manifest_fn on purpose
+    args_df$manifest <- save_value_to_csv(
+      plugin_json$pluginconfig$typing_manifest,
+      sprintf("input/%s", plugin_json$pluginconfig$manifest_fn),
+      "typing_manifest"
+    )
      
 
-    #control_defs
-   
-    args_df$control_definitions <- save_value_to_csv(plugin_json$pluginconfig$control_definitions, sprintf("input/%s", plugin_json$pluginconfig$control_def_fn), args_df$control_definitions)
+    # control_defs
 
-    #barcode_file
-    args_df$barcode_file <- save_value_to_csv(plugin_json$pluginconfig$barcode_file, sprintf("input/%s", plugin_json$pluginconfig$barcode_fn), args_df$barcode_file)
+    args_df$control_definitions <- save_value_to_csv(
+      plugin_json$pluginconfig$control_definitions,
+      sprintf("input/%s", plugin_json$pluginconfig$control_def_fn), 
+      "control_definitions",
+      args_df$control_definitions
+    )
+
+    # barcode_file
+    args_df$barcode_file <- save_value_to_csv(
+      plugin_json$pluginconfig$barcode_file,
+      sprintf("input/%s", plugin_json$pluginconfig$barcode_fn), 
+      "barcode_file",
+      args_df$barcode_file
+    )
     
-    #grouping
-    args_df$grouping_defs <- save_value_to_csv(plugin_json$pluginconfig$grouping_defs, sprintf("input/%s", plugin_json$pluginconfig$grouping_fn), args_df$grouping_defs)
+    # grouping
+    args_df$grouping_defs <- save_value_to_csv(
+      plugin_json$pluginconfig$grouping_defs,
+      sprintf("input/%s", plugin_json$pluginconfig$grouping_fn), 
+      "grouping_file",
+      args_df$grouping_defs
+    )
     
 }
 
