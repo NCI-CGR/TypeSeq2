@@ -410,7 +410,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
       mutate(simple.id = gsub("_.*", "", Lineage_ID)) %>% 
       left_join(simple_pn_matrix_long, by=c("barcode", "simple.id")) %>% 
       filter(sum(status == "pos") == def_count & simple.status == "pos") %>%
-      mutate(AF = mean(AF)) %>%
+      mutate(AF = min(AF)) %>%
       # there is no need for CHROM, POS, REF, ALT any more
       select(barcode, Lineage_ID, AF) %>%
       unique()
