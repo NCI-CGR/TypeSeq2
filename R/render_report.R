@@ -31,7 +31,7 @@ system(paste0("cp ",
 render(input = template_fn,
        output_dir = "./", output_file = "TypeSeq2HPV_QC_report.pdf", clean = T, params = list(is_clinical = F, for_batch=F))
 
-if("is_clinical" %in% names(args_df) && args_df$is_clinical == "yes"){
+if("is_clinical" %in% names(args_df) && ! is.na(args_df$is_clinical) ){
     render(input = template_fn,
        output_dir = "./", output_file = "TypeSeq2HPV_laboratory_report.pdf", clean = T, params = list(is_clinical = TRUE, for_batch=F))
 }
