@@ -45,7 +45,7 @@ cat('
 }else{
 cat('
 
-Thumbnail data insufficient for methylation analysis.
+Thumbnail data insufficient for TypeSeq2 analysis.
 
 Please see full report.
 
@@ -63,16 +63,14 @@ if (run_type!="thumbnail"){
 
 cat('
 
-<a href="./TypeSeq2HPV_QC_report.pdf" target="_blank">QC Report</a>
-
-[archive of outputs](./TypeSeq2_outputs.zip)
+[archive of encrypted outputs](./TypeSeq2_outputs.zip.pgp)
 
 
 ')
 }else{
 cat('
 
-Thumbnail data insufficient for methylation analysis.
+Thumbnail data insufficient for TypeSeq2 analysis.
 
 Please see full report.
 
