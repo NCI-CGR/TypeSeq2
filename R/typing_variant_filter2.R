@@ -8,7 +8,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   internal_control_defs <- args_df$internal_control_defs
   pn_filters <- args_df$pn_filters
   scaling_table <- args_df$scaling_table
-  is_clinical <- is.na(args_df$is_clinical)
+  is_clinical <- !is.na(args_df$is_clinical)
   min_reads_per_sample <- args_df$min_reads_per_sample %>% .convert_numeric_config()
   min_hpv_reads_per_sample <- args_df$min_hpv_reads_per_sample %>% .convert_numeric_config()
 
