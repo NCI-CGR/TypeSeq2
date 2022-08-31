@@ -194,6 +194,6 @@ html_block = if ( command_line_args$is_torrent_server == "yes") {
     # system("cp /TypeSeq2/inst/typeseq2/torrent_server_html_block.R ./")
     system(paste0("cp ", system.file("typeseq2", "torrent_server_html_block.R",  package = "TypeSeq2"), " ./"))
 
-    render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = is.na(command_line_args$is_clinical)))
+    render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = !is.na(command_line_args$is_clinical)))
 }
 
