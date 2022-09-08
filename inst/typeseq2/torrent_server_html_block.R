@@ -52,7 +52,7 @@ Please see full report.
 ')
 }
 
-#+ clinical use, echo=FALSE, results='asis', eval=TRUE
+#+ full report, echo=FALSE, results='asis', eval=TRUE
 cat("
 
 ## Analysis Output
@@ -60,13 +60,23 @@ cat("
 ")
 
 if (run_type!="thumbnail"){
-
-cat('
+    if (params$is_clinical) {
+        cat("
 
 [archive of encrypted outputs](./TypeSeq2_outputs.zip.pgp)
 
 
+")
+    }else{
+        cat('
+
+<a href="./TypeSeq2HPV_QC_report.pdf" target="_blank">QC Report</a>
+
+[archive of outputs](./TypeSeq2_outputs.zip)
+
 ')
+
+    }
 }else{
 cat('
 
