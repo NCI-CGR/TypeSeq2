@@ -232,7 +232,7 @@ Within this step, adam/spark is employed to make the demultiplexing in the progr
    + For example, RG:Z:MRFF6.IonXpress_080 => RG:Z:A80P06.MRFF6.IonXpress_080
 + Finally, save all the modified alignment records into one file *demux_reads.bam*.
 
-Then, samtools are used to split *demux_reads.bam* by new read group names, and further some each of them as *AXXPYY_sorted.bam*.
+Then, samtools are used to split *demux_reads.bam* by new read group names, and further sort each of them as *AXXPYY_sorted.bam*.
 
 The whole demultiplexing process is complicated and high cost in terms of CPU and RAM. As the code were developed several years before, some libraries are not supported any more and we have to rely on the containerization to keep it functional.  
 
