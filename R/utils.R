@@ -253,3 +253,20 @@ get_scaling_factor <- function( read_count, scaling_df){
     scaling_df %>% filter(min_avg_reads_boundary <= read_count & max_avg_reads_boundary >= read_count) %>%
     pull(scaling_factor)
 }
+
+### Get the output prefix for the whole run
+# Casey suggested to use the run name 
+get_output_prefix <- function(){
+    output_prefix <- attr(get_output_prefix, "prefix")
+
+    if(is.null(output_prefix)){
+        # cat("Reading...\n")
+        plugin_json = jsonlite::fromJSON(file("./startplugin.json"), simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
+        output_prefix <- plugin_json$plan$planName
+
+        ### only global attribute can survive
+        attr(get_output_prefix, "prefix") <<- output_prefix
+    }
+    
+    return(output_prefix)
+}
