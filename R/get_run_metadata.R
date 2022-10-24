@@ -1,4 +1,4 @@
-get_run_metadata <- function(args_df){
+get_run_metadata <- function(args_df, output_prefix=NULL){
 
 require(tidyverse)
 require(pander)
@@ -19,11 +19,15 @@ plugin_json = fromJSON(file("./startplugin.json"), simplifyDataFrame = TRUE, sim
         templating_kit_name = plugin_json$plan$templatingKitName,
         chip_type = plugin_json$runinfo$chipType,
         chip_barcode = plugin_json$expmeta$chipBarcode) %>%
-        gather('field name', value) %>%
-        ungroup() %>%
-        mutate(value = ifelse(str_length(value) > 50,
-                              str_sub(value, end = 50), value)) %>%
-        write_csv("run_info.csv")
+        gather("field name", value) %>%
+            ungroup() %>%
+            mutate(value = ifelse(str_length(value) > 50,
+                str_sub(value, end = 50), value
+            ))
+        
+    if (!is.null(output_prefix)) {
+        write_csv(run_info, sprintf("%s.Table1.csv", output_prefix))
+    }
 
     pandoc.table(run_info, style = "multiline", justify = c('right', 'left'),
                  caption = "Run Metadata", use.hyphening = TRUE)
