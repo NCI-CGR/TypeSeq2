@@ -4,7 +4,7 @@
 #' It is better to have the report be generated and troubleshoot later why the figure was absent
 #'then to have the plugin fail at these steps.
 
-sample_summary <- function(df){
+sample_summary <- function(df, output_prefix=NULL){
 
     ## sampleSummary = df %>%
     ##     group_by(Project) %>%
@@ -44,6 +44,11 @@ sample_summary <- function(df){
                  caption = "SAMPLE Summary",
                  use.hyphening=FALSE)
 
-    t4 <- qc_summary(df)
-    t4 %>% pandoc.table(caption = "QC Metrics Summary") 
+    t3 <- qc_summary(df)
+    t3 %>% pandoc.table(caption = "QC Metrics Summary")
+    
+    if(!is.null(output_prefix)){
+      write_csv(sampleSummary, sprintf("%s.Table2.csv", output_prefix))
+      write_csv(t3, sprintf("%s.Table3.csv", output_prefix))
+    }
 }
