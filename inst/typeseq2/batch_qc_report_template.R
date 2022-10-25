@@ -20,12 +20,12 @@
 
 #+  get run metadata, results='asis', echo=FALSE
 # startplugin.json
+is_clinical <- params$is_clinical
 
 get_run_metadata_safe <- possibly(get_run_metadata, otherwise = data.frame())
 
-startPluginDf = get_run_metadata_safe(args_df)
+startPluginDf = get_run_metadata_safe(args_df, ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL))
 
-is_clinical <- params$is_clinical
 
 s2n_caption <- "   
 To calculate the signal (green line) for each HPV target, the average read counts was calculated for the 10 samples which had the fewest number of reads for that target but were called positive (read counts above the minimum reads threshold). To calculate the noise (blue line) for each HPV target, the average read counts was calculated for the 10 samples which had the most reads for that target but were called negative (below the minimum reads threshold).   
@@ -47,7 +47,7 @@ For this chart, high risk types are considered to be HPV16, 18, 31, 33, 35, 39, 
 sample_summary_safe <- possibly(sample_summary, otherwise =  data.frame())
 #samples_only_matrix_results.csv
 
-temp = sample_summary_safe(samples_only_for_report)
+temp = sample_summary_safe(samples_only_for_report, ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL) )
 
 #' \newpage
 #' ## PLATE Results Summary
@@ -55,7 +55,7 @@ temp = sample_summary_safe(samples_only_for_report)
 #+ PLATE Results Summary, echo=FALSE, message=FALSE, warning=FALSE, fig.align = "center", results='asis', eval=TRUE
 plate_summary_safe <- possibly(plate_summary, otherwise = data.frame())
 #needs controls only and samples only matrix
-temp = plate_summary_safe(samples_only_for_report, is_clinical, for_batch=params$for_batch)
+temp = plate_summary_safe(samples_only_for_report, is_clinical, for_batch=params$for_batch, output_prefix=ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL) )
 
 
 #' \newpage
@@ -63,7 +63,7 @@ temp = plate_summary_safe(samples_only_for_report, is_clinical, for_batch=params
 
 #+ Control summary, echo=FALSE, message=FALSE, warning=FALSE, fig.align = "center", results='asis', eval=TRUE
 Internal_control_summary_safe <- possibly(Internal_control_summary2,otherwise = data.frame())
-temp = Internal_control_summary_safe(detailed_pn_matrix_for_report,manifest,control_for_report,specimen_control_defs, params$for_batch)
+temp = Internal_control_summary_safe(detailed_pn_matrix_for_report,manifest,control_for_report,specimen_control_defs, params$for_batch, ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL))
 
 
 
@@ -74,7 +74,7 @@ cat("\n\n\\pagebreak\n")
 cat("## Counts and Percentage of Types Positive by Project\n\n") 
 percent_positive_histogram_safe <- possibly(TypeSeq2::percent_positive_histogram, otherwise = data.frame())
 
-temp = percent_positive_histogram_safe(samples_only_for_report)
+temp = percent_positive_histogram_safe(samples_only_for_report, ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL))
 
 #+ coinfection rate histogram, echo=FALSE, message=FALSE, warning=FALSE, out.width = '200%', fig.align = "center",  eval=!is_clinical, results='asis'
 #samples only matrix
@@ -85,7 +85,7 @@ cat("## Coinfection Rate Histogram\n\n")
 coinfection_rate_histogram_safe <- possibly(coinfection_rate_histogram,
                                             otherwise = data.frame())
 
-temp = coinfection_rate_histogram_safe(samples_only_for_report)
+temp = coinfection_rate_histogram_safe(samples_only_for_report, ifelse(!params$for_batch & !is_clinical, get_output_prefix(), NULL))
 
 #' \newpage
 #' ## Signal-to-Noise Plot
