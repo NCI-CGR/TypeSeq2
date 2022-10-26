@@ -257,16 +257,15 @@ get_scaling_factor <- function( read_count, scaling_df){
 ### Get the output prefix for the whole run
 # Casey suggested to use the run name 
 get_output_prefix <- function(){
-    output_prefix <- attr(get_output_prefix, "prefix")
-
-    if(is.null(output_prefix)){
+    if(!exists(".TYPESEQ2_PREFIX", envir =.GlobalEnv)){
         # cat("Reading...\n")
         plugin_json = jsonlite::fromJSON(file("./startplugin.json"), simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
-        output_prefix <- plugin_json$plan$planName
+        .p <- plugin_json$plan$planName
 
         ### only global attribute can survive
-        attr(get_output_prefix, "prefix") <<- output_prefix
+        assign(".TYPESEQ2_PREFIX",.p, envir =.GlobalEnv)
     }
     
+    output_prefix <- get(".TYPESEQ2_PREFIX", envir =.GlobalEnv)
     return(output_prefix)
 }
