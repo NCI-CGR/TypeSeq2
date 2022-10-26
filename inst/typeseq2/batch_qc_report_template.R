@@ -36,7 +36,7 @@ The most desirable result is a large difference between the noise and the signal
 Note that the y-axis values are on a log10 scale. A gap in the signal line denotes a lack of positive samples."
 
 pie_caption <- '  
-The three sections of the pie chart represent the proportions of samples (excluding assay controls) within the project (one chart per project will be generated). The groupings are HPV-negative (“HPV_neg”), positive for low-risk types only (lrHPV_pos), and positive for high risk types (with/without low risk types also; “hrHPV_pos”).  
+The three sections of the pie chart represent the proportions of samples (excluding assay controls) within the project (one chart per project will be generated). The groupings are HPV-negative ("HPV_neg"), positive for low-risk types only (lrHPV_pos), and positive for high risk types (with/without low risk types also; "hrHPV_pos").  
 
 For this chart, high risk types are considered to be HPV16, 18, 31, 33, 35, 39, 45, 51, 52, 56, 58, 59, and 68.'
 
