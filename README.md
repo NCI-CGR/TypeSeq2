@@ -267,3 +267,119 @@ If the samples are not named in this way, it will caused issues as reported befo
 It is ideal to pull 5`-barcode ID from ID:MRFF6.IonXpress_080 rather than from the hard-coded SM:80.   However, the adam library used in this plugin is outdated, so that it is difficult to find the related documents/references about how to make such changes properly. 
 
 Noticeably, dual barcode seems supported by TorrentSuite now (see https://assets.thermofisher.com/TFS-Assets/LSG/manuals/MAN0017972_031419_TorrentSuite_5_12_UG_.pdf), which is likely to be a better solution.  The feature has been explored by Sarah at certain extension (see https://github.com/NCI-CGR/TypeSeqHPV_issues/issues/84).  A successful adoption of this solution will reduce the computation cost of this plugin dramatically.
+
+### 2. TypeSeq2 Plugin package
+The plugin package is a zip file, with the a typical folder structure as below:
+```bash
+└── TypeSeq2-dev
+    ├── instance.html
+    ├── launch.sh
+    ├── plan.html
+    ├── pluginMedia
+    │   └── configs
+    │       ├── TS2_config.csv
+    │       ├── TS2_plugin-barcodes_v1.csv
+    │       ├── TypeSeq2_BED_v1.bed
+    │       ├── TypeSeq2_Batch-controls_v1.csv
+    │       ├── TypeSeq2_Grouping-defs_v1.csv
+    │       ├── TypeSeq2_Hotspot_v1.vcf
+    │       ├── TypeSeq2_Internal-Controls_v1.csv
+    │       ├── TypeSeq2_Ion_Ref.fasta
+    │       ├── TypeSeq2_Lineage-defs_v1.csv
+    │       ├── TypeSeq2_Overall-qc-defs_v1.csv
+    │       ├── TypeSeq2_PN-criteria_v1.csv
+    │       ├── TypeSeq2_Parameters_v1.json
+    │       └── TypeSeq2_Scaling_v1.csv
+    └── pluginsettings.json
+```
+
++ The plugin name is actually defined by the folder name within the zip file, that is, *TypeSeq2-dev* in this example.
++ The script *launch.sh* is the core component of the package (see an example below), playing several important functions:
+  + Define the version of the package.
+  + Prepare some settings for singularity.
+  + Prepare settings for the docker run: *docker://cgrlab/typeseq2:dev_v2.1.7*  
+    + The whole TypeSeq2 pipeline is an R script, which is containerized within *docker://cgrlab/typeseq2:dev_v2.1.7*.
+    + \-\-bind /results/plugins/TypeSeq2-dev/pluginMedia:/user_files
+      +  /results/plugins/TypeSeq2-dev/pluginMedia is the default pluginMedia folder after the plugin installation on the IonTorrent server.  It should be mounted as /user_files to the docker container to run the plugin properly.
+      +  :memo: **Note:** Please remember to update the folder name /results/plugins/***TypeSeq2-dev***/pluginMedia accordingly if the plugin name is changed from *TypeSeq2-dev*.
++ The file *instance.html* defines the HTML interface to run the plugin.
+
+Some details about IonTorrent plugin and its development can is available [here](https://ion-torrent-sdk.readthedocs.io/en/v5.4/plugin/getting_started.html).   
+
++ An example of *launch.sh*
+```bash
+#!/bin/bash
+
+set -x
+# TypeSeq2 HPV
+VERSION="2.1.7"
+#autorundisable
+echo Pipeline version $VERSION
+
+ln ../../*.bam ./
+
+
+export SINGULARITY_TMPDIR=/tmp/singularity_${USER}_tmp
+mkdir -p $SINGULARITY_TMPDIR
+export SINGULARITY_CACHEDIR=/tmp/singularity_${USER}_cache
+mkdir -p $SINGULARITY_CACHEDIR
+
+
+### transfer some metrics files
+mkdir raw_metrics
+
+cp ../../raw_peak_signal raw_metrics
+cp ../../basecaller_results/TFStats.json raw_metrics
+cp ../../sigproc_results/analysis.bfmask.stats raw_metrics
+cp ../../ionstats_alignment.json raw_metrics
+cp ../../basecaller_results/datasets_basecaller.json raw_metrics
+cp ../../basecaller_results/BaseCaller.json raw_metrics
+cp ../../expMeta.dat raw_metrics 
+
+mkdir tmp
+
+### Note to update the pluginMedia folder name if the package name is changed
+# /results/plugins/TypeSeq2-dev/pluginMedia
+
+singularity exec  --pwd /mnt --bind $(pwd):/mnt --bind $(pwd)/tmp:/tmp --bind /results/plugins/TypeSeq2-dev/pluginMedia:/user_files docker://cgrlab/typeseq2:dev_v2.1.7 \
+        Rscript /TypeSeq2/workflows/TypeSeq2.R \
+        --is_torrent_server yes \
+        --is_clinical yes \
+        --cores 22 \
+        --ram 24G \
+        --tvc_cores 4
+
+rm *rawlib.bam
+```
+
+:bulb: **Tip:** The TypeSeq2 plugin package is maintained at https://github.com/NCI-CGR/IonTorrent_plugins/tree/main/TypeSeq2 .  User may need test new config settings by themselves.  It is better to build a new plugin package based on the existing package, with the following steps:
+1. Download the plugin zip file from https://github.com/NCI-CGR/IonTorrent_plugins.
+2. Unzip the downloaded zip file.
+3. Change the configure files under *pluginMedia*.
+   +  Make sure to revise *TS2_config.csv* properly.
+4.  Change the package name to a unique name (so that it will not messed up with other users).
+   +  Rename the root folder name to the new name in the unzipped files.
+   +  Revise *launch.sh*
+      + Change the version, for example, VERSION="0.0.1".
+        + You many need to increase version number to overwrite previous installation with the same plugin name.
+        + Or you choose to uninstall the previous installation first and reinstall with the save version number.
+      + Update the binding folder accordingly
+        + \-\-bind /results/plugins/[new_plugin_name]/pluginMedia:/user_files
+5. Zip the package and the modified plugin is ready for use. 
+
+#### Dev and Prd version
+TypeSeq2-dev is a development version, which differs from the product version TypeSeq2:
++ Package name: TypeSeq2-dev VS TypeSeq2.
++ Version: Version number of TypeSeq2-dev typically is no less than that of TypeSeq2.
++ Docker image:  cgrlab/typeseq2:dev_V2.1.7 VS cgrlab/typeseq2:V2.1.4
+   + Most important of all, TypeSeq2-dev uses a different dockerfile from TypeSeq2. 
+     + The former incorporates the latest change in the main branch of https://github.com/NCI-CGR/TypeSeq2. Therefore, the docker image cgrlab/typeseq2:dev_V2.1.7 is not stable. The dynamic docker image has one advantage in the development: developers just need rebuild the docker image (with the same tag) so as to change the R functions defined in the installed TypeSeq2-dev (without reinstalling or upgrading the package).  Contrastingly, the production version TypeSeq2 has a stable docker image, not affected by the github commits.
+     + The dockerfile for the production version is linked to the stable release of https://github.com/NCI-CGR/TypeSeq2, so that it is stable. Once a new stable version is released, the docker images for the older development versions can be deleted from the docker hub.    
+
+### 3. Common plugin errors.
+#### 3.a. Exit code 143.  
+The demultiplexing step uses spark and requires lot of memory. Each plugin job is submited as a SGE job to the queue *plugin.q* in the IonTorrent server. By default, the plugin.q queue has 48G memory assigned. The job will be killed if the memory usage exceeds 48G. There are 3 likely solutions available to deal with this memory overflow:
+
+- Rerun the plugin job as the RAM requirement is usually dynamic for the same run.   
+- Change the default maximum memory setting of plugin.q to 80G. 
+- Consider to use dual barcodes (re Modify the 3' barcode demux to save time - TS 3' BC read tagging #84). Sarah and I had tested some before. If it works, the demultiplexing step will not be needed any more and the run time will be reduced dramatically.
