@@ -169,12 +169,6 @@ plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
 
-### Clean .drake if the drake workflow is completed successfully
-if (length(failed()) == 0){
-    cache <- get_cache()
-    cache$destroy()
-}
-
 
 ### Rename read_summary.csv
 new_fn <- renaming_read_summary(readd(user_files))
@@ -205,3 +199,9 @@ html_block = if ( command_line_args$is_torrent_server == "yes") {
     render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = !is.na(command_line_args$is_clinical)))
 }
 
+
+### Clean .drake if the drake workflow is completed successfully
+if (length(failed()) == 0){
+    cache <- get_cache()
+    cache$destroy()
+}
