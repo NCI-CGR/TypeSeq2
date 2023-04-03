@@ -469,7 +469,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     }
 
     if (is_clinical) {
-      write_batch_csv(simple_pn_matrix_final %>% select(-starts_with("HPV")), i, "pn_matrix_results.laboratory.csv")
+      write_batch_csv(simple_pn_matrix_final %>% select(-starts_with("HPV"), -Num_Types_Pos), i, "pn_matrix_results.laboratory.csv")
     }
   }
 }
