@@ -450,7 +450,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   # startplugin$expmeta$chipBarcode
   # startplugin$expmeta$run_date
   simple_pn_matrix_final2 <- tibble::add_column(simple_pn_matrix_final, 
-    barcode=startplugin$expmeta$chipBarcode,
+    chipBarcode=startplugin$expmeta$chipBarcode,
     run_date = startplugin$expmeta$run_date, .after = 'Project') 
 
   # Adding Assay code to all result files
