@@ -55,7 +55,7 @@ if ( args_df$is_torrent_server == "yes") {
     args_df$manifest <- save_value_to_csv(
       plugin_json$pluginconfig$typing_manifest,
       sprintf("input/%s", plugin_json$pluginconfig$manifest_fn),
-      "typing_manifest"
+      "typing_manifest.csv"
     )
      
 
