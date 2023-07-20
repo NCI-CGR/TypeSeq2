@@ -2,97 +2,30 @@
 # TypeSeq2
 ***NCI CGR laboratory HPV typing analysis workflows and R package***
 
-TypeSeq HPV is an R package that includes  
+***TypeSeq2*** is an R package that includes  
 
 * several helper functions for working with TypeSeq data  
 * contains a "make" based pipeline for processing Ion or Illumina runs  
 * contains a docker build file that includes all the dependencies inside a single container  
   
-We recommend running the pipeline inside the docker container ```cgrlab/typeseqhpv:final_2018080604``` as it contains all the required dependencies in the correct locations.
+We recommend running the pipeline inside the docker container ```cgrlab/typeseq2:v2.2.0``` as it contains all the required dependencies in the correct locations.
 
 The workflow manager we use is **drake** https://github.com/ropensci/drake
 
+This package supports the Ion Torrent platforms.
 
-There are currently two main workflows each supporting either the Ion Torrent or Illumina NGS platforms.  Since TypeSeqHPV can be used on either platform we therefore have analysis for either. 
-
-The only requirement for either workflow is either ```docker``` or ```singularity```
+The only requirement for this workflow is either ```docker``` or ```singularity```
 
 
 
 Ion Torrent Plugin
 ================
 
-We also include a wrapper for the Ion Torrent server that can be uploaded via the provided zip file.  The prerequisite for running the Ion Torrent Plugin successfully is to install docker on the server ahead of time.
-
-## Install Docker Community Edition On Torrent Server
-
-Following instructions posted here https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
-### Uninstall previous version
-
-It may be required to uninstall previous version of docker.  Skip this step if no previous version of docker installed.
-
-```
-sudo apt-get remove docker docker-engine docker.io
-````
-
-### Update Package Index and Install
-
-````
-sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-sudo apt-get update
-
-sudo apt-get install -y docker-ce
-````
-### Post Installation Setup
-  
-Give plugin access to docker.
-````
-sudo usermod -aG docker ionadmin
-sudo usermod -aG docker ionian
-````
-
-Try a hello world install test.
-````
-docker run hello-world
-````
-
-### Make Docker storage more robust on torrent server
-
-Docker doesn't always clean up after itself.  Changing were docker keeps it's image layers will prevent critical partitions from filling up.  If this step is skipped after several runs of a docker plugin the Torrent Service job scheduler will stop working.
-
-````
-sudo service docker stop
-sudo rm -rf  /var/lib/docker
-sudo vim /etc/default/docker
-````
-
-Modify this line
-````
- #DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
-````
-Changing it to this
-````
-DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 -g /results/plugins/scratch/docker"
-````
-Restart Docker
-````
-sudo service docker start 
-````
-
+We also include a wrapper for the Ion Torrent server that can be uploaded via the provided zip file.  The prerequisite for running the Ion Torrent Plugin successfully is to install ```singularity``` on the server ahead of time.
 
 ## Download and add hpv-typing plugin zip file via torrent server gui
 
-https://github.com/cgrlab/TypeSeqHPV/releases/download/2.1808.2701/TypeSeqHPV_TSv1_Ion_Torrent_Plugin.zip
+The latest plugin package can be found at [here](https://github.com/NCI-CGR/IonTorrent_plugins/tree/main/TypeSeq2/archive).
 
 Illumina Workflow
 ================
@@ -216,7 +149,7 @@ The version of Singularity we used to run the container is 2.4.4
 Insights about this plugin
 ============================
 
-Many issues have been posted and addressed in the [related issue page](https://github.com/NCI-CGR/TypeSeqHPV_issues/issues).   Some of the common issues are to be highlighted here.
+Many issues have been posted and addressed in the [related issue page](https://github.com/NCI-CGR/TypeSeqHPV_issues/issues).   Some of the common issues are to be highlighted as below.
 
 ### 1. Demultiplexing and the related issues
 
@@ -247,7 +180,7 @@ withColumn("recordGroupSample", concat(lit("A"), $"recordGroupSample")).
 
 
 + The read group example in a properly named bam file.
-[:boom:] Note that ***SM:80*** is recognized by the scalar code.  
+:bookmark: Note that ***SM:80*** is recognized by the scalar code.  
 
 ```
 @RG     ID:MRFF6.IonXpress_080  CN:OptimusFry/S5XL-0040 DS:chef 
