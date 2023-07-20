@@ -8,7 +8,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
   internal_control_defs <- args_df$internal_control_defs
   pn_filters <- args_df$pn_filters
   scaling_table <- args_df$scaling_table
-  is_clinical <- args_df$is_clinical == "yes"
+  is_clinical <- !is.na(args_df$is_clinical)
   min_reads_per_sample <- args_df$min_reads_per_sample %>% .convert_numeric_config()
   min_hpv_reads_per_sample <- args_df$min_hpv_reads_per_sample %>% .convert_numeric_config()
 
@@ -443,6 +443,15 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
       bind_cols(lineage_for_report)
 
   write.csv(lineage_final, "lineage_for_report")
+  
+  ### add two columns after Project in simple_pn_matrix_final
+  startplugin <- my_parse_json("startplugin.json", "./") 
+
+  # startplugin$expmeta$chipBarcode
+  # startplugin$expmeta$run_date
+  simple_pn_matrix_final2 <- tibble::add_column(simple_pn_matrix_final, 
+    chipBarcode=startplugin$expmeta$chipBarcode,
+    run_date = startplugin$expmeta$run_date, .after = 'Project') 
 
   # Adding Assay code to all result files
 
@@ -458,7 +467,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     # write_batch_csv(pn_filters, i, "pn_filters_report")
     write_batch_csv(deatiled_pn_matrix_for_report1, i, "detailed_pn_matrix_results.csv")
 
-    write_batch_csv(simple_pn_matrix_final, i, "pn_matrix_results.csv")
+    write_batch_csv(simple_pn_matrix_final2, i, "pn_matrix_results.csv")
     write_batch_csv(failed_pn_matrix_final, i, "failed_samples_pn_matrix_results.csv")
     write_batch_csv(control_results_final, i, "control_results.csv")
     write_batch_csv(lineage_final, i, "lineage_filtered_results.csv")
@@ -469,7 +478,7 @@ typing_variant_filter2 <- function(variants, args_df, user_files) {
     }
 
     if (is_clinical) {
-      write_batch_csv(simple_pn_matrix_final %>% select(-starts_with("HPV")), i, "pn_matrix_results.laboratory.csv")
+      write_batch_csv(simple_pn_matrix_final2 %>% select(-starts_with("HPV"), -Num_Types_Pos), i, "pn_matrix_results.laboratory.csv")
     }
   }
 }

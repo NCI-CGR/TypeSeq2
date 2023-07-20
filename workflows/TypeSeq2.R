@@ -168,16 +168,27 @@ system("mkdir vcf")
 plan_workers(workers, num_cores)
 
 drake::make(ion_plan)
-  
+
 
 ### Rename read_summary.csv
 new_fn <- renaming_read_summary(readd(user_files))
 
 ### Compress file here
-system("zip -r TypeSeq2_outputs.zip *.read_summary.csv *results.csv *QC_report.pdf *.batch_metrics_summary.csv *.run_metrics.csv Scaled_min-filters.csv control_definitions barcode_file grouping_file typing_manifest *.full.csv ")
+# include more files here
+system(sprintf("zip -r TypeSeq2_outputs.zip *.read_summary.csv *results.csv *QC_report.pdf *.batch_metrics_summary.csv *.run_metrics.csv Scaled_min-filters.csv control_definitions barcode_file grouping_file typing_manifest.csv *.full.csv %s.Table*.csv %s.*_plot_data.csv", get_output_prefix(), get_output_prefix() ))
 
-if(command_line_args$is_clinical == "yes"){
-    system("zip -r TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv *samples_only_matrix_results.csv *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf Scaled_min-filters.csv control_definitions barcode_file grouping_file typing_manifest *.laboratory.csv ")
+if( ! is.na(command_line_args$is_clinical) ){
+    # zip file for the lab
+    system("zip -r TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv  *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf  control_definitions barcode_file grouping_file typing_manifest.csv *.laboratory.csv ")
+
+    # encrypt the zip file
+    system(sprintf("gpg2 -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip", command_line_args$is_clinical ))
+
+    # hide all files by default
+    system("chmod -R  go-rxw *")
+
+    # allow the selected files to view
+    system("chmod go+r TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.laboratory.zip *laboratory_report.pdf")
 }
 
 #### E. make html block for torrent server ####
@@ -185,6 +196,12 @@ html_block = if ( command_line_args$is_torrent_server == "yes") {
     # system("cp /TypeSeq2/inst/typeseq2/torrent_server_html_block.R ./")
     system(paste0("cp ", system.file("typeseq2", "torrent_server_html_block.R",  package = "TypeSeq2"), " ./"))
 
-    render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = command_line_args$is_clinical == "yes"))
+    render("./torrent_server_html_block.R", output_dir = "./", params = list(is_clinical = !is.na(command_line_args$is_clinical)))
 }
 
+
+### Clean .drake if the drake workflow is completed successfully
+if (length(failed()) == 0){
+    cache <- get_cache()
+    cache$destroy()
+}
