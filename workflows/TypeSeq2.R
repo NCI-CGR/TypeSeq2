@@ -186,6 +186,7 @@ if( ! is.na(command_line_args$is_clinical) ){
 
     # hide all files by default
     system("chmod -R  go-rxw *")
+    system("chmod go+r drmaa_stdout.txt") # allow to view log file via web portal
 
     # allow the selected files to view
     system("chmod go+r TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.laboratory.zip *laboratory_report.pdf")
