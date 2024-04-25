@@ -182,14 +182,18 @@ if( ! is.na(command_line_args$is_clinical) ){
     system("zip -r TypeSeq2_outputs.laboratory.zip *.read_summary.csv *control_results.csv  *failed_samples_pn_matrix_results.csv *-pn_matrix_results.laboratory.csv *laboratory_report.pdf  control_definitions barcode_file grouping_file typing_manifest.csv *.laboratory.csv ")
 
     # encrypt the zip file
-    system(sprintf("gpg2 -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip", command_line_args$is_clinical ))
+    gpg_status <- system(sprintf("gpg2 -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip", command_line_args$is_clinical ))
 
-    # hide all files by default
-    system("chmod -R  go-rxw *")
-    system("chmod go+r drmaa_stdout.txt") # allow to view log file via web portal
+    if(gpg_status == 0){
+        # remove the unencrypted files containing clinical outcomes
+        system(" ls *.Table*.csv *.full.csv *QC_report.pdf *_plot_data.csv *results.csv TypeSeq2_outputs.zip | grep -v -e control_results.csv -e failed_samples_pn_matrix_results.csv | xargs rm -f ")
+    }
+    # # hide all files by default
+    # system("chmod -R  go-rxw *")
+    # system("chmod go+r drmaa_stdout.txt") # allow to view log file via web portal
 
-    # allow the selected files to view
-    system("chmod go+r TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.laboratory.zip *laboratory_report.pdf")
+    # # allow the selected files to view
+    # system("chmod go+r TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.laboratory.zip *laboratory_report.pdf")
 }
 
 #### E. make html block for torrent server ####
