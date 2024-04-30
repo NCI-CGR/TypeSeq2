@@ -184,7 +184,7 @@ if( ! is.na(command_line_args$is_clinical) ){
     # encrypt the zip file
     gpg_status <- system(sprintf("gpg2 -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip", command_line_args$is_clinical ))
 
-    if(gpg_status == 0){
+    if(gpg_status == 0 || gpg_status == 2 ){
         # remove the unencrypted files containing clinical outcomes
         system(" ls *.Table*.csv *.full.csv *QC_report.pdf *_plot_data.csv *results.csv TypeSeq2_outputs.zip | grep -v -e control_results.csv -e failed_samples_pn_matrix_results.csv | xargs rm -f ")
     }
