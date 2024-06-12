@@ -239,8 +239,11 @@ if( ! is.na(command_line_args$is_clinical) ){
         
         ### Transfer files to the target folders
         # cp *-control_results.csv *-pn_matrix_results.csv to $folder1
-        system(sprintf("cp *-control_results.csv *-pn_matrix_results.csv %s", folders[1]))
-        
+        # system(sprintf("cp *-control_results.csv *-pn_matrix_results.csv %s", folders[1]))
+
+        # revise: <batchid>-samples_only_matrix_results.csv <batchid>-control_results.csv
+        system(sprintf("cp *-control_results.csv *-samples_only_matrix_results.csv %s", folders[1]))
+
         # make new folder $folder2/<run_id>/plugin_out/ and copy TypeSeq2_outputs.zip file there
         new_dir <- sprintf("%s/%s/plugin_out", folders[2], run_metrics$Analysis_Name)
         system(sprintf("mkdir -p %s && cp TypeSeq2_outputs.zip %s", new_dir, new_dir))
