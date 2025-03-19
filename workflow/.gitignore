@@ -1,0 +1,56 @@
+# R-specific ignores
+.Rhistory
+.RData
+.Rproj.user/
+.rds
+.rda
+*.so
+*.dll
+*.o
+*.DS_Store
+*.log
+
+# renv ignores
+renv/
+ws/
+
+# R Markdown / knitr output
+*.html
+*.pdf
+*.docx
+*.pptx
+*.tex
+*_cache/
+*_files/
+
+# Temporary files and directories
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.lock
+
+# Compiled code and binaries
+*.Rcpp
+*.cpp
+*.c
+*.h
+*.out
+*.exe
+
+# System files
+.vscode/
+.env
+
+# Data files (if you don't want to track them)
+data/
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.feather
+*.parquet
+
+# Docker ignores, if you're building locally
+Dockerfile.lock
