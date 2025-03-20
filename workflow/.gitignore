@@ -11,7 +11,8 @@
 *.log
 
 # renv ignores
-renv/
+renv/staging
+renv/library
 ws/
 
 # R Markdown / knitr output
@@ -29,7 +30,7 @@ temp/
 *.tmp
 *.bak
 *.swp
-*.lock
+
 
 # Compiled code and binaries
 *.Rcpp
