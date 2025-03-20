@@ -390,6 +390,7 @@ tar_plan(
              path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", TARGETS_ROOT),
              output_file="TypeSeq2HPV_QC_report.pdf",
              output_dir = "./",
+             intermediates_dir="./",
              clean = T,
              params = list(is_clinical = is_clinical, for_batch=F)
              )
@@ -402,6 +403,8 @@ tar_plan(
   , tar_render_rep(batch_report,
                    path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", TARGETS_ROOT), 
                    output_dir = "./",
+                   intermediates_dir="./",
+                   clean = T,
                    params = batch_df)
   
   ### 10. generate grouped pn_matrix (as defined, like Carcinogenic, CVT, etc)
@@ -418,6 +421,7 @@ tar_plan(
   , tar_render(html_page,
                path = sprintf("%s/inst/torrent_server_html_block.Rmd", TARGETS_ROOT),
                output_dir = "./",
+               intermediates_dir="./",
                clean = T,
                params = list(is_clinical = is_clinical)
   )
