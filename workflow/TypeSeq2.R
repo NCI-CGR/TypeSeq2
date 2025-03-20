@@ -1,7 +1,6 @@
 #### A. load packages ####
 library(targets)
 library(tarchetypes)
-library(crew)
 
 library(tidyverse)
 library(optigrab)
@@ -17,9 +16,9 @@ library(magrittr)
 #  /usr/local/bin/Rscript TypeSeq2.R  --debug yes --is_torrent_server yes --user_files ./user_files/
 
 
-tar_option_set(
-  controller = crew_controller_local(workers = parallel::detectCores() -1 )
-)
+# tar_option_set(
+#   controller = crew_controller_local(workers = parallel::detectCores() -1 )
+# )
 
 # Get the directory of the currently running R script
 args <- commandArgs(trailingOnly = FALSE)
