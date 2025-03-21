@@ -29,6 +29,12 @@ conflict_prefer("extract", "tidyr")
 TARGETS_ROOT <- Sys.getenv("TARGETS_ROOT")
 # stop("TARGETS_ROOT: ", TARGETS_ROOT, "\n")
 
+TMP_DIR = "./tmp"
+# render_dir = sprintf("%s", TARGETS_ROOT)
+
+### hard-coded as tar_render cannot handle path variable dependencies properly somehow
+render_dir = TMP_DIR
+
 tar_source(sprintf("%s/R", TARGETS_ROOT))
            
 # define some constants
@@ -386,8 +392,12 @@ tar_plan(
     })
      
   ## render report
+  # , tar_target(render_dir, copy_files(sprintf("%s/inst", TARGETS_ROOT), TMP_DIR),
+  #              format="file")
+               
+  #, render_dir = sprintf("%s/inst", TARGETS_ROOT)
   , tar_render(qc_report,
-             path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", TARGETS_ROOT),
+             path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", render_dir),
              output_file="TypeSeq2HPV_QC_report.pdf",
              output_dir = "./",
              intermediates_dir="./",
@@ -401,7 +411,7 @@ tar_plan(
            )
 
   , tar_render_rep(batch_report,
-                   path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", TARGETS_ROOT), 
+                   path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", render_dir), 
                    output_dir = "./",
                    intermediates_dir="./",
                    clean = T,
@@ -419,7 +429,7 @@ tar_plan(
   
   ### 13. render the html page
   , tar_render(html_page,
-               path = sprintf("%s/inst/torrent_server_html_block.Rmd", TARGETS_ROOT),
+               path = sprintf("%s/inst/torrent_server_html_block.Rmd", render_dir),
                output_dir = "./",
                intermediates_dir="./",
                clean = T,
