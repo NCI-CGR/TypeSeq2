@@ -7,7 +7,7 @@ get_args <- function(args_df, path){
     args_df$config_general <- sprintf("%s/configs/TS2_config.csv", path)
     config_file_df = read_csv(args_df$config_general, col_names = c("key", "value"), col_types="cc")  %>%
         as_tibble() %>%
-        mutate(value= ifelse(grepl("^min", key), value, paste0(path, value))) 
+        mutate(value= ifelse(grepl("^min", key), value, file.path(path, value))) 
 
     # anything defined at args_df has high priority than config_general
     new_args_df = args_df %>%
