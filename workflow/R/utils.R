@@ -300,3 +300,11 @@ get_output_prefix <- function(){
   return(output_prefix)
 }
 
+### copy Rmd template
+copy_files <- function(src_dir, dest_dir="./tmp/"){
+  if (!dir.exists(dest_dir)) {
+    dir.create(dest_dir, showWarnings = T)
+  }
+  copy_result <- file.copy(src_dir, dest_dir, recursive = TRUE)
+  return(dest_dir)
+}
