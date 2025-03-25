@@ -33,7 +33,7 @@ post_typing <- function(settings_lst, run_metrics) {
     # encrypt the zip file
     gpg_status <- run_cmd(
       sprintf(
-        "gpg2 -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip",
+        "gpg -e -R %s --batch --yes -o TypeSeq2_outputs.zip.pgp TypeSeq2_outputs.zip",
         settings_lst$is_clinical
       )
     )
