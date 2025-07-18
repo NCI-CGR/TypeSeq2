@@ -1,5 +1,6 @@
 library(tarchetypes)
 library(targets)
+library(tidyverse)
 
 options(tidyverse.quiet = TRUE)
 
@@ -43,11 +44,13 @@ HC_NAMES <- c("B2M-S", "B2M-S2")
 CTRL_CONTIGS <- c(SIC_NAMES, HC_NAMES)
 SAMPLE_ID <- c("CGR_Sample_ID", "Blinded_Sample_ID")
 
-tar_plan(
+is_clinical = read.csv(file="cmd.csv") %>% pull(is_clinical) %>% is.na %>% `!`
+
+typeseq2 <- tar_plan(
   args_df0 = read.csv(file="cmd.csv"),
   #### 1. adjust command line arguments ####
   args_df = get_args(args_df0, args_df0$user_files) %>% glimpse(),
-  is_clinical = args_df %>% pull(is_clinical) %>% is.na %>% `!`,
+  # ,
   
   #### 2. parse plugin data ####
   user_files = startplugin_parse(args_df), 
@@ -402,8 +405,10 @@ tar_plan(
              output_dir = "./",
              intermediates_dir="./",
              clean = T,
-             params = list(is_clinical = is_clinical, for_batch=F)
+             params = list(is_clinical = F, for_batch=F)
              )
+  
+  
   ### render batch report
   , batch_df = data.frame( batch_id= unique(settings_lst$manifest$Assay_Batch_Code), is_clinical=is_clinical, for_batch=T) %>%
     mutate(
@@ -436,3 +441,22 @@ tar_plan(
                params = list(is_clinical = is_clinical)
   )
 )
+
+lab_report <- tar_plan(
+  # make TypeSeq2HPV_laboratory_report.pdf; this task will be skipped if is_clinical is True
+  tar_render(qc_lab_report,
+               path = sprintf("%s/inst/TypeSeq2_QC_template.Rmd", render_dir),
+               output_file="TypeSeq2HPV_laboratory_report.pdf",
+               output_dir = "./",
+               intermediates_dir="./",
+               clean = T,
+               # cue = tar_cue_skip(condition = !is_clinical),
+               params = list(is_clinical = T, for_batch=F)
+  )
+)
+
+if(is_clinical){
+  c(typeseq2, lab_report)
+}else{
+  typeseq2
+}
