@@ -378,7 +378,7 @@ typeseq2 <- tar_plan(
       
       if (nrow(samples_only_pn_matrix) > 0) {
         write_batch_csv(
-          read_counts_final %>%
+          samples_only_pn_matrix %>%
             filter(!is.na(Owner_Sample_ID)),
           i,
           "samples_only_matrix_results.csv"
