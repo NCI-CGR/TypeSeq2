@@ -132,14 +132,16 @@ The final matrix, which represents the per-sample minimum read thresholds for ea
 
 $$\text{Min Read Threshold Matrix} = \text{Vector A} \times \text{Vector B}^{\top}$$
 
+The matrix of min read criteria is exported as the CSV file `Scaled_min-filters.csv` following each TypeSeq2 plugin run.
+
 ---
 
 
 #### 5. Assign P/N status for each amplicon in each sample
 
-##### A. Sample-Level Quality Control: *sequencing_qc* and *total_HPV_reads*
+##### A. Sample-Level Quality Control: *sequencing_qc* and *HPV_qc*
 
-Before assigning P/N status to individual amplicons within a sample, two critical sample-level quality control metrics are evaluated: *sequencing_qc* and *total_HPV_reads*. The minimum thresholds for these metrics are specified in `pluginMedia/configs/TS2_config.csv` as `min_reads_per_sample` (for total reads) and `min_hpv_reads_per_sample` (for HPV-specific reads), respectively. A sample's *sequencing_qc* is designated "pass" if its total read count is $\ge$ `min_reads_per_sample`; otherwise, it is designated "fail." Similarly, a sample's *total_HPV_reads* is designated "pass" if its total HPV read count is $\ge$ `min_hpv_reads_per_sample`; otherwise, it is designated "fail."  
+Before assigning P/N status to individual amplicons within a sample, two critical sample-level quality control metrics are evaluated: *sequencing_qc* and *HPV_qc*. The minimum thresholds for these metrics are specified in `pluginMedia/configs/TS2_config.csv` as `min_reads_per_sample` (for total reads) and `min_hpv_reads_per_sample` (for HPV-specific reads), respectively. A sample's *sequencing_qc* is designated "pass" if its total read count is $\ge$ `min_reads_per_sample`; otherwise, it is designated "fail." Similarly, a sample's *HPV_qc* is designated "pass" if its total HPV read count is $\ge$ `min_hpv_reads_per_sample`; otherwise, it is designated "fail."  
 
 + pluginMedia/configs/TS2_config.csv
   
@@ -158,6 +160,17 @@ Before assigning P/N status to individual amplicons within a sample, two critica
 | overall_qc_defs          | configs/TypeSeq2_Overall-qc-defs_v1.1.csv   |
 | min_reads_per_sample     | 5000                                        |
 | min_hpv_reads_per_sample | 5000                                        |
+
+If a sample's *sequencing_qc* is "fail," the read counts for all HPV amplicons within that sample are set to 0. Consequently, all HPV types for that sample are assigned a negative status.
+
+##### B. Amplicon-level P/N status
+
+The assignment of a "positive" or "negative" status for each amplicon within a sample is determined by a stringent, dual-criterion filtering process. An amplicon is designated as "positive" only if it simultaneously satisfies two conditions: its absolute read count (depth) must meet or exceed a calculated minimum read threshold specific to that amplicon and sample (as defined in *Scaled_min-filters.csv*), and its relative abundance (read depth divided by total sample reads) must also meet or exceed a defined minimum percentage threshold (as specified in the 3rd column of *TypeSeq2_PN-criteria_v1.3.csv*). If either of these two criteria is not fulfilled, the amplicon is then classified as "negative," indicating it did not pass the quality control measures for confident detection within that sample.
+
+```r
+status = ifelse(depth >= min_reads & depth / total_reads >= Min_perc_per_type, "pos", "neg")
+```
+
 
 #### 6. Identify HPV types
 
