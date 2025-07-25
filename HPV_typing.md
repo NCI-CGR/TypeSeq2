@@ -107,9 +107,12 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
     This vector contains the calculated scaling factor unique to each individual sample. For details on how these factors are derived, please refer to the "Run-to-Run Scaling of Minimum Read Thresholds" section (Section 3).
 
 * **Vector B: Baseline Minimum Read Thresholds per Amplicon**
-    This vector defines the default minimum read thresholds and percentage cutoffs for each amplicon (contig) type, serving as the foundational values before any sample-specific adjustments.
+    This vector defines the default minimum read thresholds and percentage cutoffs for each amplicon (contig) type, serving as the foundational values before any sample-specific adjustments. The vector is extracted from the second column of pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv.
 
-+ pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv    
+  + pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv   
+
+<center>
+
 | Contig    | Min\_reads\_per\_type | Min\_perc\_per\_type |
 |:-----|------:|-----------:|
 | ASIC-Low  | 400                   | 0.01                 |
@@ -121,7 +124,7 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
 | ASIC-High | 400                   | 0.005                |
 | ...       | ...                   | ...                  |
 
-
+</center>
 
 **Calculation of the Minimum Read Threshold Matrix:**
 
