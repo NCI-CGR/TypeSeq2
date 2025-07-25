@@ -111,7 +111,7 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
 
 + pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv    
 | Contig    | Min\_reads\_per\_type | Min\_perc\_per\_type |
-| ----- | ------ | ----------- |
+|:-----|------:|-----------:|
 | ASIC-Low  | 400                   | 0.01                 |
 | ASIC-Med  | 400                   | 0.01                 |
 | B2M-S2    | 400                   | 0.01                 |
