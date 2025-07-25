@@ -126,7 +126,7 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
 
 </center>
 
-**Calculation of the Minimum Read Threshold Matrix:**
+* **Calculation of the Minimum Read Threshold Matrix:**
 
 The final matrix, which represents the per-sample minimum read thresholds for each contig, is computed by taking the outer product of Vector A and Vector B. This ensures that the run-specific scaling factor from Vector A is correctly applied to the baseline thresholds of each amplicon defined in Vector B.
 
@@ -135,7 +135,29 @@ $$\text{Min Read Threshold Matrix} = \text{Vector A} \times \text{Vector B}^{\to
 ---
 
 
-#### 5. Assign P/N status for each sample about internal controls, HPV strains and lineages
+#### 5. Assign P/N status for each amplicon in each sample
+
+##### A. Sample-Level Quality Control: *sequencing_qc* and *total_HPV_reads*
+
+Before assigning P/N status to individual amplicons within a sample, two critical sample-level quality control metrics are evaluated: *sequencing_qc* and *total_HPV_reads*. The minimum thresholds for these metrics are specified in `pluginMedia/configs/TS2_config.csv` as `min_reads_per_sample` (for total reads) and `min_hpv_reads_per_sample` (for HPV-specific reads), respectively. A sample's *sequencing_qc* is designated "pass" if its total read count is $\ge$ `min_reads_per_sample`; otherwise, it is designated "fail." Similarly, a sample's *total_HPV_reads* is designated "pass" if its total HPV read count is $\ge$ `min_hpv_reads_per_sample`; otherwise, it is designated "fail."  
+
++ pluginMedia/configs/TS2_config.csv
+  
+| hotspot_vcf              | configs/TypeSeq2_Hotspot_v1.2.vcf           |
+| ------------------------ | ------------------------------------------- |
+| tvc_parameters           | configs/TypeSeq2_Parameters_v1.1.json       |
+| reference                | configs/TypeSeq2_Ion_Ref_v1.3.fasta         |
+| region_bed               | configs/TypeSeq2_BED_v1.1.bed               |
+| lineage_defs             | configs/TypeSeq2_Lineage-defs_v1.2.csv      |
+| pn_filters               | configs/TypeSeq2_PN-criteria_v1.3.csv       |
+| scaling_table            | configs/TypeSeq2_Scaling_v1.csv             |
+| internal_control_defs    | configs/TypeSeq2_Internal-Controls_v1.1.csv |
+| barcode_file             | configs/TypeSeq2_plugin-barcodes_v1.csv     |
+| grouping_defs            | configs/TypeSeq2_Grouping-defs_v1.csv       |
+| control_definitions      | configs/TypeSeq2_Batch-controls_v1.3.csv    |
+| overall_qc_defs          | configs/TypeSeq2_Overall-qc-defs_v1.1.csv   |
+| min_reads_per_sample     | 5000                                        |
+| min_hpv_reads_per_sample | 5000                                        |
 
 #### 6. Identify HPV types
 
