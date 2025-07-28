@@ -265,5 +265,50 @@ An HPV lineage or sublineage is ultimately assigned a "positive" status only if 
 
 This multi-layered filtering ensures that reported lineage and sublineage calls are highly reliable, based on both the precise genetic markers and the overall quality of the HPV type detection in the sample.
 
+The allele frequency (AF) assigned to a detected HPV lineage or sublineage is determined by the minimum allele frequency observed across all the genetic variants (markers) that collectively provide evidence for its presence. If a lineage or sublineage is not detected or fails to meet the stringent quality control criteria, its assigned AF will be 0. This calculated AF, reflecting the lowest supporting variant frequency and indicating the overall confidence of detection for each lineage/sublineage, is then meticulously exported to the *lineage_for_report.csv* file.
+
 ---
-#### 8. Generate reports
+
+#### 8. Quality control by the batch control samples
+In every assay plate, there are batch control samples with the known HPV typing status. 
+
+
+---
+#### 9. Generate reports
+
+---
+
+##### {AnalysisName}.full.csv
+Based on the R code provided, the `{AnalysisName}.full.csv` file is a comprehensive output that combines various pieces of information about each sample, including manifest details, read counts, and the P/N (Positive/Negative) statuses for HPV types and internal controls.
+
+Here's an explanation of each column you would find in the `{AnalysisName}.full.csv` file:
+
+* **Project**: The overall project identifier to which the sample belongs, typically from your manifest.
+* **Assay\_Batch\_Code**: A code identifying the specific batch in which the assay was processed.
+* **Assay\_Plate\_Code**: A code identifying the specific assay plate on which the sample was run.
+* **Assay\_Well\_ID**: The specific well identifier on the assay plate where the sample was located.
+* **[any\_of(SAMPLE\_ID)]**: This represents a column (or columns) from your manifest that serves as the primary sample identifier. The exact column name will depend on your `SAMPLE_ID` variable, but it's typically a unique ID for the biological sample.
+* **Owner\_Sample\_ID**: Another identifier for the sample, likely originating from the sample owner or submission.
+* **barcode**: The unique barcode sequence used to identify the sample during sequencing.
+* **total\_reads**: The total number of raw sequencing reads obtained for that sample.
+* **HPV reads**: The total number of reads that successfully mapped to any HPV amplicon.
+* **Control**: A logical indicator (TRUE/FALSE) specifying whether the sample is identified as an assay control (e.g., positive or negative controls defined in your pipeline).
+* **Num\_Types\_Pos**: The count of HPV types that were assigned a "positive" P/N status in that sample.
+* **Overall\_qc**: The final quality control status for the entire sample (e.g., "pass" or "failed"), which is a combined evaluation of internal control metrics.
+* **Sequencing\_qc**: The quality control status related specifically to the sequencing performance for that sample.
+* **Human\_Control**: The P/N status of the human internal control (e.g., B2M), indicating the quality of the human DNA in the sample.
+* **Assay\_SIC**: The P/N status of the assay spiked-in control, assessing the overall assay performance.
+* **Type**: This column dynamically lists each individual HPV type (e.g., HPV16, HPV18, HPV6) or internal control amplicon (e.g., B2M-S, ASIC-Low) for which data is reported. Because this file combines different types into long format, you'll see multiple rows for each `barcode`, one for each `Type`.
+* **Call**: The P/N (Positive/Negative) status assigned to the specific `Type` in that row for that sample.
+* **Reads**: The raw read count (`depth`) specifically for the `Type` (HPV amplicon or internal control amplicon) in that row.
+* **% of Total Reads**: The percentage of `Reads` for that specific `Type` relative to the `total_reads` for the sample (Reads / Total Reads \* 100).
+* **% of Total HPV Reads**: The percentage of `Reads` for that specific `Type` relative to the `HPV reads` for the sample (Reads / HPV Reads \* 100). This column will be `NA` for internal control amplicons (`CTRL_CONTIGS`) as they are not considered HPV types.
+* **LIMS\_Sample\_ID**: This column is initialized as `NA` in this code, suggesting it might be a placeholder for future integration with a Laboratory Information Management System (LIMS) ID, or is not populated by this specific analysis step.
+
+In summary, the `*.full.csv` file provides a detailed, row-by-row breakdown for each sample and each specific HPV type/amplicon, integrating metadata, read counts, and all relevant quality control and P/N statuses to offer a complete picture of the assay results.
+
+##### {AnalysisName}.laboratory.csv
+
+The **`{AnalysisName}.laboratory.csv`** file is a specialized report designed for clinical settings, serving as a focused subset of the more comprehensive `{AnalysisName}.full.csv` output.
+
+Specifically, this file contains **only the rows corresponding to control samples**. This means it excludes all patient samples and exclusively presents the data for internal controls (such as positive controls, negative controls, human controls, and assay spiked-in controls) that were run alongside the patient samples. All the columns present in the `{AnalysisName}.full.csv` (e.g., manifest details, read counts, P/N statuses for HPV types and internal controls, and various QC metrics) are retained in this subset, providing a complete picture of the performance of the controls within the specific assay run. This focused report is crucial for laboratories to quickly review and verify the quality and validity of their experimental run by checking the expected performance of the control samples.
