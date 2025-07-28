@@ -210,10 +210,60 @@ The ultimate overall_qc status for each sample is derived from a comprehensive e
 | pass       | pass          | pass          | pass            | pass      |
 | pass       | pass          | fail          | pass            | pass      |
 
+If the overall_qc status for a sample is determined to be "failed," the P/N (Positive/Negative) statuses for all HPV amplicons within that specific sample will be re-assigned to "NA" (Not Applicable).
+
 ---
 
-#### 6. Identify HPV types
+#### 6. Identify P/N statues of HPV types
+Human Papillomaviruses (HPVs) are categorized into a hierarchical system: types, genetically distinct variants with >10% L1 gene sequence difference, which are classified as high-risk (e.g., HPV16, HPV18) or low-risk (e.g., HPV6, HPV11) based on their association with cancer or benign conditions. Within a type, lineages (1.0-10.0% L1 difference; e.g., HPV16-A and HPV16-B) represent further genetic diversity, sometimes linked to geographical distribution or subtle clinical variations. The finest classification level, sublineages (<1.0% L1 difference within a lineage; e.g., HPV16-A1), provide even higher resolution for epidemiological and evolutionary studies. For more detailed information, you can refer to [resources from the Centers for Disease Control and Prevention (CDC)](https://www.cdc.gov/hpv/index.html) or the International HPV Reference Center.
 
-#### 7. Refine HPV typing with the internal controls
+In our analysis, an HPV type is assigned as "positive" in a sample if at least one corresponding amplicon associated with that type is found to be "positive" (as per the P/N cutoff calculation). An important exception applies to HPV16 and HPV18: for these specific high-risk types, a "positive" assignment requires the detection of at least two "positive" amplicons in the sample.
 
+The P/N (Positive/Negative) matrix, along with manifest details and sample QC metrics, are comprehensively exported to the CSV file named *pn_matrix_for_groupings*.
+
+---
+
+#### 7. Identify P/N statues of HPV lineages/sublineages
+
+The identification of specific HPV lineages and sublineages in a sample involves a rigorous evaluation of individual genetic variants (markers). This process begins by assigning a quality flag, *qc_reason*, to each HPV variant based on predefined criteria in the *TypeSeq2_Lineage-defs_v1.2.csv* table.
+
+
+**Assigning the qc_reason Flag:**
+For each candidate variant that could define a lineage or sublineage, the *qc_reason* flag records its status during a series of quality control checks. An empty *qc_reason* string initially indicates no issues, but if a check fails, a specific reason is appended.
+
++ Individual quality criteria:
+  + *min_coverage_pos*: SRF >= min_coverage_pos
+  + *min_coverage_neg*: SRR >= min_coverage_neg
+  + *min_allele_coverage_pos*: SAF >= min_allele_coverage_pos
+  + *min_allele_coverage_neg*: SAR >= min_allele_coverage_neg
+  + *min_qual*: QUAL >= min_qual
+  + *max_alt_strand_bias*: STB <= max_alt_strand_bias
+  + *min_freq*: AF >= min_freq
+  + *max_freq:: AF <= max_freq
++ *Pass* status:
+    + Meaning: his is the ideal status. It signifies that the genetic marker successfully passed all internal quality control criteria. This means the reads covering the marker were sufficient and balanced, the variant call quality was high, its allele frequency was within the acceptable range, and there were no indications of technical artifacts. A marker with a "Pass" status is considered reliable evidence for the presence of its associated lineage. 
+
+The criteria for these flags are sourced from *TypeSeq2_Lineage-defs_v1.2.csv*:
+
+| Chr        | classification | Lineage_ID | Base_num | Base_ID | vcf_variant | allele | min_coverage_pos | min_coverage_neg | min_allele_coverage_pos | min_allele_coverage_neg | min_qual | min_freq | max_freq | max_alt_strand_bias |
+|------------|----------------|------------|----------|---------|-------------|--------|------------------|------------------|-------------------------|-------------------------|----------|----------|----------|---------------------|
+| HPV6_Lin   | lineage        | HPV6_A     | 62       | T       | C           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV6_Lin   | lineage        | HPV6_B     | 62       | T       | G           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV16      | lineage        | HPV16_A    | 112      | G       | C           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV16_Lin4 | lineage        | HPV16_B    | 57       | T       | C           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV16_Lin4 | lineage        | HPV16_B    | 117      | C       | A           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV16_Lin4 | lineage        | HPV16_B    | 152      | C       | T           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV16_Lin2 | lineage        | HPV16_C    | 72       | A       | C           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV11_Lin  | sublineage     | HPV11_A1   | 47       | A       | G           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+| HPV11_Lin  | sublineage     | HPV11_A2   | 47       | A       | T           | alt1   | 0                | 0                | 10                      | 0                       | 4        | 0.05     | 1        | 1                   |
+
+**Final Lineage/Sublineage P/N Assignment:**
+
+An HPV lineage or sublineage is ultimately assigned a "positive" status only if two conditions are met:
+1.  All related genetic variants (markers) that define that specific lineage or sublineage, as listed in `TypeSeq2_Lineage-defs_v1.2.csv`, must have a "Pass" status for their `qc_reason`.
+2.  The corresponding overarching HPV type (e.g., HPV16 for HPV16-A lineage) must also have been assigned a "positive" P/N status in that sample during earlier filtering steps.
+
+This multi-layered filtering ensures that reported lineage and sublineage calls are highly reliable, based on both the precise genetic markers and the overall quality of the HPV type detection in the sample.
+
+---
 #### 8. Generate reports
