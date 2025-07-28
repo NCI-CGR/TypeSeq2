@@ -171,6 +171,46 @@ The assignment of a "positive" or "negative" status for each amplicon within a s
 status = ifelse(depth >= min_reads & depth / total_reads >= Min_perc_per_type, "pos", "neg")
 ```
 
+##### C. Sample-Level Internal Control Metrics: Assay_SIC, human_control, and overall_qc
+
+Our HPV typing assay incorporates two distinct types of internal controls: a human endogenous control and an assay spiked-in control, both critical for assessing sample quality and assay performance.
+
+###### Human Control (human_control)
+Beta-2-microglobulin (B2M) serves as our human housekeeping gene control, with its amplicons, B2M-S and B2M-S2, expected to be consistently positive in all human specimens. The human_control status for each sample is assigned based on the Positive/Negative (P/N) statuses of B2M-S and B2M-S2, as defined within the TypeSeq2_Internal-Controls_v1.1.csv configuration table. For instance, if B2M-S is "pos" but B2M-S2 is "neg," the human_control status will be "pass_low-concentration."
+
+###### Assay Spiked-in Control (Assay_SIC)
+We also include a set of assay spiked-in controls (ASICs): ASIC-Low, ASIC-Med, and ASIC-High. These are designed to mimic varying target abundances, with ASIC-Low at 1X abundance, ASIC-Med at 2.5X, and ASIC-High at 10X. The Assay_SIC status is determined by the P/N calls of these three ASICs, also based on the TypeSeq2_Internal-Controls_v1.1.csv table. As an example, Assay_SIC will be assigned "pass_flag-high" if both ASIC-Low and ASIC-Med are "pos" while ASIC-High is "neg."
+
+
++ The detailed criteria for assigning these internal control statuses are provided in the following table:
+  
+| internal_control_code | qc_name       | qc_print               | ASIC-Low | ASIC-Med | ASIC-High | B2M-S | B2M-S2 |
+| --------------------- | ------------- | ---------------------- | -------- | -------- | --------- | ----- | ------ |
+| Assay_SIC             | Assay_SIC     | pass                   | pos      | pos      | pos       |       |        |
+| Assay_SIC             | Assay_SIC     | pass_flag-low          | neg      | pos      | pos       |       |        |
+| Assay_SIC             | Assay_SIC     | pass_flag-med          | pos      | neg      | pos       |       |        |
+| Assay_SIC             | Assay_SIC     | pass_flag-high         | pos      | pos      | neg       |       |        |
+| Assay_SIC             | Assay_SIC     | failed_med-high        | pos      | neg      | neg       |       |        |
+| Assay_SIC             | Assay_SIC     | failed_low-high        | neg      | pos      | neg       |       |        |
+| Assay_SIC             | Assay_SIC     | failed_low-med         | neg      | neg      | pos       |       |        |
+| Assay_SIC             | Assay_SIC     | failed_all             | neg      | neg      | neg       |       |        |
+| specimens             | human_control | pass                   |          |          |           | pos   | pos    |
+| specimens             | human_control | pass                   |          |          |           | pos   | neg    |
+| specimens             | human_control | pass_low-concentration |          |          |           | neg   | pos    |
+| specimens             | human_control | failed_to_amplify      |          |          |           | neg   | neg    |
+
+
+###### Overall QC status: *overall_qc*
+
+The ultimate overall_qc status for each sample is derived from a comprehensive evaluation that integrates the human_control and Assay_SIC metrics. This integrated assessment follows the specific criteria outlined in the TypeSeq2_Overall-qc-defs_v1.1.csv configuration table:
+
+| OVERALL_QC | sequencing_qc | human_control | total_HPV_reads | Assay_SIC |
+| ---------- | ------------- | ------------- | --------------- | --------- |
+| pass       | pass          | pass          | fail            | pass      |
+| pass       | pass          | pass          | pass            | pass      |
+| pass       | pass          | fail          | pass            | pass      |
+
+---
 
 #### 6. Identify HPV types
 
