@@ -265,15 +265,57 @@ An HPV lineage or sublineage is ultimately assigned a "positive" status only if 
 
 This multi-layered filtering ensures that reported lineage and sublineage calls are highly reliable, based on both the precise genetic markers and the overall quality of the HPV type detection in the sample.
 
-The allele frequency (AF) assigned to a detected HPV lineage or sublineage is determined by the minimum allele frequency observed across all the genetic variants (markers) that collectively provide evidence for its presence. If a lineage or sublineage is not detected or fails to meet the stringent quality control criteria, its assigned AF will be 0. This calculated AF, reflecting the lowest supporting variant frequency and indicating the overall confidence of detection for each lineage/sublineage, is then meticulously exported to the *lineage_for_report.csv* file.
+The allele frequency (AF) assigned to a detected HPV lineage or sublineage is determined by the minimum allele frequency observed across all the genetic variants (markers) that collectively provide evidence for its presence. If a lineage or sublineage is not detected or fails to meet the stringent quality control criteria, its assigned AF will be 0. This calculated AF, reflecting the lowest supporting variant frequency and indicating the overall confidence of detection for each lineage/sublineage, is then meticulously exported to the *lineage_for_report* file.
 
 ---
 
-#### 8. Quality control by the batch control samples
-In every assay plate, there are batch control samples with the known HPV typing status. 
+#### 8. Quality control by batch control samples
 
+To ensure the integrity and reliability of every assay plate, a set of batch control samples with known HPV typing statuses are included. These controls provide vital batch-level performance information, monitoring critical aspects of the assay process.
+
+**Batch-Level Performance Monitoring:**
+These controls are placed in independent wells, separate from the patient samples, and are designed to assess the overall performance of the assay at a batch level. They primarily control for the quality of **reagents**, the efficacy of **master mixes**, and the proper functioning of **equipment** (with the exception of individual well pipetting). It's important to note that these controls generally **do not control for** pipetting errors (e.g., missed or inaccurate transfers in individual wells) or the inherent quality of individual patient specimens.
+
+**EXTRACTION/LYSIS BATCH CONTROLS**
+
+These controls are specifically designed to monitor the efficiency and cleanliness of the nucleic acid extraction and lysis processes for the entire batch.
+
+* **Positive Control (HPV16/18+ cell lines):** These controls consist of cell lines known to contain HPV16 and/or HPV18. They confirm that the DNA extraction, lysis, and subsequent steps are successfully recovering and preparing target DNA.
+* **Negative Extraction Control (clean media):** This control utilizes clean media as its input material for the entire extraction process. Its purpose is to detect any contamination introduced during the DNA extraction and handling phases, ensuring no exogenous DNA is present from the start.
+* **Empty (for Negative Assay Control):** This typically refers to an empty well or a well containing only buffer, acting as a negative control for the entire assay process to detect any carry-over contamination within the assay itself, outside of extraction.
+
+**ASSAY BATCH CONTROLS**
+
+These controls focus on verifying the performance of the downstream assay steps, including amplification (PCR) and detection.
+
+* **Positive Assay Controls (plasmids and synthetic DNA fragments):** These controls are engineered DNA constructs (plasmids or synthetic fragments) containing specific HPV sequences. They are introduced at various stages of the assay to verify the amplification and detection efficiency of particular HPV targets.
+* **Negative Assay Controls (no-template and human+ HPV-):**
+    * **No-template assay control (PCR negative):** This control contains all reagents required for PCR but no DNA template. It monitors for contamination within the PCR reagents or the amplification setup, ensuring no non-specific amplification occurs.
+    * **Human+ HPV- (human positive, HPV negative) control:** This control contains human DNA that has been confirmed to be negative for all targeted HPV types. It serves to check for the specificity of the HPV detection, ensuring that the presence of human DNA does not lead to false-positive HPV signals.
+
+In the quality control process for batch control samples, their expected amplicon statuses are defined in the TypeSeq2_Batch-controls_v1.3.csv table. This table specifies whether an amplicon is anticipated to be "pos" (positive), "neg" (negative), or "either." The "either" status acts as a wildcard, meaning the amplicon's P/N call can be either positive or negative without impacting the control's pass/fail determination, and is consequently ignored in the subsequent analysis of that specific control's performance.
+
+To evaluate these controls, the actual assay results are fuzzy matched with the *TypeSeq2_Batch-controls_v1.3.csv* table. This matching uses a flexible approach where the Owner_Sample_ID from your assay results is considered a match for a Control_Code in the definition table if the Owner_Sample_ID contains the Control_Code string, and this comparison is case-insensitive. For example, an Owner_Sample_ID like "SampleA_ntc" would successfully match a Control_Code of "NTC".  Overall, there are two types of controls defined in *TypeSeq2_Batch-controls_v1.3.csv*: "pos" and "neg".   The observed results for each control sample's amplicons are compared against predefined expectations (allowing for "pos," "neg," or "either" outcomes) and then consolidates these individual checks into an overall "pass" or "fail" verdict for each control, along with specific reasons for any failures. This ensures the reliability of the entire assay batch.
+
+**TypeSeq2_Batch-controls_v1.3.csv**
+| Control_Code                        | Control_type | qc_name        | B2M-S  | B2M-S2 | HPV6 | HPV11 | HPV13 | HPV16 | HPV18 | HPV26 | … |
+| ----------------------------------- | ------------ | -------------- | ------ | ------ | ---- | ----- | ----- | ----- | ----- | ----- | - |
+| SiHa-HeLa                           | pos          | control_result | either | either | neg  | neg   | neg   | pos   | pos   | neg   | … |
+| C0112                               | pos          | control_result | either | either | neg  | neg   | neg   | pos   | pos   | neg   | … |
+| Lysis-NTC                           | neg          | control_result | neg    | neg    | neg  | neg   | neg   | neg   | neg   | neg   | … |
+| PCR-NTC                             | neg          | control_result | neg    | neg    | neg  | neg   | neg   | neg   | neg   | neg   | … |
+| NTC                                 | neg          | control_result | neg    | neg    | neg  | neg   | neg   | neg   | neg   | neg   | … |
+| hg19                                | pos          | control_result | either | pos    | neg  | neg   | neg   | neg   | neg   | neg   | … |
+| LOW_6_30_33_39_43_83_84_90_HIGH_69  | pos          | control_result | either | either | pos  | neg   | neg   | neg   | neg   | neg   | … |
+| LOW_26_32_42_45_51_67_72_82_HIGH_30 | pos          | control_result | either | either | neg  | neg   | neg   | neg   | neg   | pos   | … |
+| LOW_16_44_52_53_69_71_87_89_HIGH_32 | pos          | control_result | either | either | neg  | neg   | neg   | pos   | neg   | neg   | … |
+| …                                   | …            | …              | …      | …      | …    | …     | …     | …     | …     | …     | … |
+
+
+The `Control_type`, `control_result`, and `control_fail_code` for each batch control sample are consolidated and exported to individual CSV files, named `{AssayBatch}-control_results.csv`, providing a clear and concise summary of the quality control outcomes for each assay batch.
 
 ---
+
 #### 9. Generate reports
 
 ---
