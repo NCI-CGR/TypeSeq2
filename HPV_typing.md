@@ -6,7 +6,11 @@
 The development of the Human Papillomavirus (HPV) typing workflow has spanned several years at NCI-CGR, yet a complete technical record has not been previously compiled. This document aims to establish a foundational understanding by synthesizing existing documentation and elucidating unrecorded aspects through the reverse engineering of the R source code integral to HPV typing.
 
 ### Reference
++ https://github.com/NCI-CGR/TypeSeq2
 + 2021-09_TypeSeq2-Technical-Overview_2_Wei[21].pptx
++ https://github.com/NCI-CGR/TypeSeqHPV_issues/issues
++ https://tracker.nci.nih.gov/browse/CGRDOI-536
+  + https://tracker.nci.nih.gov/browse/CGRDOI-534
 
 ---
 
