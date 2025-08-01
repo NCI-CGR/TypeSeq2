@@ -8,17 +8,6 @@ The development of the Human Papillomavirus (HPV) typing workflow has spanned se
 ### Reference
 + 2021-09_TypeSeq2-Technical-Overview_2_Wei[21].pptx
 
-### Something about controls
-+ Control samples: batch controls
-+ Internal controls 
-  + Human B2M
-    + B2M-S1
-    + B2M-S2
-  + Assay spike-in controls
-    + ASIC-Low
-    + ASIC-Med
-    + ASIC-High
-
 ---
 
 ## Methods
@@ -83,7 +72,7 @@ Example:
 
 If your run's average reads per sample was 60,000, and the scaling table indicates a scaling factor of 0.85 for this read depth, then all min_reads_per_type values in your filtering criteria table would be multiplied by 0.85 to set the adjusted minimum read thresholds for each type.
 
-+ Scaling table (pluginMedia/configs/TypeSeq2_Scaling_v1.csv)
+**Scaling table (pluginMedia/configs/TypeSeq2_Scaling_v1.csv)**
 ```csv
 min_avg_reads_boundary,max_avg_reads_boundary,scaling_factor
 200000,200000000,2
@@ -109,9 +98,8 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
 * **Vector B: Baseline Minimum Read Thresholds per Amplicon**
     This vector defines the default minimum read thresholds and percentage cutoffs for each amplicon (contig) type, serving as the foundational values before any sample-specific adjustments. The vector is extracted from the second column of pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv.
 
-  + pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv   
-
 <center>
+**pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv** 
 
 | Contig    | Min\_reads\_per\_type | Min\_perc\_per\_type |
 |:-----|------:|-----------:|
@@ -143,7 +131,7 @@ The matrix of min read criteria is exported as the CSV file `Scaled_min-filters.
 
 Before assigning P/N status to individual amplicons within a sample, two critical sample-level quality control metrics are evaluated: *sequencing_qc* and *HPV_qc*. The minimum thresholds for these metrics are specified in `pluginMedia/configs/TS2_config.csv` as `min_reads_per_sample` (for total reads) and `min_hpv_reads_per_sample` (for HPV-specific reads), respectively. A sample's *sequencing_qc* is designated "pass" if its total read count is $\ge$ `min_reads_per_sample`; otherwise, it is designated "fail." Similarly, a sample's *HPV_qc* is designated "pass" if its total HPV read count is $\ge$ `min_hpv_reads_per_sample`; otherwise, it is designated "fail."  
 
-+ pluginMedia/configs/TS2_config.csv
+**pluginMedia/configs/TS2_config.csv**
   
 | hotspot_vcf              | configs/TypeSeq2_Hotspot_v1.2.vcf           |
 | ------------------------ | ------------------------------------------- |
@@ -182,7 +170,7 @@ Beta-2-microglobulin (B2M) serves as our human housekeeping gene control, with i
 We also include a set of assay spiked-in controls (ASICs): ASIC-Low, ASIC-Med, and ASIC-High. These are designed to mimic varying target abundances, with ASIC-Low at 1X abundance, ASIC-Med at 2.5X, and ASIC-High at 10X. The Assay_SIC status is determined by the P/N calls of these three ASICs, also based on the TypeSeq2_Internal-Controls_v1.1.csv table. As an example, Assay_SIC will be assigned "pass_flag-high" if both ASIC-Low and ASIC-Med are "pos" while ASIC-High is "neg."
 
 
-+ The detailed criteria for assigning these internal control statuses are provided in the following table:
+**The detailed criteria for assigning these internal control statuses are provided in the following table:**
   
 | internal_control_code | qc_name       | qc_print               | ASIC-Low | ASIC-Med | ASIC-High | B2M-S | B2M-S2 |
 | --------------------- | ------------- | ---------------------- | -------- | -------- | --------- | ----- | ------ |
@@ -316,9 +304,8 @@ The `Control_type`, `control_result`, and `control_fail_code` for each batch con
 
 ---
 
-#### 9. Generate reports
 
----
+#### 9. Generate reports
 
 ##### {AnalysisName}.full.csv
 Based on the R code provided, the `{AnalysisName}.full.csv` file is a comprehensive output that combines various pieces of information about each sample, including manifest details, read counts, and the P/N (Positive/Negative) statuses for HPV types and internal controls.
