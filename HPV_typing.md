@@ -72,19 +72,19 @@ Example:
 
 If your run's average reads per sample was 60,000, and the scaling table indicates a scaling factor of 0.85 for this read depth, then all min_reads_per_type values in your filtering criteria table would be multiplied by 0.85 to set the adjusted minimum read thresholds for each type.
 
-**Scaling table (pluginMedia/configs/TypeSeq2_Scaling_v1.csv)**
-```csv
-min_avg_reads_boundary,max_avg_reads_boundary,scaling_factor
-200000,200000000,2
-150000,199999,1.75
-125000,149999,1.5
-100000,124999,1.25
-75000,99999,1
-50000,74999,0.85
-25000,49999,0.75
-10000,24999,0.6
-1,9999,0.5
-```
+***Scaling table (pluginMedia/configs/TypeSeq2_Scaling_v1.csv)***
+
+| min_avg_reads_boundary | max_avg_reads_boundary | scaling_factor |
+| ---------------------- | ---------------------- | -------------- |
+| 200000                 | 200000000              | 2              |
+| 150000                 | 199999                 | 1.75           |
+| 125000                 | 149999                 | 1.5            |
+| 100000                 | 124999                 | 1.25           |
+| 75000                  | 99999                  | 1              |
+| 50000                  | 74999                  | 0.85           |
+| 25000                  | 49999                  | 0.75           |
+| 10000                  | 24999                  | 0.6            |
+| 1                      | 9999                   | 0.5            |
 
 ---
 
