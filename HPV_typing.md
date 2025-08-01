@@ -98,19 +98,19 @@ To establish the matrix of minimum read thresholds for each amplicon (contig) wi
 * **Vector B: Baseline Minimum Read Thresholds per Amplicon**
     This vector defines the default minimum read thresholds and percentage cutoffs for each amplicon (contig) type, serving as the foundational values before any sample-specific adjustments. The vector is extracted from the second column of pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv.
 
+***pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv*** 
 <center>
-**pluginMedia/configs/TypeSeq2_PN-criteria_v1.3.csv** 
 
 | Contig    | Min\_reads\_per\_type | Min\_perc\_per\_type |
 |:-----|------:|-----------:|
+| ...       | ...                   | ...                  |
+| ASIC-High | 400                   | 0.005                |
 | ASIC-Low  | 400                   | 0.01                 |
 | ASIC-Med  | 400                   | 0.01                 |
+| B2M-S     | 400                   | 0.008                |
 | B2M-S2    | 400                   | 0.01                 |
 | HPV6      | 500                   | 0.01                 |
 | HPV6\_Lin | 500                   | 0.01                 |
-| B2M-S     | 400                   | 0.008                |
-| ASIC-High | 400                   | 0.005                |
-| ...       | ...                   | ...                  |
 
 </center>
 
@@ -131,7 +131,7 @@ The matrix of min read criteria is exported as the CSV file `Scaled_min-filters.
 
 Before assigning P/N status to individual amplicons within a sample, two critical sample-level quality control metrics are evaluated: *sequencing_qc* and *HPV_qc*. The minimum thresholds for these metrics are specified in `pluginMedia/configs/TS2_config.csv` as `min_reads_per_sample` (for total reads) and `min_hpv_reads_per_sample` (for HPV-specific reads), respectively. A sample's *sequencing_qc* is designated "pass" if its total read count is $\ge$ `min_reads_per_sample`; otherwise, it is designated "fail." Similarly, a sample's *HPV_qc* is designated "pass" if its total HPV read count is $\ge$ `min_hpv_reads_per_sample`; otherwise, it is designated "fail."  
 
-**pluginMedia/configs/TS2_config.csv**
+***pluginMedia/configs/TS2_config.csv***
   
 | hotspot_vcf              | configs/TypeSeq2_Hotspot_v1.2.vcf           |
 | ------------------------ | ------------------------------------------- |
@@ -170,7 +170,7 @@ Beta-2-microglobulin (B2M) serves as our human housekeeping gene control, with i
 We also include a set of assay spiked-in controls (ASICs): ASIC-Low, ASIC-Med, and ASIC-High. These are designed to mimic varying target abundances, with ASIC-Low at 1X abundance, ASIC-Med at 2.5X, and ASIC-High at 10X. The Assay_SIC status is determined by the P/N calls of these three ASICs, also based on the TypeSeq2_Internal-Controls_v1.1.csv table. As an example, Assay_SIC will be assigned "pass_flag-high" if both ASIC-Low and ASIC-Med are "pos" while ASIC-High is "neg."
 
 
-**The detailed criteria for assigning these internal control statuses are provided in the following table:**
+***The detailed criteria for assigning these internal control statuses are provided in the following table:***
   
 | internal_control_code | qc_name       | qc_print               | ASIC-Low | ASIC-Med | ASIC-High | B2M-S | B2M-S2 |
 | --------------------- | ------------- | ---------------------- | -------- | -------- | --------- | ----- | ------ |
@@ -231,7 +231,7 @@ For each candidate variant that could define a lineage or sublineage, the *qc_re
 + *Pass* status:
     + Meaning: his is the ideal status. It signifies that the genetic marker successfully passed all internal quality control criteria. This means the reads covering the marker were sufficient and balanced, the variant call quality was high, its allele frequency was within the acceptable range, and there were no indications of technical artifacts. A marker with a "Pass" status is considered reliable evidence for the presence of its associated lineage. 
 
-The criteria for these flags are sourced from *TypeSeq2_Lineage-defs_v1.2.csv*:
+***The criteria for these flags are sourced from *TypeSeq2_Lineage-defs_v1.2.csv*:***
 
 | Chr        | classification | Lineage_ID | Base_num | Base_ID | vcf_variant | allele | min_coverage_pos | min_coverage_neg | min_allele_coverage_pos | min_allele_coverage_neg | min_qual | min_freq | max_freq | max_alt_strand_bias |
 |------------|----------------|------------|----------|---------|-------------|--------|------------------|------------------|-------------------------|-------------------------|----------|----------|----------|---------------------|
@@ -285,7 +285,7 @@ In the quality control process for batch control samples, their expected amplico
 
 To evaluate these controls, the actual assay results are fuzzy matched with the *TypeSeq2_Batch-controls_v1.3.csv* table. This matching uses a flexible approach where the Owner_Sample_ID from your assay results is considered a match for a Control_Code in the definition table if the Owner_Sample_ID contains the Control_Code string, and this comparison is case-insensitive. For example, an Owner_Sample_ID like "SampleA_ntc" would successfully match a Control_Code of "NTC".  Overall, there are two types of controls defined in *TypeSeq2_Batch-controls_v1.3.csv*: "pos" and "neg".   The observed results for each control sample's amplicons are compared against predefined expectations (allowing for "pos," "neg," or "either" outcomes) and then consolidates these individual checks into an overall "pass" or "fail" verdict for each control, along with specific reasons for any failures. This ensures the reliability of the entire assay batch.
 
-**TypeSeq2_Batch-controls_v1.3.csv**
+***TypeSeq2_Batch-controls_v1.3.csv***
 | Control_Code                        | Control_type | qc_name        | B2M-S  | B2M-S2 | HPV6 | HPV11 | HPV13 | HPV16 | HPV18 | HPV26 | … |
 | ----------------------------------- | ------------ | -------------- | ------ | ------ | ---- | ----- | ----- | ----- | ----- | ----- | - |
 | SiHa-HeLa                           | pos          | control_result | either | either | neg  | neg   | neg   | pos   | pos   | neg   | … |
