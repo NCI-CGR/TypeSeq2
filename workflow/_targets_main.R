@@ -410,7 +410,7 @@ typeseq2 <- tar_plan(
   
   
   ### render batch report
-  , batch_df = data.frame( batch_id= unique(settings_lst$manifest$Assay_Batch_Code), is_clinical=is_clinical, for_batch=T) %>%
+  , batch_df = data.frame( batch_id= unique(settings_lst$manifest$Assay_Batch_Code), is_clinical=F, for_batch=T) %>%
     mutate(
            output_file=sprintf("%s_TypeSeq2HPV_QC_report.pdf", batch_id)
            )
